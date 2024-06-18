@@ -139,7 +139,7 @@ ROOT_URLCONF = 'saveus.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'frontend', 'public')],
+        'DIRS': [os.path.join(BASE_DIR, '../FRONT', 'dist')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -238,65 +238,9 @@ SIMPLE_JWT = {
 SOCIALACCOUNT_PROVIDERS = secrets.get("SOCIALACCOUNT_PROVIDERS", {})
 
 
-# allauth - continue 버튼 생략
-# get 으로 사용하면 안됩니다.
-# SOCIALACCOUNT_LOGIN_ON_GET = True
-
 # allauth backends
 AUTHENTICATION_BACKENDS = (
     #Needed to login by username in Django admin, regardless of 'allauth'
     'django.contrib.auth.backends.ModelBackend',
     
 )
-
-# SOCIALACCOUNT_PROVIDERS = {
-#     'kakao': {
-#         'APP': {
-#             'client_id': 'YOUR_KAKAO_CLIENT_ID',
-#             'secret': 'YOUR_KAKAO_CLIENT_SECRET',
-#         },
-#         'CALLBACK_URL': 'http://localhost:8000/accounts/kakao/login/callback/',
-#     },
-#     'naver': {
-#         'APP': {
-#             'client_id': 'pkkVX4R4IhbPih5b9WxX',
-#             'secret': 'hENg3OQgKH',
-#         },
-#         'CALLBACK_URL': 'http://localhost:8000/accounts/naver/login/callback/',
-#     },
-# }
-
-
-# 로그 기록
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'debug.log'),
-        },
-    },
-    'root': {
-        'handlers': ['file'],
-        'level': 'DEBUG',
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-        'map': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': False,
-        },
-    },
-}
-
-
-# 관리자 페이지 정보
-# admin@admin.com
-# admin1234
