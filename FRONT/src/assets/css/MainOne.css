@@ -1,0 +1,163 @@
+@charset "UTF-8";
+
+@import url(https://fonts.googleapis.com/css?family=Raleway:400,500,800);
+
+#app {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+body, html {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #fcba03;
+    font-family: 'Raleway', sans-serif;
+}
+
+body {
+    width: 100%;
+    display: block;
+    padding: 20px;
+}
+
+.container {
+    width: 80%;
+    max-width: 2000px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+@media only screen and (max-width: 600px) {
+    .container {
+        max-width: 100%;
+        padding: 10px;
+    }
+}
+
+.input-data {
+    margin-bottom: 20px;
+}
+
+.guide-text {
+    font-weight: 500;
+    color: #474747;
+    border: 2px solid #f9db16;
+    border-radius: 5px;
+    background-color: rgba(255, 251, 212, 0.5);
+    margin-bottom: 30px;
+    padding: 10px 20px;
+}
+
+.input-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.input-wrapper span {
+    text-align: left;
+    flex-shrink: 0;
+    width: auto;
+    margin-right: 10px;
+    font-weight: 500;
+}
+
+.input-wrapper input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #bbbbbb;
+    border-radius: 5px;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+
+.input-data .checkbox-group {
+    display: flex;
+    gap: 10px;
+}
+
+.input-data .single-checkbox {
+    margin-top: 20px;
+}
+
+.input-data input[type="text"] {
+    margin-left: 10px;
+}
+
+.input-data input[type="checkbox"] {
+    display: none;
+}
+
+.chceck-text {
+    margin-right: 10px;
+}
+
+.input-data label.selected {
+    background-color: #e0a800;
+    color: #fff;
+}
+
+.input-data label {
+    padding: 5px 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.submit-data input[type="submit"],
+#check-mycost input[type="button"] {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    background-color: #fcba03;
+    color: #fff;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+.submit-data input[type="submit"]:hover,
+#check-mycost input[type="button"]:hover {
+    background-color: #e0a800;
+}
+
+#map-api, #check-mycost {
+    margin-top: 30px;
+}
+
+#check-mycost {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+#check-mycost .check-mycost {
+    width: 100%; /* 필요에 따라 width를 조정할 수 있습니다. */
+    margin: 0;
+}
+
+.map-view-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.map-view-container .full-width {
+    width: 100%;
+}

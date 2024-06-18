@@ -1,0 +1,75 @@
+.login-container {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 2em;
+    background: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.input-data {
+    margin-bottom: 1.5em;
+}
+
+.guide-text p {
+    margin-bottom: 0.5em;
+    font-weight: bold;
+    text-align: center;
+}
+
+.input-wrapper {
+    margin-bottom: 1em;
+    display: flex;
+    flex-direction: column;
+    margin-left: 0; /* 명시적으로 모든 input-wrapper에 적용된 margin-left를 0으로 설정 */
+}
+
+.input-wrapper span {
+    display: block;
+    margin-bottom: 0.3em;
+    font-weight: bold;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    font-size: 1em;
+    margin-left: 0; /* 모든 input에 margin-left를 0으로 설정 */
+}
+
+.submit-data {
+    text-align: center;
+}
+
+.submit-data input {
+    background: #007bff;
+    color: #fff;
+    border: none;
+    padding: 0.5em 1em;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+    font-size: 1em;
+}
+
+.submit-data input:hover {
+    background: #0056b3;
+}
+
+.signup-redirect {
+    text-align: center;
+    margin-top: 1em;
+}
+
+.signup-redirect a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.signup-redirect a:hover {
+    text-decoration: underline;
+}
