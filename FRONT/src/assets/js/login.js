@@ -13,16 +13,16 @@ export function handleLogin(alertComponent) {
     .then(data => {
     if (data.success) {
         console.log('로그인 성공:', data);
-        alertComponent.showAlert('로그인 성공하였습니다.', 'https://3a145eca76f9.ngrok.app/card-recom');
+        alertComponent.showAlert('로그인 성공하였습니다.', 'https://young-jii.github.io/saveus/card-recom');
         // 로그인 성공 후 동작 (예: 페이지 이동)
     } else {
         console.error('로그인 실패:', data.message);
-        alertComponent.showAlert('로그인 실패:', 'https://3a145eca76f9.ngrok.app/card-recom');
+        alertComponent.showAlert('로그인 실패:', 'https://young-jii.github.io/saveus/card-recom');
     }
     })
     .catch(error => {
     console.error('로그인 에러:', error);
-    alertComponent.showAlert('로그인 성공하였습니다.', 'https://3a145eca76f9.ngrok.app/card-recom'); // 입력과 상관없이 성공 메시지 표시
+    alertComponent.showAlert('로그인 성공하였습니다.', 'https://young-jii.github.io/saveus/card-recom'); // 입력과 상관없이 성공 메시지 표시
     });
 }
 

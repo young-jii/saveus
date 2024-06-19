@@ -29,7 +29,7 @@
             </div>
         <div class="signup-redirect">
             <p> 계정이 없으신가요?
-                <a href="https://3a145eca76f9.ngrok.app/MainOne">서비스 이용하러 가기</a>
+                <a href="https://young-jii.github.io/saveus/MainOne">서비스 이용하러 가기</a>
             </p>
         </div>
         </form>
