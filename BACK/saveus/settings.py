@@ -36,6 +36,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1', 
     'localhost',
     "https://young-jii.github.io/saveus/",  # 8080 서버
+    "3.39.250.17",
     secrets["NGROK_DOMAIN"].replace("https://", "").replace("http://", ""),
     ]
 
@@ -123,7 +124,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
     "https://young-jii.github.io/saveus/",
-    "https://d5bf569728f0.ngrok.app"
+    "https://d5bf569728f0.ngrok.app",
+    "3.39.250.17",
 ]
 
 # CSRF 설정
@@ -131,7 +133,8 @@ CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8080',
     "http://127.0.0.1:8080",
     "https://young-jii.github.io/saveus/",
-    "https://d5bf569728f0.ngrok.app"
+    "https://d5bf569728f0.ngrok.app",
+    "3.39.250.17"
 ] # Vue.js 개발 서버 주소를 신뢰된 출처로 추가
 
 ROOT_URLCONF = 'saveus.urls'
