@@ -3,6 +3,7 @@ const webpack = require('webpack');
 
 module.exports = defineConfig({
   transpileDependencies: true,
+  publicPath: process.env.NODE_ENV === 'production' ? '/saveus/' : '/', // 배포 환경에 따라 publicPath 설정
   configureWebpack: {
     plugins: [
       new webpack.DefinePlugin({
@@ -20,28 +21,23 @@ module.exports = defineConfig({
     ],
     host: '0.0.0.0', // 외부 접속을 허용
     port: 8080,
-    https: false, // HTTPS 사용
+    https: false, // HTTPS 사용 안함
     client: {
-      webSocketURL: {
-        protocol: 'wss',
-        hostname: '3a145eca76f9.ngrok.app', // WebSocket URL 설정
-        port: 443,
-        pathname: '/ws',
-      },
+      webSocketURL: 'ws://localhost:8080/ws', // 단순화된 WebSocket URL 설정
     },
     proxy: {
       '/api': {
-        target: 'https://d5bf569728f0.ngrok.app', // Django ngrok 도메인으로 대체
+        target: 'http://localhost:8000', // Django 서버
         changeOrigin: true,
         secure: false,
       },
       '/calculate': {
-        target: 'https://d5bf569728f0.ngrok.app',
+        target: 'http://localhost:8000',
         changeOrigin: true,
       },
     },
     headers: {
-      'Access-Control-Allow-Origin': 'https://3a145eca76f9.ngrok.app', // 특정 도메인만 허용
+      'Access-Control-Allow-Origin': 'http://localhost:8000', // 특정 도메인만 허용
       'Access-Control-Allow-Credentials': 'true', // 자격 증명 허용
     },
   },

@@ -31,10 +31,9 @@ axios.get(`${apiBaseUrl}/map/set-csrf-token/`)
     });
 
 // WebSocket URL 설정
-const wsProtocol = location.protocol === 'https:' ? 'wss' : 'ws'; // HTTPS일 때 WSS를 사용하도록 설정
 const wsBaseUrl = process.env.VUE_APP_USE_NGROK === 'true'
-    ? process.env.VUE_APP_WS_BASE_URL_NGROK
-    : process.env.VUE_APP_WS_BASE_URL_LOCAL;
+    ? `wss://${process.env.VUE_APP_WS_BASE_URL_NGROK}`
+    : `ws://${process.env.VUE_APP_WS_BASE_URL_LOCAL}`;
 
 if (!wsBaseUrl) {
     console.error('WebSocket Base URL is not defined. Check your .env file.');
@@ -42,7 +41,8 @@ if (!wsBaseUrl) {
     console.log(`WebSocket Base URL: ${wsBaseUrl}`); // 디버깅용 로그
 }
 
-const socket = new WebSocket(`${wsProtocol}://${wsBaseUrl}/ws/some_path/`);
+const socket = new WebSocket('ws://localhost:8080/ws/some_path/');
+
 
 socket.onopen = () => {
     console.log('WebSocket connection opened.');
