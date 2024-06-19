@@ -35,7 +35,7 @@ DEBUG = False
 ALLOWED_HOSTS = [
     '127.0.0.1', 
     'localhost',
-    "3a145eca76f9.ngrok.app",  # 8080 서버
+    "https://young-jii.github.io/saveus/",  # 8080 서버
     secrets["NGROK_DOMAIN"].replace("https://", "").replace("http://", ""),
     ]
 
@@ -122,7 +122,7 @@ CORS_ALLOW_HEADERS = [
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://127.0.0.1:8080",
-    "https://3a145eca76f9.ngrok.app",
+    "https://young-jii.github.io/saveus/",
     "https://d5bf569728f0.ngrok.app"
 ]
 
@@ -130,7 +130,7 @@ CORS_ALLOWED_ORIGINS = [
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8080',
     "http://127.0.0.1:8080",
-    "https://3a145eca76f9.ngrok.app",
+    "https://young-jii.github.io/saveus/",
     "https://d5bf569728f0.ngrok.app"
 ] # Vue.js 개발 서버 주소를 신뢰된 출처로 추가
 
@@ -184,7 +184,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Internationalization
 LANGUAGE_CODE = 'ko'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/seoul'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
