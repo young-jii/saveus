@@ -159,15 +159,19 @@ WSGI_APPLICATION = 'saveus.wsgi.application'
 
 # Database
 DATABASES = {
-    "default": {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'test',
-        'USER' : 'saveus',
-        'PASSWORD' : 'saveEarth@9603', # 설정한 비밀번호로 적어주면 된다.
-        'HOST' : '3.39.250.17',
-        'PORT' : '3306',
-    }
-}
+	'default': {
+                'ENGINE': 'django.db.backends.mysql',
+                'NAME': 'saveusdb',
+                'USER': 'admin',
+                'PASSWORD': 'saveEarth9603',
+                'HOST': 'saveus.cz8u8aauqb69.ap-northeast-2.rds.amazonaws.com',
+                'PORT': '3306',
+                'OPTIONS': {
+                    'init_command' : "SET sql_mode='STRICT_TRANS_TABLES'"
+                    },
+                }
+            }
+
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
