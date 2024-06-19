@@ -164,7 +164,7 @@ DATABASES = {
         'NAME': 'test',
         'USER' : 'root',
         'PASSWORD' : 'admin1234', # 설정한 비밀번호로 적어주면 된다.
-        'HOST' : '127.0.0.1',
+        'HOST' : '3.39.250.17',
         'PORT' : '3306',
     }
 }
