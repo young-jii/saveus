@@ -164,7 +164,7 @@ DATABASES = {
                 'NAME': 'saveusdb',
                 'USER': 'admin',
                 'PASSWORD': 'saveEarth9603',
-                'HOST': 'saveus.cz8u8aauqb69.ap-northeast-2.rds.amazonaws.com',
+                'HOST': 'saveusdb.cz8u8aauqb69.ap-northeast-2.rds.amazonaws.com',
                 'PORT': '3306',
                 'OPTIONS': {
                     'init_command' : "SET sql_mode='STRICT_TRANS_TABLES'"
