@@ -6,7 +6,7 @@ import { EventBus } from '../../../eventBus';  // 이벤트 버스 불러오기
 // CSRF 토큰을 가져와 Axios 인스턴스에 추가
 const getCsrfToken = async () => {
     try {
-        const response = await axios.get('https://3.35.141.132/odsay/set-csrf-token/', { withCredentials: true });
+        const response = await axios.get('https://3.35.141.132:8000/map/set-csrf-token/', { withCredentials: true });
         console.log('MapView.js >> CSRF token received:', response.data);
         return response.data.csrfToken;
     } catch (error) {
@@ -17,7 +17,7 @@ const getCsrfToken = async () => {
 
 // Axios 인스턴스 생성 및 기본 설정 추가
 const axiosInstance = axios.create({
-    baseURL: 'https://3.35.141.132',  // ngrok 도메인 설정
+    baseURL: 'https://3.35.141.132:8000',  // Django 백엔드 서버 URL
     withCredentials: true  // 자격 증명 포함
 });
 

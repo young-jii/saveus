@@ -10,7 +10,7 @@ axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
 // API 기본 URL 설정
-const apiBaseUrl = process.env.VUE_APP_API_BASE_URL_LOCAL;
+const apiBaseUrl = process.env.VUE_APP_API_BASE_URL_LOCAL || 'https://3.35.141.132:8000';
 
 if (!apiBaseUrl) {
     console.error('API Base URL is not defined. Check your .env file.');
@@ -29,7 +29,7 @@ axios.get(`${apiBaseUrl}/map/set-csrf-token/`)
     });
 
 // WebSocket URL 설정
-const wsBaseUrl = `wss://${process.env.VUE_APP_WS_BASE_URL_LOCAL}`;
+const wsBaseUrl = process.env.VUE_APP_WS_BASE_URL_LOCAL || 'wss://3.35.141.132:8000';
 
 if (!wsBaseUrl) {
     console.error('WebSocket Base URL is not defined. Check your .env file.');

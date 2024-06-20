@@ -35,9 +35,9 @@ DEBUG = False
 ALLOWED_HOSTS = [
     '127.0.0.1', 
     'localhost',
-    "https://young-jii.github.io/saveus/",  # 8080 서버
     "3.35.141.132",
-    "ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com"
+    "ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com",
+    "young-jii.github.io",
     ]
 
 INSTALLED_APPS = [
@@ -78,7 +78,6 @@ MIDDLEWARE = [
     # CORS 관련 설정
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -105,7 +104,6 @@ CSRF_COOKIE_SECURE = False    # HTTPS가 아닌 경우 False로 설정
 CSRF_COOKIE_SAMESITE = None   # CSRF 쿠키가 교차 사이트 요청에서도 설정되도록 함
 
 CORS_ALLOW_CREDENTIALS = True   # 자격 증명을 포함한 요청 허용
-# CORS_ALLOW_ALL_ORIGINS = True   # 모든 출처에서의 요청 허용
 
 # CORS_ALLOW_HEADERS 추가 (필요할 경우)
 CORS_ALLOW_HEADERS = [
@@ -247,7 +245,5 @@ SOCIALACCOUNT_PROVIDERS = secrets.get("SOCIALACCOUNT_PROVIDERS", {})
 
 # allauth backends
 AUTHENTICATION_BACKENDS = (
-    #Needed to login by username in Django admin, regardless of 'allauth'
     'django.contrib.auth.backends.ModelBackend',
-    
 )

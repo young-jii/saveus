@@ -2,7 +2,7 @@ import axios from 'axios';
 import MapView from '../../components/MapView.vue';
 
 // CSRF 토큰 설정
-axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = true;         
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
@@ -53,19 +53,19 @@ export default {
             const apiBaseUrl = this.$root.$apiBaseUrl;
             console.log('mainone.js API Base URL:', apiBaseUrl);
             try {
-                const response = await axios.get(`${apiBaseUrl}/map/api/set-csrf-token/`, { withCredentials: true });
+                const response = await axios.get(`${apiBaseUrl}/map/set-csrf-token/`, { withCredentials: true });
                 console.log('mainone.js CSRF token set successfully.');
                 console.log('mainone.js Response data:', response.data);
                 
                 // 직접 CSRF 토큰을 설정합니다.
                 const csrfToken = response.data.csrfToken;
                 this.csrfToken = csrfToken;
-
+        
                 // 쿠키에서도 CSRF 토큰을 가져옵니다.
                 const cookieCsrfToken = getCookie('csrftoken');
                 console.log('mainone.js Retrieved CSRF token from cookie:', cookieCsrfToken);
                 this.csrfToken = cookieCsrfToken || csrfToken;
-
+        
                 console.log('mainone.js CSRF 토큰:', this.csrfToken);
                 return this.csrfToken;
             } catch (error) {
@@ -73,6 +73,7 @@ export default {
                 throw error;
             }
         },
+        
 
         handleCheckboxChange(field) {
             if (field === 'mem_young_y') {
@@ -120,6 +121,7 @@ export default {
                         withCredentials: true
                     }
                 );
+                
 
                 console.log('mainone.js Response:', response.data);
 
