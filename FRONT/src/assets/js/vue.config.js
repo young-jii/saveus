@@ -16,7 +16,7 @@ module.exports = defineConfig({
   devServer: {
     allowedHosts: [
       "3a145eca76f9.ngrok.app",
-      "d5bf569728f0.ngrok.app",
+      "3.35.141.132",
       'localhost',
     ],
     host: '0.0.0.0', // 외부 접속을 허용

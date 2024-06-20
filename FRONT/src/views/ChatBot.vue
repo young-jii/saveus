@@ -65,7 +65,7 @@ export default {
         async calculateCost(payment) {
             console.log(`Sending request to calculate cost with payment: ${payment}`); // 콘솔에 출력
             try {
-                const response = await fetch(`https://d5bf569728f0.ngrok.app/calculate/calculate-cost/?payment=${payment}`);
+                const response = await fetch(`https://3.35.141.132/calculate/calculate-cost/?payment=${payment}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }

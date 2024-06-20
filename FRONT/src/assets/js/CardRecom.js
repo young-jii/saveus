@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getCsrfToken } from './csrfToken.js';
 
 const axiosInstance = axios.create({
-    baseURL: 'https://d5bf569728f0.ngrok.app',
+    baseURL: 'https://3.35.141.132',
     withCredentials: true
 });
 
