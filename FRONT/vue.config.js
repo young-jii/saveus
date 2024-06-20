@@ -41,7 +41,7 @@ module.exports = defineConfig({
       },
     },
     headers: {
-      'Access-Control-Allow-Origin': 'https://3a145eca76f9.ngrok.app', // 특정 도메인만 허용
+      'Access-Control-Allow-Origin': 'https://young-jii.github.io/saveus/', // 특정 도메인만 허용
       'Access-Control-Allow-Credentials': 'true', // 자격 증명 허용
     },
   },
