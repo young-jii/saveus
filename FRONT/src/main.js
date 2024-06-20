@@ -10,15 +10,13 @@ axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
 // API 기본 URL 설정
-const apiBaseUrl = process.env.VUE_APP_USE_NGROK === 'true'
-    ? process.env.VUE_APP_API_BASE_URL_NGROK
-    : process.env.VUE_APP_API_BASE_URL_LOCAL;
+const apiBaseUrl = process.env.VUE_APP_API_BASE_URL_LOCAL;
 
-    if (!apiBaseUrl) {
-        console.error('API Base URL is not defined. Check your .env file.');
-    } else {
-        console.log(`API Base URL: ${apiBaseUrl}`); // 디버깅용 로그
-    }
+if (!apiBaseUrl) {
+    console.error('API Base URL is not defined. Check your .env file.');
+} else {
+    console.log(`API Base URL: ${apiBaseUrl}`); // 디버깅용 로그
+}
 
 // CSRF 토큰을 가져와 Axios에 설정
 axios.get(`${apiBaseUrl}/map/set-csrf-token/`)
@@ -31,9 +29,7 @@ axios.get(`${apiBaseUrl}/map/set-csrf-token/`)
     });
 
 // WebSocket URL 설정
-const wsBaseUrl = process.env.VUE_APP_USE_NGROK === 'true'
-    ? `wss://${process.env.VUE_APP_WS_BASE_URL_NGROK}`
-    : `ws://${process.env.VUE_APP_WS_BASE_URL_LOCAL}`;
+const wsBaseUrl = `wss://${process.env.VUE_APP_WS_BASE_URL_LOCAL}`;
 
 if (!wsBaseUrl) {
     console.error('WebSocket Base URL is not defined. Check your .env file.');
@@ -41,8 +37,7 @@ if (!wsBaseUrl) {
     console.log(`WebSocket Base URL: ${wsBaseUrl}`); // 디버깅용 로그
 }
 
-const socket = new WebSocket('ws://localhost:8080/ws/some_path/');
-
+const socket = new WebSocket(`${wsBaseUrl}/ws/some_path/`);
 
 socket.onopen = () => {
     console.log('WebSocket connection opened.');
