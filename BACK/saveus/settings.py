@@ -124,7 +124,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8080",
     "https://young-jii.github.io",
     "https://3.35.141.132",
-    "3.35.141.132",
 ]
 
 # CSRF 설정
@@ -133,7 +132,6 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8080",
     "https://young-jii.github.io/saveus/",
     "https://3.35.141.132",
-    "3.35.141.132",
 ] # Vue.js 개발 서버 주소를 신뢰된 출처로 추가
 
 ROOT_URLCONF = 'saveus.urls'
