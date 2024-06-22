@@ -38,6 +38,7 @@ ALLOWED_HOSTS = [
     "3.35.141.132",
     "ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com",
     "young-jii.github.io",
+    "jiyoung.pythonanywhere.com"
     ]
 
 INSTALLED_APPS = [
@@ -100,7 +101,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8080",
     "https://young-jii.github.io",
     "https://3.35.141.132",
-    "https://ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com"
+    "https://ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com",
+    "https://jiyoung.pythonanywhere.com"
 ]
 
 CORS_ALLOW_CREDENTIALS = True   # 자격 증명을 포함한 요청 허용
@@ -124,7 +126,8 @@ CSRF_TRUSTED_ORIGINS = [
     "http://127.0.0.1:8080",
     "https://young-jii.github.io/",
     "https://3.35.141.132",
-    "https://ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com"
+    "https://ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com",
+    "https://jiyoung.pythonanywhere.com"
 ]
 
 CSRF_COOKIE_HTTPONLY = False
@@ -156,10 +159,10 @@ WSGI_APPLICATION = 'saveus.wsgi.application'
 DATABASES = {
 	'default': {
                 'ENGINE': 'django.db.backends.mysql',
-                'NAME': 'saveusdb',
+                'NAME': 'saveus',
                 'USER': 'admin',
                 'PASSWORD': 'saveEarth9603',
-                'HOST': 'saveusdb.cz8u8aauqb69.ap-northeast-2.rds.amazonaws.com',
+                'HOST': '127.0.0.1',
                 'PORT': '3306',
                 'OPTIONS': {
                     'init_command' : "SET sql_mode='STRICT_TRANS_TABLES'"

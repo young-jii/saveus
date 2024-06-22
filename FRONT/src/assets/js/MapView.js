@@ -2,7 +2,7 @@ import axios from 'axios';
 import WebSocketClient from '../../utils/WebSocketClient';
 import { EventBus } from '../../../eventBus';  // 이벤트 버스 불러오기
 
-const apiBaseUrl = process.env.VUE_APP_API_BASE_URL || 'https://ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com';
+const apiBaseUrl = process.env.VUE_APP_API_BASE_URL || 'https://jiyoung.pythonanywhere.com';
 
 // CSRF 토큰을 가져와 Axios 인스턴스에 추가
 const getCsrfToken = async () => {
@@ -18,7 +18,7 @@ const getCsrfToken = async () => {
 
 // Axios 인스턴스 생성 및 기본 설정 추가
 const axiosInstance = axios.create({
-    baseURL: 'https://ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com',
+    baseURL: 'https://jiyoung.pythonanywhere.com',
     withCredentials: true  // 자격 증명 포함
 });
 

@@ -9,7 +9,7 @@ axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
 // API 기본 URL 설정 (HTTPS 사용)
-const apiBaseUrl = process.env.VUE_APP_API_BASE_URL || 'https://ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com';
+const apiBaseUrl = process.env.VUE_APP_API_BASE_URL || 'https://jiyoung.pythonanywhere.com';
 
 if (!apiBaseUrl) {
     console.error('API Base URL is not defined. Check your .env file.');

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const apiBaseUrl = process.env.VUE_APP_API_BASE_URL || 'https://ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com';
+const apiBaseUrl = process.env.VUE_APP_API_BASE_URL || 'https://jiyoung.pythonanywhere.com';
 
 axios.defaults.withCredentials = true;
 axios.defaults.xsrfCookieName = 'csrftoken';

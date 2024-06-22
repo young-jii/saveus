@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getCsrfToken } from './csrfToken.js';
 
 const axiosInstance = axios.create({
-    baseURL: 'https://ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com',
+    baseURL: 'https://jiyoung.pythonanywhere.com',
     withCredentials: true
 });
 
