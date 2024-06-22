@@ -3,6 +3,10 @@ import json
 import sys
 from pathlib import Path
 from datetime import timedelta
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # settings.py 맨 위에 추가
 import django.utils.translation
@@ -11,7 +15,7 @@ django.utils.translation.ugettext_lazy = django.utils.translation.gettext_lazy
 # Channels settings
 from channels.security.websocket import AllowedHostsOriginValidator
 
-SITE_ID=3
+SITE_ID = 3
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -38,11 +42,11 @@ DEBUG = False
 ALLOWED_HOSTS = [
     '127.0.0.1', 
     'localhost',
-    "3.35.141.132",
-    "ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com",
-    "young-jii.github.io",
-    "jiyoung.pythonanywhere.com"
-    ]
+    '3.35.141.132',
+    'ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com',
+    'young-jii.github.io',
+    'jiyoung.pythonanywhere.com'
+]
 
 INSTALLED_APPS = [
     # Third-party apps
@@ -127,7 +131,7 @@ CORS_ALLOW_HEADERS = [
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8080',
     "http://127.0.0.1:8080",
-    "https://young-jii.github.io/",
+    "https://young-jii.github.io",
     "https://3.35.141.132",
     "https://ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com",
     "https://jiyoung.pythonanywhere.com"
@@ -160,19 +164,18 @@ WSGI_APPLICATION = 'saveus.wsgi.application'
 
 # Database
 DATABASES = {
-	'default': {
-                'ENGINE': 'django.db.backends.mysql',
-                'NAME': 'saveus',
-                'USER': 'admin',
-                'PASSWORD': 'saveEarth9603',
-                'HOST': '127.0.0.1',
-                'PORT': '3306',
-                'OPTIONS': {
-                    'init_command' : "SET sql_mode='STRICT_TRANS_TABLES'"
-                    },
-                }
-            }
-
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'saveus',
+        'USER': 'admin',
+        'PASSWORD': 'saveEarth9603',
+        'HOST': '127.0.0.1',
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'"
+        },
+    }
+}
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
@@ -204,14 +207,12 @@ STATICFILES_DIRS = [
 ]
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
 
 # rest framework 에 대한 설정
 REST_FRAMEWORK = {
     # 기본 인증에 대한 설정
-    'DEFAULT_AUTHENTICATION_CLASSES' : (
+    'DEFAULT_AUTHENTICATION_CLASSES': (
         # dj_rest_auth의 인증 절차 중 JWTCoojoeAuthentication을 사용
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.TokenAuthentication',
@@ -233,18 +234,17 @@ REST_USE_JWT = True
 # simiplejwt 에 대한 설정
 SIMPLE_JWT = {
     # access token 의 유효기간
-    'ACCESS_TOKEN_LIFETIME' : timedelta(minutes=60),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     # refresh token 의 유효기간
-    'REFRESH_TOKEN_LIFETIME' : timedelta(days=2),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=2),
     # 토큰에 들어가는 알고리즘
-    'ALGORITHM' : 'HS256',
+    'ALGORITHM': 'HS256',
     # 토큰을 만드는데 사용할 secret key
-    'SIGNING_KEY' : SECRET_KEY,
+    'SIGNING_KEY': os.getenv('SECRET_KEY'),
 }
 
 # SOCIALACCOUNT_PROVIDERS 설정 추가
 SOCIALACCOUNT_PROVIDERS = secrets.get("SOCIALACCOUNT_PROVIDERS", {})
-
 
 # allauth backends
 AUTHENTICATION_BACKENDS = (
