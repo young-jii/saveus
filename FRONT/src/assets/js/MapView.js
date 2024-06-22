@@ -347,7 +347,7 @@ export default {
         }
     },
     async mounted() {
-        this.wsClient = new WebSocketClient('wss://ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com/ws/some_path/');
+        this.wsClient = new WebSocketClient('wss://https://jiyoung.pythonanywhere.com/ws/some_path/');
         this.wsClient.connect();
         this.initializeMap();
         await this.findRoute();

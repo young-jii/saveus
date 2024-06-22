@@ -25,7 +25,7 @@ module.exports = defineConfig({
     client: {
       webSocketURL: {
         protocol: 'wss',
-        hostname: 'ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com',
+        hostname: 'https://jiyoung.pythonanywhere.com',
         port: 443,
         pathname: '/ws',
       },

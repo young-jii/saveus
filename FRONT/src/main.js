@@ -30,7 +30,7 @@ axios.get('/map/set-csrf-token/', { withCredentials: true })
     });
 
 // WebSocket URL 설정 (HTTPS에 맞춰 WSS 사용)
-const wsBaseUrl = process.env.VUE_APP_WS_BASE_URL || 'wss://ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com';
+const wsBaseUrl = process.env.VUE_APP_WS_BASE_URL || 'wss://https://jiyoung.pythonanywhere.com';
 
 if (!wsBaseUrl) {
     console.error('WebSocket Base URL is not defined. Check your .env file.');
