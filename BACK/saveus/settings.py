@@ -18,13 +18,16 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # secret.json 파일 읽어오기
 SECRET_BASE_FILE = os.path.join(BASE_DIR, "secrets.json")
 
-# secret.json 파일을 읽고, json key/value 값들을 secrets 에 할당함
 try:
-    with open(SECRET_BASE_FILE) as f:
+    with open(SECRET_BASE_FILE, encoding='utf-8') as f:
         secrets = json.load(f)
 except FileNotFoundError:
     # 로그 또는 알림을 추가하여 파일이 없음을 알립니다
     print("secret 파일 읽기 실패!")
+except json.JSONDecodeError as e:
+    # JSON 형식 에러가 발생한 경우 처리
+    print(f"JSON Decode Error: {e}")
+    secrets = {}
 
 # setattr을 이용하여 key 값은 변수명, value 값은 값으로 각 변수에 할당
 for key, value in secrets.items():
