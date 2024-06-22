@@ -2,7 +2,7 @@ import axios from 'axios';
 import { getCsrfToken } from './csrfToken.js';
 
 const axiosInstance = axios.create({
-    baseURL: 'https://3.35.141.132:8000',
+    baseURL: 'https://ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com',
     withCredentials: true
 });
 
@@ -61,10 +61,10 @@ const CardRecomMixin = {
         };
     },
     watch: {
-        startPoint(newStartPoint) {  // 수정된 부분
+        startPoint(newStartPoint) { 
             this.localStartPoint = newStartPoint;
         },
-        endPoint(newEndPoint) {  // 수정된 부분
+        endPoint(newEndPoint) {
             this.localEndPoint = newEndPoint;
         }
     },

@@ -2,8 +2,8 @@ const { defineConfig } = require('@vue/cli-service');
 const webpack = require('webpack');
 
 module.exports = defineConfig({
+  publicPath: process.env.NODE_ENV === 'production' ? '/saveus/' : '/',
   transpileDependencies: true,
-  publicPath: process.env.NODE_ENV === 'production' ? '/saveus/' : '/', // 배포 환경에 따라 publicPath 설정
   configureWebpack: {
     plugins: [
       new webpack.DefinePlugin({
@@ -15,29 +15,34 @@ module.exports = defineConfig({
   },
   devServer: {
     allowedHosts: [
-      "3a145eca76f9.ngrok.app",
+      "young-jii.github.io",
       "3.35.141.132",
       'localhost',
     ],
     host: '0.0.0.0', // 외부 접속을 허용
     port: 8080,
-    https: false, // HTTPS 사용 안함
+    https: false, // HTTPS 사용
     client: {
-      webSocketURL: 'ws://localhost:8080/ws', // 단순화된 WebSocket URL 설정
+      webSocketURL: {
+        protocol: 'wss',
+        hostname: 'ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com',
+        port: 443,
+        pathname: '/ws',
+      },
     },
     proxy: {
       '/api': {
-        target: 'http://localhost:8000', // Django 서버
+        target: 'https://3.35.141.132',
         changeOrigin: true,
         secure: false,
       },
       '/calculate': {
-        target: 'http://localhost:8000',
+        target: 'https://3.35.141.132',
         changeOrigin: true,
       },
     },
     headers: {
-      'Access-Control-Allow-Origin': 'http://localhost:8000', // 특정 도메인만 허용
+      'Access-Control-Allow-Origin': 'https://young-jii.github.io', // 특정 도메인만 허용
       'Access-Control-Allow-Credentials': 'true', // 자격 증명 허용
     },
   },

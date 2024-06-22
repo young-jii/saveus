@@ -7,6 +7,7 @@ urlpatterns = [
     path('map/api/', include('map.urls')),
     path('odsay/', include('odsay.urls')),
     path('card/', include('card.urls')),
-    path('calculate/', include('calculate.urls')),  # 이 부분을 수정했습니다.
+    path('calculate/', include('calculate.urls')),
+    path('api/set-csrf-token/', include('card.urls')),  # CSRF 토큰 엔드포인트 추가
     re_path(r'^.*$', TemplateView.as_view(template_name='index.html')),
 ]
