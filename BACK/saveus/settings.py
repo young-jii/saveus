@@ -97,14 +97,6 @@ CHANNEL_LAYERS = {
 # ASGI application 설정
 ASGI_APPLICATION = 'saveus.asgi.application'
 
-
-# CSRF 설정
-CSRF_COOKIE_HTTPONLY = False  # 클라이언트에서 접근 가능하도록 설정
-CSRF_COOKIE_SECURE = False    # HTTPS가 아닌 경우 False로 설정
-CSRF_COOKIE_SAMESITE = None   # CSRF 쿠키가 교차 사이트 요청에서도 설정되도록 함
-
-CORS_ALLOW_CREDENTIALS = True   # 자격 증명을 포함한 요청 허용
-
 # CORS_ALLOW_HEADERS 추가 (필요할 경우)
 CORS_ALLOW_HEADERS = [
     'accept',
@@ -126,14 +118,22 @@ CORS_ALLOWED_ORIGINS = [
     "https://ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com"
 ]
 
+CORS_ALLOW_CREDENTIALS = True   # 자격 증명을 포함한 요청 허용
+
 # CSRF 설정
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:8080',
     "http://127.0.0.1:8080",
-    "https://young-jii.github.io/saveus/",
+    "https://young-jii.github.io/",
     "https://3.35.141.132",
     "https://ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com"
 ] # Vue.js 개발 서버 주소를 신뢰된 출처로 추가
+
+# CSRF 설정
+CSRF_COOKIE_HTTPONLY = False  # 클라이언트에서 접근 가능하도록 설정
+CSRF_COOKIE_SECURE = True    # HTTPS가 아닌 경우 False로 설정
+CSRF_USE_SESSIONS = True
+CSRF_COOKIE_SAMESITE = None   # CSRF 쿠키가 교차 사이트 요청에서도 설정되도록 함
 
 ROOT_URLCONF = 'saveus.urls'
 

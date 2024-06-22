@@ -1,70 +1,66 @@
 import { createApp } from 'vue';
 import App from './App.vue';
-
 import router from './router';
 import axios from 'axios';
 
 // Axios 기본 설정
-axios.defaults.withCredentials = true; // withCredentials 설정 추가
+axios.defaults.withCredentials = true;
 axios.defaults.xsrfCookieName = 'csrftoken';
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
-// API 기본 URL 설정
-const apiBaseUrl = process.env.VUE_APP_API_BASE_URL_LOCAL || 'https://3.35.141.132:8000';
+// API 기본 URL 설정 (HTTPS 사용)
+const apiBaseUrl = process.env.VUE_APP_API_BASE_URL || 'https://ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com';
 
 if (!apiBaseUrl) {
     console.error('API Base URL is not defined. Check your .env file.');
 } else {
-    console.log(`API Base URL: ${apiBaseUrl}`); // 디버깅용 로그
+    console.log(`API Base URL: ${apiBaseUrl}`);
+    axios.defaults.baseURL = apiBaseUrl; // Axios 기본 URL 설정
 }
 
 // CSRF 토큰을 가져와 Axios에 설정
-axios.get(`${apiBaseUrl}/map/set-csrf-token/`)
+axios.get('/map/set-csrf-token/', { withCredentials: true })
     .then(response => {
-        console.log('main.js >> CSRF Token response:', response); // 디버깅용 로그
-        axios.defaults.headers.common['X-CSRFToken'] = response.data.csrfToken;
+        const csrfToken = response.data.csrfToken;
+        console.log('CSRF Token received:', csrfToken);
+        axios.defaults.headers.common['X-CSRFToken'] = csrfToken;
     })
     .catch(error => {
-        console.error('Error getting CSRF Token: ', error); // 디버깅용 로그
+        console.error('Error getting CSRF Token:', error.response || error.message);
     });
 
-// WebSocket URL 설정
-const wsBaseUrl = process.env.VUE_APP_WS_BASE_URL_LOCAL || 'wss://3.35.141.132:8000';
+// WebSocket URL 설정 (HTTPS에 맞춰 WSS 사용)
+const wsBaseUrl = process.env.VUE_APP_WS_BASE_URL || 'wss://ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com';
 
 if (!wsBaseUrl) {
     console.error('WebSocket Base URL is not defined. Check your .env file.');
 } else {
-    console.log(`WebSocket Base URL: ${wsBaseUrl}`); // 디버깅용 로그
+    console.log(`WebSocket Base URL: ${wsBaseUrl}`);
 }
 
-const socket = new WebSocket(`${wsBaseUrl}/ws/some_path/`);
+// WebSocket 연결 (오류 처리 개선)
+let socket;
+try {
+    socket = new WebSocket(`${wsBaseUrl}/ws/some_path/`);
 
-socket.onopen = () => {
-    console.log('WebSocket connection opened.');
-};
+    socket.onopen = () => console.log('WebSocket connection opened.');
+    socket.onmessage = (event) => console.log('WebSocket message received:', event.data);
+    socket.onclose = () => console.log('WebSocket connection closed.');
+    socket.onerror = (error) => console.error('WebSocket error:', error);
+} catch (error) {
+    console.error('Failed to establish WebSocket connection:', error);
+}
 
-socket.onmessage = (event) => {
-    console.log('WebSocket message received:', event.data);
-};
-
-socket.onclose = () => {
-    console.log('WebSocket connection closed.');
-};
-
-socket.onerror = (error) => {
-    console.error('WebSocket error:', error);
-};
-
-// ODSAY API 호출용 Axios 인스턴스 생성 (withCredentials 비활성화)
+// ODSAY API 호출용 Axios 인스턴스 생성
 const odsayAxiosInstance = axios.create({
     baseURL: 'https://api.odsay.com/v1/api/',
-    withCredentials: false, // withCredentials 옵션 비활성화
+    withCredentials: false,
 });
 
 const app = createApp(App);
 app.config.globalProperties.$axios = axios;
-app.config.globalProperties.$odsayAxios = odsayAxiosInstance; // ODSAY API 호출용 인스턴스 설정
-app.config.globalProperties.$apiBaseUrl = apiBaseUrl; // apiBaseUrl 전역 속성으로 설정
-app.config.globalProperties.$socket = socket; // WebSocket 전역 속성으로 설정
+app.config.globalProperties.$odsayAxios = odsayAxiosInstance;
+app.config.globalProperties.$apiBaseUrl = apiBaseUrl;
+app.config.globalProperties.$socket = socket;
 
 app.use(router).mount('#app');
