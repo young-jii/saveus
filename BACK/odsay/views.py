@@ -7,8 +7,6 @@ from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 
-
-
 # 로거 설정
 logger = logging.getLogger(__name__)
 
@@ -19,7 +17,10 @@ def set_csrf_token(request):
         csrf_token = get_token(request)
         logger.info(f"odsay/views.py >> CSRF Token: {csrf_token}")
         print(f"odsay/views.py >> CSRF Token: {csrf_token}")
-        return JsonResponse({'csrfToken': csrf_token})
+        response = JsonResponse({'csrfToken': csrf_token})
+        response["Access-Control-Allow-Origin"] = request.headers.get('Origin') if request.headers.get('Origin') else '*'
+        response["Access-Control-Allow-Credentials"] = "true"
+        return response
     except Exception as e:
         logger.error(f"odsay/views.py >> Error setting CSRF token: {e}")
         print(f"odsay/views.py >> Error setting CSRF token: {e}")
@@ -59,8 +60,6 @@ def geocode(request):
         logger.error("odsay/views.py >> Invalid request method")
         print("odsay/views.py >> Invalid request method")
         return JsonResponse({'error': 'Invalid request method'}, status=405)
-
-
 
 def naver_geocode_address(address):
     headers = {

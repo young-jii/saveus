@@ -1,5 +1,5 @@
 import logging
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse
 from django.middleware.csrf import get_token
 from django.views.decorators.csrf import ensure_csrf_cookie, csrf_exempt
 from django.views.decorators.http import require_GET, require_http_methods
