@@ -2,7 +2,7 @@ export function handleLogin(alertComponent) {
     // 로그인 로직 구현 (예: 서버에 로그인 요청 보내기)
     console.log('로그인 시도 중...', this.loginData);
     // 예시로, ngrok의 백엔드 서버로 로그인 요청 보내기
-    fetch('https://3.35.141.132/api/login/', {
+    fetch('https://jiyoung.pythonanywhere.com/api/login/', {
     method: 'POST',
     headers: {
     'Content-Type': 'application/json'
