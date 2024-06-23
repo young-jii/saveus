@@ -19,7 +19,7 @@ if (!apiBaseUrl) {
 }
 
 // CSRF 토큰을 가져와 Axios에 설정
-axios.get('/map/set-csrf-token/', { withCredentials: true })
+axios.get(`${apiBaseUrl}/map/set-csrf-token/`, { withCredentials: true })
     .then(response => {
         const csrfToken = response.data.csrfToken;
         console.log('CSRF Token received:', csrfToken);
