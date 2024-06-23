@@ -27,9 +27,9 @@ export default {
         this.getCsrfToken().then(() => {
             this.fetchIntroData();
         });
-        this.$root.$socket.onmessage = (event) => {
-            console.log('WebSocket message received in IntroPage:', event.data);
-        };
+        // this.$root.$socket.onmessage = (event) => {
+        //     console.log('WebSocket message received in IntroPage:', event.data);
+        // };
     },
     methods: {
         async getCsrfToken() {

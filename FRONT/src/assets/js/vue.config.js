@@ -22,14 +22,14 @@ module.exports = defineConfig({
     host: '0.0.0.0', // 외부 접속을 허용
     port: 8080,
     https: false, // HTTPS 사용
-    client: {
-      webSocketURL: {
-        protocol: 'wss',
-        hostname: 'https://jiyoung.pythonanywhere.com',
-        port: 443,
-        pathname: '/ws',
-      },
-    },
+    // client: {
+    //   webSocketURL: {
+    //     protocol: 'wss',
+    //     hostname: 'https://jiyoung.pythonanywhere.com',
+    //     port: 443,
+    //     pathname: '/ws',
+    //   },
+    // },
     proxy: {
       '/api': {
         target: 'https://jiyoung.pythonanywhere.com',

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import WebSocketClient from '../../utils/WebSocketClient';
+// import WebSocketClient from '../../utils/WebSocketClient';
 import { EventBus } from '../../../eventBus';  // 이벤트 버스 불러오기
 
 const apiBaseUrl = process.env.VUE_APP_API_BASE_URL || 'https://jiyoung.pythonanywhere.com';
@@ -116,7 +116,7 @@ export default {
             localEndPoint: this.endPoint,
             routes: [],
             map: null,
-            wsClient: null,
+            // wsClient: null,
             polylines: []  // 폴리라인을 저장할 배열
         };
     },
@@ -347,8 +347,8 @@ export default {
         }
     },
     async mounted() {
-        this.wsClient = new WebSocketClient('wss://https://jiyoung.pythonanywhere.com/ws/some_path/');
-        this.wsClient.connect();
+        // this.wsClient = new WebSocketClient('wss://https://jiyoung.pythonanywhere.com/ws/some_path/');
+        // this.wsClient.connect();
         this.initializeMap();
         await this.findRoute();
     },
