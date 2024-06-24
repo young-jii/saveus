@@ -72,17 +72,17 @@ def get_coordinates(address):
 
 def get_route_info(sx, sy, ex, ey):
     print(f'Fetching route from ({sx}, {sy}) to ({ex}, {ey})')
-    
+
     # 인코딩된 API 키
     encoded_api_key = settings.ODSAY_API_KEY
     url = f'https://api.odsay.com/v1/api/searchPubTransPathT?SX={sx}&SY={sy}&EX={ex}&EY={ey}&apiKey={encoded_api_key}'
-    
+
     response = requests.get(url)
-    
+
     print(f'get_route_info >> Request URL: {url}')
     print(f'get_route_info >> Response status code: {response.status_code}')
     print(f'get_route_info >> Response text: {response.text}')
-    
+
     if response.status_code == 200:
         print('get_route_info >> Route info fetched successfully')
         return response.json()
@@ -116,7 +116,7 @@ def find_route(request):
                 return JsonResponse({'error': 'Invalid end address'}, status=400)
 
             route_info = get_route_info(sx, sy, ex, ey)
-            
+
             if route_info:
                 print('find_route >> Route information fetched successfully')
                 return JsonResponse(route_info)

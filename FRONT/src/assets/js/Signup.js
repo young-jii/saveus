@@ -13,7 +13,7 @@ export function handleSignup(alertComponent) {
     // signupData를 URL 쿼리 문자열로 변환
     const queryParams = new URLSearchParams(this.signupData).toString();
 
-    axios.get(`https://3.35.141.132/api/signup/?${queryParams}`, {
+    axios.get(`https://jiyoung.pythonanywhere.com/api/signup/?${queryParams}`, {
         headers: {
             'Content-Type': 'application/json'
         },

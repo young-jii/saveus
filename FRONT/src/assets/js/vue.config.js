@@ -32,12 +32,12 @@ module.exports = defineConfig({
     },
     proxy: {
       '/api': {
-        target: 'https://3.35.141.132',
+        target: 'https://jiyoung.pythonanywhere.com',
         changeOrigin: true,
         secure: false,
       },
       '/calculate': {
-        target: 'https://3.35.141.132',
+        target: 'https://jiyoung.pythonanywhere.com',
         changeOrigin: true,
       },
     },
