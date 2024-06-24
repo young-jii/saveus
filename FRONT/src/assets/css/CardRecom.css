@@ -4,6 +4,7 @@ body {
 
 .map-view {
     padding: 30px;
+    position: relative; /* .odsay-logo의 position: absolute를 위해 필요 */
 }
 
 .controls-results-chart-container {
@@ -13,9 +14,12 @@ body {
 }
 
 #controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
     width: 100%;
     margin-bottom: 30px;
-
     padding-left: 20px;
     padding-right: 20px;
     box-sizing: border-box;
@@ -23,30 +27,6 @@ body {
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     font-weight: bold;
-}
-
-.results-chart {
-    width: 100%;
-    margin-bottom: 30px;
-
-    padding: 20px;
-    box-sizing: border-box;
-    background-color: #fffce1;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    font-weight: bold;
-}
-
-.results-chart {
-    display: flex;
-    flex-direction: row;
-}
-
-#controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    text-align: center;
 }
 
 #controls > .control-item {
@@ -87,6 +67,28 @@ body {
     border: 1px solid #ddd;
     border-radius: 5px;
     box-sizing: border-box;
+}
+
+.results-chart {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin-bottom: 30px;
+    padding: 20px;
+    box-sizing: border-box;
+    background-color: #fffce1;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    font-weight: bold;
+}
+
+.odsay-logo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1000; /* #chat 요소보다 더 높은 z-index 설정 */
+    width: 100px; /* 필요에 따라 크기를 조정 */
+    height: auto;
 }
 
 #results {
@@ -235,7 +237,6 @@ body {
     background-color: #ffea94;
 }
 
-
 #barChat {
     width: 100%;
     height: 100%;
@@ -315,7 +316,7 @@ body {
 .modal-wrap.show {
     opacity: 1;
     visibility: visible;
-    vertical-align:bottom;
+    vertical-align: bottom;
     align-items: center;
 }
 
@@ -332,7 +333,7 @@ body {
     transition: transform 0.3s ease;
     max-height: 80vh;
     overflow-y: auto;
-    display: auto;
+    display: flex;
     flex-direction: column;
     align-items: center;
 }
@@ -367,6 +368,7 @@ body {
 .modal-footer button:hover {
     background: #0056b3;
 }
+
 
 
 
