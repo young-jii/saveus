@@ -18,7 +18,7 @@ function getCookie(name) {
 export default {
     name: 'IntroPage',
     data() {
-        return { 
+        return {
             message: '',
             csrfToken: null,
         };
@@ -27,17 +27,17 @@ export default {
         this.getCsrfToken().then(() => {
             this.fetchIntroData();
         });
-        // this.$root.$socket.onmessage = (event) => {
-        //     console.log('WebSocket message received in IntroPage:', event.data);
-        // };
+        this.$root.$socket.onmessage = (event) => {
+            console.log('WebSocket message received in IntroPage:', event.data);
+        };
     },
     methods: {
         async getCsrfToken() {
             const apiBaseUrl = this.$root.$apiBaseUrl;
-            console.log('---시작---');
+            console.log('---시작---')
             console.log('IntroPage API Base URL:', apiBaseUrl);
             try {
-                const response = await axios.get(`${apiBaseUrl}/map/set-csrf-token/`, { withCredentials: true });
+                const response = await axios.get(`${apiBaseUrl}/map/api/set-csrf-token/`, { withCredentials: true });
                 console.log('IntroPage CSRF token set successfully.');
                 console.log('IntroPage Response data:', response.data);
 
@@ -59,17 +59,16 @@ export default {
             const apiBaseUrl = this.$root.$apiBaseUrl;
             console.log('Fetching intro data from:', `${apiBaseUrl}/main/api/intro/`);
             try {
-                const response = await axios.get(`${apiBaseUrl}/main/api/intro/`, {
-                    headers: {
-                        'X-CSRFToken': this.csrfToken
-                    },
-                    withCredentials: true
-                });
-                console.log('IntroPage fetched data:', response.data);
-                this.message = response.data.message;
+                const response = await fetch(`${apiBaseUrl}/main/api/intro/`);
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                const data = await response.json();
+                console.log('IntroPage fetched data:', data);
+                this.message = data.message;
             } catch (error) {
                 console.error('Error fetching data:', error);
             }
-        }
+        },
     }
 };
