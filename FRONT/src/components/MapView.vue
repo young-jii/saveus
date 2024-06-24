@@ -55,14 +55,13 @@
                                         </span>
                                     </li>
                                 </ul>
-                            <div class="maker" style="display: none;">powered by<em>www.ODsay.com</em></div>
+                                <img :src="odsayLogo" alt="ODsay Logo" class="odsay-logo" />
+                            </div>
                         </div>
-                    </div>
-                </li>
-            </ul>
+                    </li>
+                </ul>
             </div>
         </div>
-        <img :src="odsayLogo" alt="ODsay Logo" /> <!-- Add the logo here -->
         <div id="map"></div>
     </div>
 </template>
