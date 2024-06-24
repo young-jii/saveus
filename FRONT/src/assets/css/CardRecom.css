@@ -84,8 +84,8 @@ body {
 
 .odsay-logo {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: -30px;
+    left: -510px;
     z-index: 1000; /* #chat 요소보다 더 높은 z-index 설정 */
     width: 100px; /* 필요에 따라 크기를 조정 */
     height: auto;
@@ -235,6 +235,8 @@ body {
     box-sizing: border-box;
     padding: 10px;
     background-color: #ffea94;
+    position: relative;
+    margin-top: 22px;
 }
 
 #barChat {
