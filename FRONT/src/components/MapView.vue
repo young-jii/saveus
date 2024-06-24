@@ -62,12 +62,14 @@
             </ul>
             </div>
         </div>
+        <img :src="odsayLogo" alt="ODsay Logo" /> <!-- Add the logo here -->
         <div id="map"></div>
     </div>
 </template>
 
 <script>
 import MapView from '../assets/js/MapView';
+import odsayLogo from '../assets/img/ODsay_bi_mark.png'
 
 export default {
     props: {
@@ -81,6 +83,7 @@ export default {
             localEndPoint: this.endPoint,
             routes: [],
             map: null,
+            odsayLogo,
         };
     },
     methods: {
