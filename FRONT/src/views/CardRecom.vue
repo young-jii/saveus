@@ -61,6 +61,7 @@
                         </ul>
                     </div>
                 </div>
+                <img :src="odsayLogo" alt="ODsay Logo" /> <!-- Add the logo here -->
                 <div id="chat">
                     <ChatBot :selectedPayment="selectedPayment" />
                 </div>
@@ -94,6 +95,7 @@
 import CardRecomMixin from '../assets/js/CardRecom.js';
 import CardDetail from './CardDetail.vue'; // CardDetail 컴포넌트 불러오기
 import ChatBot from './ChatBot.vue'; // ChatBot 컴포넌트 불러오기
+import odsayLogo from '../assets/img/ODsay_bi_mark.png';
 
 export default {
     name: 'CardRecom',
@@ -109,7 +111,8 @@ export default {
             localStartPoint: this.startPoint,  // props로부터 데이터를 data로 설정
             localEndPoint: this.endPoint,      // props로부터 데이터를 data로 설정
             routes: JSON.parse(this.$route.query.routes || '[]'),  // query로부터 routes 파싱
-            selectedPayment: null  // 추가
+            selectedPayment: null,  // 추가
+            odsayLogo,
         };
     },
     methods: {
