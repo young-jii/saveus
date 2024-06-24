@@ -61,8 +61,8 @@
                         </ul>
                     </div>
                 </div>
-                <img :src="odsayLogo" alt="ODsay Logo" /> <!-- Add the logo here -->
                 <div id="chat">
+                    <img :src="odsayLogo" alt="ODsay Logo" /> <!-- Add the logo here -->
                     <ChatBot :selectedPayment="selectedPayment" />
                 </div>
             </div>
