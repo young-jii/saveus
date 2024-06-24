@@ -1,6 +1,8 @@
 import axios from 'axios';
 // import WebSocketClient from '../../utils/WebSocketClient';
 import { EventBus } from '../../../eventBus';  // 이벤트 버스 불러오기
+import CustonAlert from '@/components/CustonAlert.vue';  // CustonAlert.vue 임포트
+
 
 const apiBaseUrl = process.env.VUE_APP_API_BASE_URL || 'https://jiyoung.pythonanywhere.com';
 
@@ -102,6 +104,9 @@ const busLineColors = {
 };
 
 export default {
+    components: {
+        CustonAlert  // CustonAlert 컴포넌트 등록
+    },
     props: {
         memHome: String,
         startPoint: String,
@@ -117,10 +122,14 @@ export default {
             routes: [],
             map: null,
             // wsClient: null,
-            polylines: []  // 폴리라인을 저장할 배열
+            polylines: [],  // 폴리라인을 저장할 배열
+            alert: null  // 알림 객체를 저장할 변수
         };
     },
     methods: {
+        showAlert(message) {
+            this.alert.showAlert(message);  // CustonAlert 컴포넌트의 showAlert 메소드 호출
+        },
         async geocode(address) {
             try {
                 console.log('MapView.js >> Geocoding address:', address);
@@ -132,6 +141,7 @@ export default {
                 if (error.response) {
                     console.error('MapView.js >> Error response data:', error.response.data);
                 }
+                this.showAlert('주소를 도로명 주소로 정확히 다시 입력하세요.');  // 에러 발생 시 알림 표시
                 throw error;
             }
         },
@@ -351,6 +361,7 @@ export default {
         // this.wsClient.connect();
         this.initializeMap();
         await this.findRoute();
+        this.alert = this.$refs.customAlert;  // CustonAlert 컴포넌트를 참조로 저장
     },
     watch: {
         startPoint(newStartPoint) {

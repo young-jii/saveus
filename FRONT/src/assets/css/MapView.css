@@ -19,6 +19,7 @@ body {
     box-sizing: border-box; /* padding과 border를 포함하여 크기 계산 */
     overflow-y: auto; /* 스크롤 추가 */
     padding: 10px;
+    margin-top: 22px;
 }
 
 #controls {
