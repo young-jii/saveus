@@ -95,9 +95,7 @@
 import CardRecomMixin from '../assets/js/CardRecom.js';
 import CardDetail from './CardDetail.vue';
 import ChatBot from './ChatBot.vue';
-import odsayLogo from '../assets/img/ODsay_bi_mark.png';
-// eslint-disable-next-line vue/no-unused-vars
-if (false) console.log(odsayLogo);
+import $odsayLogo from '../assets/img/ODsay_bi_mark.png';
 
 export default {
     name: 'CardRecom',
