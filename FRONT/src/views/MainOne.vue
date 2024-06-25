@@ -116,11 +116,13 @@
 import mainOne from '../assets/js/MainOne.js';
 import { redirectToSignup as originalRedirectToSignup } from '../assets/js/login.js';
 import MapView from '../components/MapView.vue';
+import CardRecom from './CardRecom.vue';  // Make sure to import CardRecom
 
 export default {
     mixins: [mainOne],
     components: {
-        MapView
+        MapView,
+        CardRecom  // Add CardRecom to components
     },  
     data() {
         return {
