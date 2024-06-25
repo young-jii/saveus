@@ -96,6 +96,8 @@ import CardRecomMixin from '../assets/js/CardRecom.js';
 import CardDetail from './CardDetail.vue';
 import ChatBot from './ChatBot.vue';
 import odsayLogo from '../assets/img/ODsay_bi_mark.png';
+// eslint-disable-next-line vue/no-unused-vars
+if (false) console.log(odsayLogo);
 
 export default {
     name: 'CardRecom',
@@ -211,7 +213,7 @@ export default {
     mounted() {
         console.log('Received routes:', this.routes);
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.$eventBus.$off('formSubmitted', this.updateFormData);
     }
 };

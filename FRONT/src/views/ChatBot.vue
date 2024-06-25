@@ -118,7 +118,7 @@ export default {
     created() {
         this.$eventBus.$on('formSubmitted', this.updateFormData);
     },
-    beforeDestroy() {
+    beforeUnmount() {
         this.$eventBus.$off('formSubmitted', this.updateFormData);
     }
 };
