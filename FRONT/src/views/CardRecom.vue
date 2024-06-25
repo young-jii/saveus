@@ -2,15 +2,15 @@
     <div class="map-view">
         <div class="controls-results-chart-container">
             <div id="controls">
-            <div class="control-item">
-                <label for="startAddress">출발지</label>
-                <input type="text" id="startAddress" v-model="localStartPoint">
-            </div>
-            <div class="control-item">
-                <label for="endAddress">도착지</label>
-                <input type="text" id="endAddress" v-model="localEndPoint">
-            </div>
-            <button @click="findRoute">길찾기</button>
+                <div class="control-item">
+                    <label for="startAddress">출발지</label>
+                    <input type="text" id="startAddress" v-model="localStartPoint">
+                </div>
+                <div class="control-item">
+                    <label for="endAddress">도착지</label>
+                    <input type="text" id="endAddress" v-model="localEndPoint">
+                </div>
+                <button @click="findRoute">길찾기</button>
             </div>
             <div class="results-chart">
                 <div id="results">
@@ -18,45 +18,45 @@
                     <div class="route-list-box">
                         <ul class="route-list">
                             <li v-for="(route, index) in routes" :key="index" class="route-data">
-                            <div class="route_con" @click="handleRouteClick(route)">
-                                <div class="route_time_header"> [총 소요 시간] {{ formatTime(route.totalTime) }}</div>
-                                <div class="route_time">
-                                <span class="info_sub">
-                                    <span>환승 {{ route.subwayTransitCount + route.busTransitCount - 1 }}회 | </span>
-                                    <span>{{ route.payment }}원 | </span>
-                                    <span>{{ (route.totalDistance / 1000).toFixed(1) }}km</span>
-                                </span>
+                                <div class="route_con" @click="handleRouteClick(route)">
+                                    <div class="route_time_header"> [총 소요 시간] {{ formatTime(route.totalTime) }}</div>
+                                    <div class="route_time">
+                                        <span class="info_sub">
+                                            <span>환승 {{ route.subwayTransitCount + route.busTransitCount - 1 }}회 | </span>
+                                            <span>{{ route.payment }}원 | </span>
+                                            <span>{{ (route.totalDistance / 1000).toFixed(1) }}km</span>
+                                        </span>
+                                    </div>
+                                    <div class="route_bar">
+                                        <span 
+                                            v-for="(subPath, subIndex) in route.subPaths" 
+                                            :key="subIndex"
+                                            :class="['bar_area', getTrafficClass(subPath, true)]"
+                                            :style="{ flexBasis: `${subPath.sectionTime * 100}%`, minWidth: '6.5%' }"
+                                        >
+                                            <span class="bar">
+                                                <span class="time">{{ subPath.sectionTime }}분</span>
+                                            </span>
+                                        </span>
+                                    </div>
+                                    <div class="route_detail">
+                                        <ul class="route-detail-list">
+                                            <li v-for="(subPath, subIndex) in filteredSubPaths(route.subPaths)" :key="subIndex" class="line">
+                                                <span class="icon" :class="getTrafficClass(subPath)"></span>
+                                                <span class="r_body">
+                                                    <span class="r_action">{{ getAction(subPath, subPath.startName, subPath.lane) }}</span>
+                                                </span>
+                                            </li>
+                                            <li :key="route.subPaths.length" class="line">
+                                                <span class="icon"></span>
+                                                <span class="r_body">
+                                                    <span class="r_title">➪ {{ route.lastEndStation }} 하차</span>
+                                                </span>
+                                            </li>
+                                        </ul>
+                                        <div class="maker" style="display: none;">powered by<em>www.ODsay.com</em></div>
+                                    </div>
                                 </div>
-                                <div class="route_bar">
-                                <span 
-                                    v-for="(subPath, subIndex) in route.subPaths" 
-                                    :key="subIndex"
-                                    :class="['bar_area', getTrafficClass(subPath, true)]"
-                                    :style="{ flexBasis: `${subPath.sectionTime * 100}%`, minWidth: '6.5%' }"
-                                >
-                                    <span class="bar">
-                                    <span class="time">{{ subPath.sectionTime }}분</span>
-                                    </span>
-                                </span>
-                                </div>
-                                <div class="route_detail">
-                                <ul class="route-detail-list">
-                                    <li v-for="(subPath, subIndex) in filteredSubPaths(route.subPaths)" :key="subIndex" class="line">
-                                    <span class="icon" :class="getTrafficClass(subPath)"></span>
-                                    <span class="r_body">
-                                        <span class="r_action">{{ getAction(subPath, subPath.startName, subPath.lane) }}</span>
-                                    </span>
-                                    </li>
-                                    <li :key="route.subPaths.length" class="line">
-                                    <span class="icon"></span>
-                                    <span class="r_body">
-                                        <span class="r_title">➪ {{ route.lastEndStation }} 하차</span>
-                                    </span>
-                                    </li>
-                                </ul>
-                                <div class="maker" style="display: none;">powered by<em>www.ODsay.com</em></div>
-                                </div>
-                            </div>
                             </li>
                         </ul>
                     </div>
@@ -70,22 +70,22 @@
         <div id="cardsList">
             <!-- 카드 목록 -->
             <div id="cards">
-            <div v-for="card in cards" :key="card.id" class="card" @click="modalOpen(card.id)">
-                <img :src="card.imgSrc" :alt="card.altText"/>
-                <p>{{ getFormattedAltText(card.altText) }}</p>
-            </div>
-    
-            <div class="modal-wrap" ref="modalWrap">
-                <div class="modal-container">
-                <div class="modal-content" v-if="selectedCardId">
-                    <!-- 여기에 CardDetail 컴포넌트 불러오기 -->
-                    <CardDetail :id="selectedCardId" />
+                <div v-for="card in cards" :key="card.id" class="card" @click="modalOpen(card.id)">
+                    <img :src="card.imgSrc" :alt="card.altText"/>
+                    <p>{{ getFormattedAltText(card.altText) }}</p>
                 </div>
-                    <div class="modal-footer">
-                        <button @click="modalClose">close</button>
+    
+                <div class="modal-wrap" ref="modalWrap">
+                    <div class="modal-container">
+                        <div class="modal-content" v-if="selectedCardId">
+                            <!-- 여기에 CardDetail 컴포넌트 불러오기 -->
+                            <CardDetail :id="selectedCardId" />
+                        </div>
+                        <div class="modal-footer">
+                            <button @click="modalClose">close</button>
+                        </div>
                     </div>
                 </div>
-            </div>
             </div>
         </div>
     </div>
@@ -95,7 +95,8 @@
 import CardRecomMixin from '../assets/js/CardRecom.js';
 import CardDetail from './CardDetail.vue';
 import ChatBot from './ChatBot.vue';
-import $odsayLogo from '../assets/img/ODsay_bi_mark.png';
+// eslint-disable-next-line no-unused-vars
+import odsayLogo from '../assets/img/ODsay_bi_mark.png';
 
 export default {
     name: 'CardRecom',
