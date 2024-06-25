@@ -74,7 +74,6 @@ export default {
             }
         },
         
-
         handleCheckboxChange(field) {
             if (field === 'mem_young_y') {
                 this.inputs.mem_young_y = true;
@@ -122,11 +121,10 @@ export default {
                     }
                 );
                 
-
                 console.log('mainone.js Response:', response.data);
 
                 // Emit an event with the form data
-                this.$eventBus.$emit('formSubmitted', {
+                this.$root.$emit('formSubmitted', {
                     mem_home: this.inputs.mem_home,
                     start_point: this.inputs.start_point,
                     end_point: this.inputs.end_point,
@@ -156,4 +154,4 @@ export default {
     mounted() {
         this.getCsrfToken();
     },
-};
+}
