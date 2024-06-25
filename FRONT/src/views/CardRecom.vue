@@ -92,7 +92,7 @@
 </template>
 
 <script>
-import { ref, reactive, watch, onMounted, onBeforeUnmount } from 'vue'; // Vue 3 Composition API
+import { ref, reactive, watch, onMounted } from 'vue'; // Vue 3 Composition API
 import { useRouter } from 'vue-router'; // Vue Router
 import CardRecomMixin from '../assets/js/CardRecom.js'; // Mixin
 import CardDetail from './CardDetail.vue'; // Component
