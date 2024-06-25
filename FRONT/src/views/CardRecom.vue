@@ -92,11 +92,12 @@
 </template>
 
 <script>
-import CardRecomMixin from '../assets/js/CardRecom.js';
-import CardDetail from './CardDetail.vue';
-import ChatBot from './ChatBot.vue';
-// eslint-disable-next-line no-unused-vars
-import odsayLogo from '../assets/img/ODsay_bi_mark.png';
+import { ref, reactive, watch, onMounted, onBeforeUnmount } from 'vue'; // Vue 3 Composition API
+import { useRouter } from 'vue-router'; // Vue Router
+import CardRecomMixin from '../assets/js/CardRecom.js'; // Mixin
+import CardDetail from './CardDetail.vue'; // Component
+import ChatBot from './ChatBot.vue'; // Component
+import odsayLogo from '../assets/img/ODsay_bi_mark.png'; // Image
 
 export default {
     name: 'CardRecom',
@@ -106,49 +107,51 @@ export default {
         startPoint: String,
         endPoint: String
     },
-    data() {
-        return {
-            payment: 0,
-            formData: {
-                home: '',
-                start_point: '',
-                end_point: '',
-                young: 'N',
-                subsidiary: 'N'
-            },
-            selectedPayment: null,
-            selectedCardId: null
+    setup(props, { emit }) {
+        const router = useRouter();
+        const payment = ref(0);
+        const formData = reactive({
+            home: '',
+            start_point: '',
+            end_point: '',
+            young: 'N',
+            subsidiary: 'N'
+        });
+        const selectedPayment = ref(null);
+        const selectedCardId = ref(null);
+        const modalWrapRef = ref(null);
+
+        const updateFormData = (data) => {
+            Object.assign(formData, data);
         };
-    },
-    created() {
-        this.$eventBus.$on('formSubmitted', this.updateFormData);
-    },
-    methods: {
-        updateFormData(data) {
-            this.formData = { ...data };
-        },
-        handleRouteClick(route) {
-            this.selectedPayment = route.payment;
-            console.log("Selected route payment:", this.selectedPayment);
-            this.$emit('payment-selected', this.selectedPayment);
-        },
-        modalOpen(cardId) {
+
+        const handleRouteClick = (route) => {
+            selectedPayment.value = route.payment;
+            console.log("Selected route payment:", selectedPayment.value);
+            emit('payment-selected', selectedPayment.value);
+        };
+
+        const modalOpen = (cardId) => {
             console.log("Opening modal for card:", cardId);
-            this.selectedCardId = cardId;
-            this.$refs.modalWrap.classList.add('show');
-        },
-        modalClose() {
-            this.selectedCardId = null;
-            this.$refs.modalWrap.classList.remove('show');
-        },
-        filteredSubPaths(subPaths) {
+            selectedCardId.value = cardId;
+            modalWrapRef.value.classList.add('show');
+        };
+
+        const modalClose = () => {
+            selectedCardId.value = null;
+            modalWrapRef.value.classList.remove('show');
+        };
+
+        const filteredSubPaths = (subPaths) => {
             return subPaths.filter(subPath => subPath.trafficType !== 3);
-        },
-        goToDetail(cardId) {
+        };
+
+        const goToDetail = (cardId) => {
             console.log(`Navigating to card detail for card id: ${cardId}`);
-            this.$router.push({ name: 'CardDetail', params: { id: cardId } });
-        },
-        getFormattedAltText(altText) {
+            router.push({ name: 'CardDetail', params: { id: cardId } });
+        };
+
+        const getFormattedAltText = (altText) => {
             const parts = altText.split('*');
             if (parts.length === 2) {
                 return `[${parts[1]}] ${parts[0]}`;
@@ -158,8 +161,9 @@ export default {
                 return `[${parts[2]}: ${parts[3]}] ${parts[0]} : ${parts[1]}`;
             }
             return altText;
-        },
-        getTrafficClass(subPath, isBar = false) {
+        };
+
+        const getTrafficClass = (subPath, isBar = false) => {
             const prefix = isBar ? 'bar_' : '';
             if (subPath.trafficType === 2) {
                 const busClass = `${prefix}bus${subPath.lane && subPath.lane[0] ? subPath.lane[0].type : ''}`;
@@ -171,49 +175,62 @@ export default {
                 const walkClass = `${prefix}line_walk`;
                 return walkClass;
             }
-        },
-        async sendParameters() {
+        };
+
+        const sendParameters = async () => {
             const params = {
-                payment: this.selectedPayment,
-                home: this.formData.home,
-                start_point: this.formData.start_point,
-                end_point: this.formData.end_point,
-                young: this.formData.young,
-                subsidiary: this.formData.subsidiary,
-                pre_month: 0 // You might want to add this to formData if needed
+                payment: selectedPayment.value,
+                home: formData.home,
+                start_point: formData.start_point,
+                end_point: formData.end_point,
+                young: formData.young,
+                subsidiary: formData.subsidiary,
+                pre_month: 0
             };
             try {
                 const response = await fetch(`https://jiyoung.pythonanywhere.com/calculate/calculate-cost/?${new URLSearchParams(params)}`);
                 const data = await response.json();
-                this.$emit('calculationResult', data);
+                emit('calculationResult', data);
             } catch (error) {
                 console.error('Error sending parameters:', error);
             }
-        }
-    },
-    watch: {
-        startPoint(newVal) {
-            this.formData.start_point = newVal;
-        },
-        endPoint(newVal) {
-            this.formData.end_point = newVal;
-        },
-        selectedPayment(newVal) {
-            if (newVal) {
-                this.sendParameters();
-            }
-        }
-    },
-    provide() {
-        return {
-            selectedPayment: () => this.selectedPayment
         };
-    },
-    mounted() {
-        console.log('Received routes:', this.routes);
-    },
-    beforeUnmount() {
-        this.$eventBus.$off('formSubmitted', this.updateFormData);
+
+        watch(() => props.startPoint, (newVal) => {
+            formData.start_point = newVal;
+        });
+
+        watch(() => props.endPoint, (newVal) => {
+            formData.end_point = newVal;
+        });
+
+        watch(selectedPayment, (newVal) => {
+            if (newVal) {
+                sendParameters();
+            }
+        });
+
+        onMounted(() => {
+            console.log('Received routes:', CardRecomMixin.data().routes);
+        });
+
+        return {
+            payment,
+            formData,
+            selectedPayment,
+            selectedCardId,
+            modalWrapRef,
+            odsayLogo,
+            updateFormData,
+            handleRouteClick,
+            modalOpen,
+            modalClose,
+            filteredSubPaths,
+            goToDetail,
+            getFormattedAltText,
+            getTrafficClass,
+            sendParameters
+        };
     }
 };
 </script>
