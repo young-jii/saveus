@@ -16,16 +16,24 @@
 <script>
 export default {
     name: 'ChatBot',
-    props: ['selectedPayment'], // selectedPayment를 props로 받기
+    props: ['selectedPayment'],
     data() {
         return {
             messages: [],
-            userInput: ''
+            userInput: '',
+            formData: {
+                home: '',
+                start_point: '',
+                end_point: '',
+                young: 'N',
+                subsidiary: 'N',
+                pre_month: 0
+            }
         };
     },
     watch: {
         async selectedPayment(newPayment) {
-            console.log("Selected payment in ChatBot:", newPayment); // 콘솔에 출력
+            console.log("Selected payment in ChatBot:", newPayment);
             if (newPayment) {
                 await this.handleRouteClickPayment(newPayment);
             }
@@ -42,7 +50,7 @@ export default {
         },
         async getBotResponse(message) {
             let botResponse = '';
-            console.log("User message:", message); // 추가
+            console.log("User message:", message);
             if (message.toLowerCase().includes('안녕하세요')) {
                 botResponse = '안녕하세요! 무엇을 도와드릴까요?';
             } else if (message.toLowerCase().includes('도움')) {
@@ -63,27 +71,38 @@ export default {
             return value.toLocaleString();
         },
         async calculateCost(payment) {
-            console.log(`Sending request to calculate cost with payment: ${payment}`); // 콘솔에 출력
+            console.log(`Sending request to calculate cost with payment: ${payment}`);
             try {
-                const response = await fetch(`https://jiyoung.pythonanywhere.com/calculate/calculate-cost/?payment=${payment}`);
+                const params = new URLSearchParams({
+                    payment: payment,
+                    home: this.formData.home,
+                    start_point: this.formData.start_point,
+                    end_point: this.formData.end_point,
+                    young: this.formData.young,
+                    subsidiary: this.formData.subsidiary,
+                    pre_month: this.formData.pre_month
+                });
+                const response = await fetch(`https://jiyoung.pythonanywhere.com/calculate/calculate-cost/?${params}`);
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 const data = await response.json();
-                console.log('Response data:', data); // 응답 데이터 콘솔에 출력
+                console.log('Response data:', data);
                 return data;
             } catch (error) {
                 console.error('Error calculating cost:', error);
-                return { minValue: 0, maxValue: 0 };
+                return { '일반': [0, 0] };
             }
         },
         async handleRouteClickPayment(payment) {
-            console.log("Handling route click payment in ChatBot:", payment); // 콘솔에 출력
+            console.log("Handling route click payment in ChatBot:", payment);
             if (payment) {
                 try {
-                    console.log("Calling calculateCost..."); // 추가
-                    const { minValue, maxValue } = await this.calculateCost(payment);
-                    console.log(`Calculated cost: min=${minValue}, max=${maxValue}`); // 추가
+                    console.log("Calling calculateCost...");
+                    const data = await this.calculateCost(payment);
+                    const minValue = data['일반'][0];
+                    const maxValue = data['일반'][1];
+                    console.log(`Calculated cost: min=${minValue}, max=${maxValue}`);
                     const botResponse = `현재 선택한 경로의 편도 교통비는 ${this.formatNumber(payment)}원 입니다. \n<해당 경로로 한 달 동안 이용한다고 했을 때 예상 비용>\n ↡ 최소 : ${this.formatNumber(minValue)}원\n ↟ 최대 : ${this.formatNumber(maxValue)}원`;
                     this.messages.push({ sender: 'bot', text: botResponse });
                     this.scrollToEnd();
@@ -91,7 +110,16 @@ export default {
                     console.error("Error in handleRouteClickPayment:", error);
                 }
             }
+        },
+        updateFormData(data) {
+            this.formData = { ...data };
         }
+    },
+    created() {
+        this.$eventBus.$on('formSubmitted', this.updateFormData);
+    },
+    beforeDestroy() {
+        this.$eventBus.$off('formSubmitted', this.updateFormData);
     }
 };
 </script>

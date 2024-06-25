@@ -2,6 +2,9 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
 import axios from 'axios';
+import Vue from 'vue';
+
+Vue.prototype.$eventBus = new Vue();
 
 // Axios 기본 설정
 axios.defaults.withCredentials = true;

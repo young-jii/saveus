@@ -93,33 +93,43 @@
 
 <script>
 import CardRecomMixin from '../assets/js/CardRecom.js';
-import CardDetail from './CardDetail.vue'; // CardDetail 컴포넌트 불러오기
-import ChatBot from './ChatBot.vue'; // ChatBot 컴포넌트 불러오기
+import CardDetail from './CardDetail.vue';
+import ChatBot from './ChatBot.vue';
 import odsayLogo from '../assets/img/ODsay_bi_mark.png';
 
 export default {
     name: 'CardRecom',
-    components: { CardDetail, ChatBot }, // CardDetail 컴포넌트 등록
+    components: { CardDetail, ChatBot },
     mixins: [CardRecomMixin],
     props: {
-    startPoint: String,
-    endPoint: String
+        startPoint: String,
+        endPoint: String
     },
     data() {
-    return {
-            selectedCardId: null,
-            localStartPoint: this.startPoint,  // props로부터 데이터를 data로 설정
-            localEndPoint: this.endPoint,      // props로부터 데이터를 data로 설정
-            routes: JSON.parse(this.$route.query.routes || '[]'),  // query로부터 routes 파싱
-            selectedPayment: null,  // 추가
-            odsayLogo,
+        return {
+            payment: 0,
+            formData: {
+                home: '',
+                start_point: '',
+                end_point: '',
+                young: 'N',
+                subsidiary: 'N'
+            },
+            selectedPayment: null,
+            selectedCardId: null
         };
     },
+    created() {
+        this.$eventBus.$on('formSubmitted', this.updateFormData);
+    },
     methods: {
+        updateFormData(data) {
+            this.formData = { ...data };
+        },
         handleRouteClick(route) {
-            this.selectedPayment = route.payment; // 선택된 경로의 payment 값을 저장
+            this.selectedPayment = route.payment;
             console.log("Selected route payment:", this.selectedPayment);
-            this.$emit('payment-selected', this.selectedPayment);  // 이벤트 발생
+            this.$emit('payment-selected', this.selectedPayment);
         },
         modalOpen(cardId) {
             console.log("Opening modal for card:", cardId);
@@ -140,49 +150,71 @@ export default {
         getFormattedAltText(altText) {
             const parts = altText.split('*');
             if (parts.length === 2) {
-            return `[${parts[1]}] ${parts[0]}`;
+                return `[${parts[1]}] ${parts[0]}`;
             } else if (parts.length === 3) {
-            return `[${parts[2]}] ${parts[0]} : ${parts[1]}`;
+                return `[${parts[2]}] ${parts[0]} : ${parts[1]}`;
             } else if (parts.length === 4) {
-            return `[${parts[2]}: ${parts[3]}] ${parts[0]} : ${parts[1]}`;
+                return `[${parts[2]}: ${parts[3]}] ${parts[0]} : ${parts[1]}`;
             }
             return altText;
         },
         getTrafficClass(subPath, isBar = false) {
             const prefix = isBar ? 'bar_' : '';
             if (subPath.trafficType === 2) {
-            const busClass = `${prefix}bus${subPath.lane && subPath.lane[0] ? subPath.lane[0].type : ''}`;
-            // console.log('Bus class:', busClass);
-            return busClass;
+                const busClass = `${prefix}bus${subPath.lane && subPath.lane[0] ? subPath.lane[0].type : ''}`;
+                return busClass;
             } else if (subPath.trafficType === 1) {
-            const subClass = `${prefix}sub${subPath.lane && subPath.lane[0] ? subPath.lane[0].subwayCode : ''}`;
-            // console.log('Subway class:', subClass);
-            return subClass;
+                const subClass = `${prefix}sub${subPath.lane && subPath.lane[0] ? subPath.lane[0].subwayCode : ''}`;
+                return subClass;
             } else {
-            const walkClass = `${prefix}line_walk`;
-            // console.log('Walk class:', walkClass);
-            return walkClass;
+                const walkClass = `${prefix}line_walk`;
+                return walkClass;
+            }
+        },
+        async sendParameters() {
+            const params = {
+                payment: this.selectedPayment,
+                home: this.formData.home,
+                start_point: this.formData.start_point,
+                end_point: this.formData.end_point,
+                young: this.formData.young,
+                subsidiary: this.formData.subsidiary,
+                pre_month: 0 // You might want to add this to formData if needed
+            };
+            try {
+                const response = await fetch(`https://jiyoung.pythonanywhere.com/calculate/calculate-cost/?${new URLSearchParams(params)}`);
+                const data = await response.json();
+                this.$emit('calculationResult', data);
+            } catch (error) {
+                console.error('Error sending parameters:', error);
             }
         }
     },
     watch: {
         startPoint(newVal) {
-            this.localStartPoint = newVal;
+            this.formData.start_point = newVal;
         },
         endPoint(newVal) {
-            this.localEndPoint = newVal;
+            this.formData.end_point = newVal;
+        },
+        selectedPayment(newVal) {
+            if (newVal) {
+                this.sendParameters();
+            }
         }
     },
     provide() {
         return {
-            selectedPayment: this.selectedPayment
+            selectedPayment: () => this.selectedPayment
         };
     },
     mounted() {
         console.log('Received routes:', this.routes);
+    },
+    beforeDestroy() {
+        this.$eventBus.$off('formSubmitted', this.updateFormData);
     }
 };
 </script>
 
 <style scoped src="../assets/css/CardRecom.css"></style>
-    

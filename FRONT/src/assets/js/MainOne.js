@@ -125,6 +125,15 @@ export default {
 
                 console.log('mainone.js Response:', response.data);
 
+                // Emit an event with the form data
+                this.$eventBus.$emit('formSubmitted', {
+                    mem_home: this.inputs.mem_home,
+                    start_point: this.inputs.start_point,
+                    end_point: this.inputs.end_point,
+                    young: this.inputs.mem_young_y ? 'Y' : 'N',
+                    subsidiary: this.inputs.mem_subsidiary_yn ? 'Y' : 'N'
+                });
+
                 // 성공적으로 데이터를 받았을 때 showMapApi를 true로 설정하여 MapView 컴포넌트를 표시
                 this.showMapApi = true;
                 this.showCheckButton = true;
