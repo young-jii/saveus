@@ -122,7 +122,7 @@ export default {
                     throw error;
                 }
             },
-            async findRoute() {
+        async findRoute() {
             try {
                 console.log('MapView.js >> Finding route with start point:', this.localStartPoint, 'and end point:', this.localEndPoint);
 
@@ -148,7 +148,7 @@ export default {
                 const odsasApiUrl = `https://api.odsay.com/v1/api/searchPubTransPathT?SX=${sx}&SY=${sy}&EX=${ex}&EY=${ey}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
                 console.log('MapView.js >> ODSAY API request URL:', odsasApiUrl);
 
-                const routeResponse = await this.$odsayAxios.get(odsasApiUrl);
+                const routeResponse = await axios.get(odsasApiUrl);
                 console.log('MapView.js >> ODSAY API response:', routeResponse.data);
 
                 if (routeResponse.data && routeResponse.data.result && routeResponse.data.result.path) {
@@ -174,13 +174,13 @@ export default {
                     });
                     console.log('MapView.js >> Emitting route-found event with routes:', this.routes);
                     EventBus.emit('route-found', this.routes);
-                    } else {
-                        console.error('MapView.js >> No valid route found');
-                    }
-                } catch (error) {
-                    console.error('MapView.js >> Error finding route:', error);
+                } else {
+                    console.error('MapView.js >> No valid route found');
                 }
-            },
+            } catch (error) {
+                console.error('MapView.js >> Error finding route:', error);
+            }
+        },
         async handleRouteSelection(route) {
             console.log('handleRouteSelection method called in MapView.js');
         try {
