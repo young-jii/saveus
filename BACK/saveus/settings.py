@@ -14,6 +14,7 @@ django.utils.translation.ugettext_lazy = django.utils.translation.gettext_lazy
 
 # Channels settings
 from channels.security.websocket import AllowedHostsOriginValidator
+from corsheaders.defaults import default_headers
 
 SITE_ID = 3
 
@@ -80,8 +81,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
     'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -104,9 +105,9 @@ CHANNEL_LAYERS = {
 ASGI_APPLICATION = 'saveus.asgi.application'
 
 CORS_ALLOWED_ORIGINS = [
+    "https://young-jii.github.io",
     "http://localhost:8080",
     "http://127.0.0.1:8080",
-    "https://young-jii.github.io",
     "https://3.35.141.132",
     "https://ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com",
     "https://jiyoung.pythonanywhere.com"
@@ -115,16 +116,8 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_CREDENTIALS = True   # 자격 증명을 포함한 요청 허용
 
 # CORS_ALLOW_HEADERS 추가 (필요할 경우)
-CORS_ALLOW_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    'Access-Control-Allow-Credentials',
 ]
 
 # CSRF 설정
