@@ -1,5 +1,4 @@
 import axios from 'axios';
-// import WebSocketClient from '../../utils/WebSocketClient';
 import { EventBus } from '../../../eventBus';  // 이벤트 버스 불러오기
 import CustonAlert from '@/components/CustonAlert.vue';  // CustonAlert.vue 임포트
 
@@ -126,6 +125,13 @@ export default {
             alert: null  // 알림 객체를 저장할 변수
         };
     },
+    async mounted() {
+        this.initializeMap();
+        await this.findRoute();
+        this.alert = this.$refs.customAlert;  // CustonAlert 컴포넌트를 참조로 저장
+        // Listen for the route-selected event
+        EventBus.on('route-selected', this.handleRouteClick);
+    },
     methods: {
         showAlert(message) {
             this.alert.showAlert(message);  // CustonAlert 컴포넌트의 showAlert 메소드 호출
@@ -214,7 +220,7 @@ export default {
         },
 
         async handleRouteClick(route) {
-            console.log('handleRouteClick method called');
+            console.log('handleRouteClick method called in MapView.js');
             try {
                 const { mapObj, sx, sy, ex, ey } = route;
                 console.log('MapView.vue >> handleRouteClick >> mapObj:', mapObj);
@@ -357,13 +363,7 @@ export default {
             }
         }
     },
-    async mounted() {
-        // this.wsClient = new WebSocketClient('wss://https://jiyoung.pythonanywhere.com/ws/some_path/');
-        // this.wsClient.connect();
-        this.initializeMap();
-        await this.findRoute();
-        this.alert = this.$refs.customAlert;  // CustonAlert 컴포넌트를 참조로 저장
-    },
+
     watch: {
         startPoint(newStartPoint) {
             this.localStartPoint = newStartPoint;

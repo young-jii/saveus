@@ -69,7 +69,8 @@
 
 <script>
 import MapView from '../assets/js/MapView.js';
-import odsayLogo from '../assets/img/ODsay_bi_mark.png'
+import odsayLogo from '../assets/img/ODsay_bi_mark.png' ;
+import { EventBus } from '../../eventBus.js' ;
 
 export default {
     props: {
@@ -101,7 +102,8 @@ export default {
             return subPaths.filter(subPath => subPath.trafficType !== 3);
         },
         handleRouteClick(route) {
-            this.$emit('route-selected', route.payment);
+            console.log('handleRouteClick method called in MapView.vue');
+            EventBus.emit('route-selected', route);
         }
     },
     async mounted() {
