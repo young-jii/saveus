@@ -21,7 +21,7 @@ def odsay_proxy(request):
     
     return JsonResponse(response.json())
 
-@ensure_csrf_cookie
+@csrf_exempt
 def set_csrf_token(request):
     print("odsay/views.py >> set_csrf_token called")
     try:

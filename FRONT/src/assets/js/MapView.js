@@ -110,38 +110,35 @@ export default {
         async geocode(address) {
             try {
                 console.log('MapView.js >> Geocoding address:', address);
-                const response = await axiosInstance.get('/odsay/geocode/', { params: { address } });
+                const response = await axiosInstance.get('/geocode/', { params: { address } });
                 console.log('MapView.js >> Geocode response:', response.data);
                 return response.data;
-                } catch (error) {
-                    console.error('MapView.js >> Error geocoding address:', error);
-                    if (error.response) {
+            } catch (error) {
+                console.error('MapView.js >> Error geocoding address:', error);
+                if (error.response) {
                     console.error('MapView.js >> Error response data:', error.response.data);
-                    }
-                    this.showAlert('주소를 도로명 주소로 정확히 다시 입력하세요.');
-                    throw error;
                 }
-            },
+                this.showAlert('주소를 도로명 주소로 정확히 다시 입력하세요.');
+                throw error;
+            }
+        },
         async findRoute() {
             try {
                 console.log('MapView.js >> Finding route with start point:', this.localStartPoint, 'and end point:', this.localEndPoint);
                 
-                // localStartPoint와 localEndPoint가 유효한지 확인
                 if (!this.localStartPoint || !this.localEndPoint) {
                     throw new Error('Start point or end point is missing');
                 }
 
-                // Geocoding 주소를 통해 좌표를 가져오는 부분 (백엔드에서 처리)
-                const startResponse = await this.geocode(this.localStartPoint);  // GET 메서드를 사용하도록 수정
+                const startResponse = await this.geocode(this.localStartPoint);
                 console.log('MapView.js >> Start geocode response:', startResponse);
-                const endResponse = await this.geocode(this.localEndPoint);  // GET 메서드를 사용하도록 수정
+                const endResponse = await this.geocode(this.localEndPoint);
                 console.log('MapView.js >> End geocode response:', endResponse);
                 
                 if (!startResponse || !endResponse) {
                     throw new Error('Failed to get coordinates');
                 }
 
-                // startResponse와 endResponse에서 올바르게 데이터를 추출
                 const sx = startResponse.x;
                 const sy = startResponse.y;
                 const ex = endResponse.x;
@@ -150,7 +147,6 @@ export default {
                 console.log('MapView.js >> Start coordinates:', { sx, sy });
                 console.log('MapView.js >> End coordinates:', { ex, ey });
                 
-                // Use Django backend as a proxy for ODsay API
                 const routeResponse = await axiosInstance.get('/api/odsay-proxy/', {
                     params: {
                         SX: sx,
@@ -185,13 +181,13 @@ export default {
                     });
                     console.log('MapView.js >> Emitting route-found event with routes:', this.routes);
                     EventBus.emit('route-found', this.routes);
-                    } else {
-                        console.error('MapView.js >> No valid route found');
-                    }
-                } catch (error) {
-                    console.error('MapView.js >> Error finding route:', error);
+                } else {
+                    console.error('MapView.js >> No valid route found');
                 }
-            },          
+            } catch (error) {
+                console.error('MapView.js >> Error finding route:', error);
+            }
+        },
         async handleRouteSelection(route) {
             console.log('handleRouteSelection method called in MapView.js');
             try {
@@ -199,26 +195,24 @@ export default {
                 console.log('MapView.vue >> handleRouteSelection >> mapObj:', mapObj);
                 console.log('MapView.vue >> handleRouteSelection >> sx, sy, ex, ey:', sx, sy, ex, ey);
 
-                // Use Django backend as a proxy for ODsay API
-                const routeResponse = await axiosInstance.get('/api/odsay-proxy/', {
+                const response = await axiosInstance.get('/api/odsay-proxy/', {
                     params: {
-                        mapObject: `0:0@${mapObj}`,
-                        apiKey: process.env.VUE_APP_ODSAY_API_KEY
+                        mapObject: `0:0@${mapObj}`
                     }
                 });
 
-                console.log('MapView.js >> ODSAY loadLane API response:', routeResponse.data);
+                console.log('MapView.js >> ODSAY loadLane API response:', response.data);
 
                 this.clearPolylines();
 
                 this.drawNaverMarker(sx, sy);
                 this.drawNaverMarker(ex, ey);
-                this.drawNaverPolyLine(routeResponse.data);
+                this.drawNaverPolyLine(response.data);
 
-                if (routeResponse.data.result.boundary) {
+                if (response.data.result.boundary) {
                     const boundary = new naver.maps.LatLngBounds(
-                        new naver.maps.LatLng(routeResponse.data.result.boundary.top, routeResponse.data.result.boundary.left),
-                        new naver.maps.LatLng(routeResponse.data.result.boundary.bottom, routeResponse.data.result.boundary.right)
+                        new naver.maps.LatLng(response.data.result.boundary.top, response.data.result.boundary.left),
+                        new naver.maps.LatLng(response.data.result.boundary.bottom, response.data.result.boundary.right)
                     );
                     this.map.panToBounds(boundary);
                 }
