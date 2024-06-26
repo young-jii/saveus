@@ -50,20 +50,9 @@ ALLOWED_HOSTS = [
 ]
 
 INSTALLED_APPS = [
-    # Third-party apps
     'corsheaders',
-    'rest_framework', # df_rest_auth 를 사용하려면 아래 app이 선행되어야 함
-    'rest_framework.authtoken', 
-    
-    # 사용자 제작 django app
-    # 'user',
-    'main',
-    'map',
-    'odsay',
-    'card',
-    'calculate',
-
-    # dj_rest_auth 의 registraiton 을 사용하기 위해서 app 추가 필요
+    'rest_framework',
+    'rest_framework.authtoken',
     'django.contrib.sites',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -71,13 +60,14 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
-    
-    # dj_rest_auth
     'dj_rest_auth',
     'dj_rest_auth.registration',
-    
-    #token
     'rest_framework_simplejwt',
+    'main',
+    'map',
+    'odsay',
+    'card',
+    'calculate',
 ]
 
 MIDDLEWARE = [
@@ -118,8 +108,8 @@ CORS_ALLOW_CREDENTIALS = True   # 자격 증명을 포함한 요청 허용
 # CORS_ALLOW_HEADERS 추가 (필요할 경우)
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'Access-Control-Allow-Credentials',
-    'Access-Control-Allow-Origin',  # 요청의 출처 허용
-    'Access-Control-Allow-Methods',  # 허용되는 HTTP 메서드
+    'Access-Control-Allow-Origin',
+    'Access-Control-Allow-Methods',
 ]
 
 # CSRF 설정
@@ -133,9 +123,9 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 CSRF_COOKIE_HTTPONLY = False
-CSRF_COOKIE_SECURE = True 
+CSRF_COOKIE_SECURE = True
 CSRF_USE_SESSIONS = True
-CSRF_COOKIE_SAMESITE = None 
+CSRF_COOKIE_SAMESITE = 'None'
 
 ROOT_URLCONF = 'saveus.urls'
 
