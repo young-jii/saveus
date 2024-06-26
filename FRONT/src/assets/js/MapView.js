@@ -110,7 +110,7 @@ export default {
         async geocode(address) {
             try {
                 console.log('MapView.js >> Geocoding address:', address);
-                const response = await axiosInstance.get('/geocode/', { params: { address } });
+                const response = await axiosInstance.get('/odsay/geocode/', { params: { address } });
                 console.log('MapView.js >> Geocode response:', response.data);
                 return response.data;
             } catch (error) {
