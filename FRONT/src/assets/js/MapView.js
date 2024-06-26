@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { EventBus } from '../../../eventBus';  // 이벤트 버스 불러오기
-import CustonAlert from '@/components/CustonAlert.vue';  // CustonAlert.vue 임포트
+import CustonAlert from '@/components/CustomAlert.vue';  // CustonAlert.vue 임포트
 
 const apiBaseUrl = process.env.VUE_APP_API_BASE_URL || 'https://jiyoung.pythonanywhere.com';
 

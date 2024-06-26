@@ -39,7 +39,7 @@
 
 <script>
 import { handleLogin } from "../assets/js/login.js";
-import CustomAlert from "../components/CustonAlert.vue";
+import CustomAlert from "../components/CustomAlert.vue";
 
 export default {
     components: {

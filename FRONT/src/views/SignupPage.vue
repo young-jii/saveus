@@ -50,7 +50,7 @@
 
 <script>
 import { handleSignup, redirectToLogin } from "../assets/js/Signup.js";
-import CustomAlert from "../components/CustonAlert.vue";
+import CustomAlert from "../components/CustomAlert.vue";
 
 export default {
     components: {
