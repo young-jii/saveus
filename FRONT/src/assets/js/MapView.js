@@ -148,7 +148,7 @@ export default {
                 const odsayApiUrl = `https://api.odsay.com/v1/api/searchPubTransPathT?SX=${sx}&SY=${sy}&EX=${ex}&EY=${ey}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
                 console.log('MapView.js >> ODSAY API request URL:', odsayApiUrl);
         
-                const routeResponse = await axios.get(odsasApiUrl, { withCredentials: true });
+                const routeResponse = await axios.get(odsayApiUrl, { withCredentials: true });
                 console.log('MapView.js >> ODSAY API response:', routeResponse.data);
         
 
@@ -189,10 +189,10 @@ export default {
                 console.log('MapView.vue >> handleRouteSelection >> mapObj:', mapObj);
                 console.log('MapView.vue >> handleRouteSelection >> sx, sy, ex, ey:', sx, sy, ex, ey);
 
-                const odsasApiUrl = `https://api.odsay.com/v1/api/loadLane?mapObject=0:0@${mapObj}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
-                console.log('MapView.vue >> ODSAY loadLane API request URL:', odsasApiUrl);
+                const odsayApiUrl = `https://api.odsay.com/v1/api/loadLane?mapObject=0:0@${mapObj}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
+                console.log('MapView.vue >> ODSAY loadLane API request URL:', odsayApiUrl);
 
-                const routeResponse = await this.$odsayAxios.get(odsasApiUrl);
+                const routeResponse = await this.$odsayAxios.get(odsayApiUrl);
                 console.log('MapView.js >> ODSAY loadLane API response:', routeResponse.data);
 
                 this.clearPolylines();
