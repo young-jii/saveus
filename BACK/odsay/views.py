@@ -10,6 +10,17 @@ from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 # 로거 설정
 logger = logging.getLogger(__name__)
 
+@csrf_exempt
+def odsay_proxy(request):
+    odsay_api_key = settings.ODSAY_API_KEY
+    params = request.GET.dict()
+    params['apiKey'] = odsay_api_key
+    
+    odsay_url = 'https://api.odsay.com/v1/api/searchPubTransPathT'
+    response = requests.get(odsay_url, params=params)
+    
+    return JsonResponse(response.json())
+
 @ensure_csrf_cookie
 def set_csrf_token(request):
     print("odsay/views.py >> set_csrf_token called")

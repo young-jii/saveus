@@ -5,4 +5,5 @@ urlpatterns = [
     path('find-route/', find_route, name='find-route'),
     path('set-csrf-token/', set_csrf_token, name='set-csrf-token'),
     path('geocode/', geocode, name='geocode'),  # Geocoding 엔드포인트 추가
+    path('api/odsay-proxy/', odsay_proxy, name='odsay_proxy'),
 ]
