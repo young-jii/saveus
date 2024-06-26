@@ -102,7 +102,7 @@
                 />
             </div>
         </div>
-        <!-- 최종 추천 카드 확인 버튼 -> 해당 버튼을 누르면 회원가입을 하도록 유도 -->
+
         <div id="check-mycost" v-if="showCheckButton">
             <div class="check-mycost">
                 <input type="button" value="결과 확인하기" @click="handleResultCheck">
@@ -131,7 +131,6 @@ export default {
             showMapView: false,
             showCheckButton: false,
             showCardRecom: false,
-            routes: [],
         };
     },
     methods: {
