@@ -214,6 +214,7 @@ export default {
         },
 
         async handleRouteClick(route) {
+            console.log('handleRouteClick method called');
             try {
                 const { mapObj, sx, sy, ex, ey } = route;
                 console.log('MapView.vue >> handleRouteClick >> mapObj:', mapObj);
