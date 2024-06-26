@@ -18,13 +18,13 @@
                     <li v-for="(route, index) in routes" :key="index" class="route-data">
                         <div class="route_con" @click="onRouteClick(route)">
                             <div class="route_time_header">[총 소요 시간] {{ formatTime(route.totalTime) }}</div>
-                                <div class="route_time">
-                                    <span class="info_sub">
-                                        <span>환승 {{ route.subwayTransitCount + route.busTransitCount - 1 }}회 | </span>
-                                        <span>{{ route.payment }}원 | </span>
-                                        <span>{{ (route.totalDistance / 1000).toFixed(1) }}km</span>
-                                    </span>
-                                </div>
+                            <div class="route_time">
+                                <span class="info_sub">
+                                    <span>환승 {{ route.subwayTransitCount + route.busTransitCount - 1 }}회 | </span>
+                                    <span>{{ route.payment }}원 | </span>
+                                    <span>{{ (route.totalDistance / 1000).toFixed(1) }}km</span>
+                                </span>
+                            </div>
                             <div class="route_bar">
                                 <span 
                                     v-for="(subPath, subIndex) in route.subPaths" 
@@ -63,13 +63,12 @@
         <div id="map"></div>
     </div>
 </template>
-    
+
 <script>
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useStore } from 'vuex';
 import { EventBus } from '../../eventBus.js';
 import MapView from './MapView.js';
-import CustonAlert from '@/components/CustonAlert.vue';
 
 export default {
     components: {
@@ -84,6 +83,7 @@ export default {
         memSubsidiaryYn: Boolean
     },
     setup(props) {
+        const store = useStore();
         const localStartPoint = ref(props.startPoint);
         const localEndPoint = ref(props.endPoint);
         const routes = ref([]);
@@ -91,13 +91,22 @@ export default {
         const polylines = ref([]);
         const alert = ref(null);
 
-        onMounted(async () => {
-        MapView.methods.initializeMap.call({ map: map.value });
+        const findRoute = async () => {
             await MapView.methods.findRoute.call({ 
                 localStartPoint: localStartPoint.value, 
                 localEndPoint: localEndPoint.value,
                 routes: routes.value
             });
+        };
+
+        const onRouteClick = (route) => {
+            console.log('onRouteClick method called in MapView.vue');
+            store.dispatch('setSelectedRoute', route);
+        };
+
+        onMounted(async () => {
+            MapView.methods.initializeMap.call({ map: map.value });
+            await findRoute();
             alert.value = MapView.methods.$refs.customAlert;
             EventBus.on('route-selected', MapView.methods.handleRouteSelection);
         });
@@ -113,6 +122,8 @@ export default {
             map,
             polylines,
             alert,
+            findRoute,
+            onRouteClick,
             ...MapView.methods
         };
     }
