@@ -125,32 +125,37 @@ export default {
         async findRoute() {
             try {
                 console.log('MapView.js >> Finding route with start point:', this.localStartPoint, 'and end point:', this.localEndPoint);
-        
+                
+                // localStartPoint와 localEndPoint가 유효한지 확인
                 if (!this.localStartPoint || !this.localEndPoint) {
                     throw new Error('Start point or end point is missing');
                 }
-        
-                const startResponse = await this.geocode(this.localStartPoint);
+
+                // Geocoding 주소를 통해 좌표를 가져오는 부분 (백엔드에서 처리)
+                const startResponse = await this.geocode(this.localStartPoint);  // GET 메서드를 사용하도록 수정
                 console.log('MapView.js >> Start geocode response:', startResponse);
-                const endResponse = await this.geocode(this.localEndPoint);
+                const endResponse = await this.geocode(this.localEndPoint);  // GET 메서드를 사용하도록 수정
                 console.log('MapView.js >> End geocode response:', endResponse);
-        
+                
                 if (!startResponse || !endResponse) {
                     throw new Error('Failed to get coordinates');
                 }
-        
-                const { x: sx, y: sy } = startResponse;
-                const { x: ex, y: ey } = endResponse;
-        
+
+                // startResponse와 endResponse에서 올바르게 데이터를 추출
+                const sx = startResponse.x;
+                const sy = startResponse.y;
+                const ex = endResponse.x;
+                const ey = endResponse.y;
+                
                 console.log('MapView.js >> Start coordinates:', { sx, sy });
                 console.log('MapView.js >> End coordinates:', { ex, ey });
-        
-                const odsayApiUrl = `https://api.odsay.com/v1/api/searchPubTransPathT?SX=${sx}&SY=${sy}&EX=${ex}&EY=${ey}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
-                console.log('MapView.js >> ODSAY API request URL:', odsayApiUrl);
-        
-                const routeResponse = await axios.get(odsayApiUrl);
+                
+                // ODSAY API를 통해 경로 찾기 요청
+                const odsasApiUrl = `searchPubTransPathT?SX=${sx}&SY=${sy}&EX=${ex}&EY=${ey}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
+                console.log('MapView.js >> ODSAY API request URL:', odsasApiUrl); // 요청 URL을 로그에 출력
+                
+                const routeResponse = await this.$odsayAxios.get(odsasApiUrl);
                 console.log('MapView.js >> ODSAY API response:', routeResponse.data);
-        
 
                 if (routeResponse.data && routeResponse.data.result && routeResponse.data.result.path) {
                     this.routes = routeResponse.data.result.path.map((path) => {
