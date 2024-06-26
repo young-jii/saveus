@@ -19,7 +19,7 @@
             <div class="input-data">
                 <div class="guide-text">
                     <p>🚎 매일 왕복해서 다니는 곳의 출발지/도착지를 입력하세요. 🚎</p>
-                    <p>📍 해당 주소지를 도로명 주소로 정확하게 입력해 주세요. 📍  </p>
+                    <p>📍 해당 주소지를 도로명 주소로 정확하게 입력해 주세요. 📍</p>
                 </div>
                 <div class="input-wrapper">
                     <span>출발지</span>
@@ -105,7 +105,7 @@
         <!-- 최종 추천 카드 확인 버튼 -> 해당 버튼을 누르면 회원가입을 하도록 유도 -->
         <div id="check-mycost" v-if="showCheckButton">
             <div class="check-mycost" v-if="showCheckButton">
-                <input type="button" value="결과 확인하기" @click="redirectToCardRecom">
+                <input type="button" value="결과 확인하기" @click="handleResultCheck">
                 <!-- <input type="button" value="회원가입해서 확인하기" @click="redirectToSignup"> -->
             </div>
         </div>
@@ -167,7 +167,19 @@ export default {
         routesFound(routes) {
             this.routes = routes;
             this.showCheckButton = true;
-        }
+        },
+        async handleResultCheck() {
+            try {
+                this.redirectToCardRecom();
+                if (this.selectedPayment) {
+                    eventBus.emit('handleRouteClickPayment', this.selectedPayment);
+                } else {
+                    console.error('Selected payment is null or undefined');
+                }
+            } catch (error) {
+                console.error('Error in handleResultCheck:', error);
+            }
+        },
     },
 };
 </script>

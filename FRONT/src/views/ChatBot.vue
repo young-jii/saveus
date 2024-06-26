@@ -126,12 +126,14 @@ export default {
 
         onMounted(() => {
             eventBus.on('formSubmitted', updateFormData);
+            eventBus.on('handleRouteClickPayment', handleRouteClickPayment);
         });
 
         onBeforeUnmount(() => {
             eventBus.off('formSubmitted', updateFormData);
+            eventBus.off('handleRouteClickPayment', handleRouteClickPayment);
         });
-
+        
         return {
             messages,
             userInput,
