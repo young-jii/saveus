@@ -102,7 +102,6 @@
                 />
             </div>
         </div>
-
         <div id="check-mycost" v-if="showCheckButton">
             <div class="check-mycost">
                 <input type="button" value="결과 확인하기" @click="handleResultCheck">
@@ -117,7 +116,6 @@
 import mainOne from '../assets/js/MainOne.js';
 import MapView from '../components/MapView.vue';
 import CardRecom from './CardRecom.vue';
-import { useStore } from 'vuex'; // vuex를 import 추가
 
 export default {
     mixins: [mainOne],
@@ -131,18 +129,18 @@ export default {
             showMapView: false,
             showCheckButton: false,
             showCardRecom: false,
+            store: null,
         };
     },
     methods: {
         handleSubmit() {
-            console.log("제출하기 버튼 클릭")
+            console.log("handleSubmit 눌림")
             // Form 제출 시 처리
             this.findRoute();
         },
         findRoute() {
             // 최적 경로 탐색 코드
             this.showMapView = true; // MapView 표시
-            console.log("제출하기 버튼 클릭 완료")
         },
         onRouteSelected(route) {
             // 경로 선택 시 처리
@@ -151,9 +149,8 @@ export default {
         },
         handleResultCheck() {
             // 결과 확인 버튼 처리
-            const store = useStore(); // Vuex store 가져오기
-            const selectedRoute = store.getters.getSelectedRoute;
-            
+            const selectedRoute = this.store.getters.getSelectedRoute;
+
             if (selectedRoute && selectedRoute.payment) {
                 this.showCardRecom = true; // CardRecom 컴포넌트 표시
                 const data = {
@@ -174,7 +171,9 @@ export default {
             }
         },
     },
+    mounted() {
+        this.store = this.$store; // Vue 컴포넌트 내에서 this.$store를 사용하여 Vuex store에 접근합니다.
+    },
 };
-</script>
 
 <style scoped src="@/assets/css/MainOne.css"></style>
