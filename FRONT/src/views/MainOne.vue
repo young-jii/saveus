@@ -146,7 +146,7 @@ export default {
             originalRedirectToSignup.call(this, queryParams);
         },
         onRouteSelected(payment) {
-            this.selectedPayment = payment;
+            this.selectedPayment = route.payment;
         },
         redirectToCardRecom() {
             const data = {

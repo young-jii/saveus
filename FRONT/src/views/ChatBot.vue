@@ -115,9 +115,11 @@ export default {
             Object.assign(formData, data);
         };
 
+        // watch를 통해 selectedPayment 변경 감지
         watch(() => props.selectedPayment, async (newPayment) => {
             console.log("Selected payment in ChatBot:", newPayment);
             if (newPayment) {
+                // handleRouteClickPayment를 호출하여 처리
                 await handleRouteClickPayment(newPayment);
             }
         });

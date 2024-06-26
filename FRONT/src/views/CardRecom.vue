@@ -110,7 +110,7 @@ export default {
         memYoungY: Boolean,
         memYoungN: Boolean,
         memSubsidiaryYn: Boolean,
-        payment: Number
+        selectedPayment: Number
     },
     
     setup(props, { emit }) {
