@@ -108,7 +108,7 @@
             </div>
         </div>
         <!-- CardRecom 컴포넌트를 props로 데이터를 전달 -->
-        <CardRecom :startPoint="startPoint" :endPoint="endPoint" />
+        <CardRecom v-if="showCardRecom" :startPoint="inputs.start_point" :endPoint="inputs.end_point" />
     </div>
 </template>
 
@@ -129,6 +129,7 @@ export default {
             ...mainOne.data(),
             showMapView: false,
             showCheckButton: false,
+            showCardRecom: false, 
             routes: [],
         };
     },
@@ -142,14 +143,15 @@ export default {
             originalRedirectToSignup.call(this, queryParams);
         },
         redirectToCardRecom() {
-            this.$router.push({
-                name: 'CardRecom',
-                query: {
-                    routes: JSON.stringify(this.routes),
-                    startPoint: this.inputs.start_point,
-                    endPoint: this.inputs.end_point
-                }
-            });
+            this.showCardRecom = true; // Add this line
+            // this.$router.push({
+            //     name: 'CardRecom',
+            //     query: {
+            //         routes: JSON.stringify(this.routes),
+            //         startPoint: this.inputs.start_point,
+            //         endPoint: this.inputs.end_point
+            //     }
+            // });
         },
         routesFound(routes) {
             this.routes = routes;
