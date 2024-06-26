@@ -118,6 +118,8 @@ CORS_ALLOW_CREDENTIALS = True   # 자격 증명을 포함한 요청 허용
 # CORS_ALLOW_HEADERS 추가 (필요할 경우)
 CORS_ALLOW_HEADERS = list(default_headers) + [
     'Access-Control-Allow-Credentials',
+    'Access-Control-Allow-Origin',  # 요청의 출처 허용
+    'Access-Control-Allow-Methods',  # 허용되는 HTTP 메서드
 ]
 
 # CSRF 설정
