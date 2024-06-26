@@ -71,6 +71,7 @@ import { EventBus } from '../../eventBus.js';
 import { axiosInstance } from '../assets/js/MapView.js';  // Import axiosInstance
 // import CustomAlert from '../components/CustomAlert.vue';
 import MapView from '../assets/js/MapView.js';
+import odsayLogo from '../assets/img/ODsay_bi_mark.png';
 
 export default {
     components: {
