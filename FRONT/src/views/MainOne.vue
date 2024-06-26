@@ -115,10 +115,9 @@
 
 <script>
 import mainOne from '../assets/js/MainOne.js';
-import { redirectToSignup as originalRedirectToSignup } from '../assets/js/login.js';
 import MapView from '../components/MapView.vue';
 import CardRecom from './CardRecom.vue';
-import { useStore } from 'vuex'; // Vuex에서 useStore를 import
+import { useStore } from 'vuex'; // vuex를 import 추가
 
 export default {
     mixins: [mainOne],
@@ -146,11 +145,15 @@ export default {
         },
         onRouteSelected(route) {
             // 경로 선택 시 처리
-            this.$store.dispatch('selectRoute', route); // Vuex action 호출
+            const store = useStore(); // Vuex store 가져오기
+            store.dispatch('selectRoute', route); // Vuex action 호출
         },
         handleResultCheck() {
             // 결과 확인 버튼 처리
-            if (this.$store.state.selectedRoute.payment) {
+            const store = useStore(); // Vuex store 가져오기
+            const selectedRoute = store.getters.getSelectedRoute;
+            
+            if (selectedRoute && selectedRoute.payment) {
                 this.showCardRecom = true; // CardRecom 컴포넌트 표시
                 const data = {
                     memHome: this.inputs.mem_home,
@@ -159,7 +162,7 @@ export default {
                     memYoungY: this.inputs.mem_young_y,
                     memYoungN: this.inputs.mem_young_n,
                     memSubsidiaryYn: this.inputs.mem_subsidiary_yn,
-                    payment: this.$store.state.selectedRoute.payment
+                    payment: selectedRoute.payment
                 };
                 console.log('Data being sent to CardRecom:', data);
                 this.$nextTick(() => {
