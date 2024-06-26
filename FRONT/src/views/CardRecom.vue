@@ -71,21 +71,25 @@
             <!-- 카드 목록 -->
             <div id="cards">
                 <div v-for="card in cards" :key="card.id" class="card" @click="modalOpen(card.id)">
-                    <img :src="card.imgSrc" :alt="card.altText"/>
+                    <img :src="card.imgSrc" :alt="card.altText">
                     <p>{{ getFormattedAltText(card.altText) }}</p>
                 </div>
     
-                <div class="modal-wrap" ref="modalWrap">
-                    <div class="modal-container">
-                        <div class="modal-content" v-if="selectedCardId">
-                            <!-- 여기에 CardDetail 컴포넌트 불러오기 -->
+                <!-- Modal -->
+                <Teleport to="body">
+                    <div v-if="isModalOpen" class="modal-overlay" @click="modalClose">
+                        <div class="modal-wrap" @click.stop>
+                        <div class="modal-container">
+                            <div class="modal-content" v-if="selectedCardId">
                             <CardDetail :id="selectedCardId" />
-                        </div>
-                        <div class="modal-footer">
+                            </div>
+                            <div class="modal-footer">
                             <button @click="modalClose">close</button>
+                            </div>
+                        </div>
                         </div>
                     </div>
-                </div>
+                </Teleport>
             </div>
         </div>
     </div>
@@ -97,7 +101,6 @@ import { useRouter } from 'vue-router'; // Vue Router
 import CardRecomMixin from '../assets/js/CardRecom.js'; // Mixin
 import CardDetail from './CardDetail.vue'; // Component
 import ChatBot from './ChatBot.vue'; // Component
-import odsayLogo from '../assets/img/ODsay_bi_mark.png'; // Image
 
 export default {
     name: 'CardRecom',
@@ -105,134 +108,107 @@ export default {
     mixins: [CardRecomMixin],
     props: {
         startPoint: String,
-        endPoint: String
+        endPoint: String,
+        memHome: String,
+        memYoungY: Boolean,
+        memYoungN: Boolean,
+        memSubsidiaryYn: Boolean,
+        payment: Number
     },
+    
     setup(props, { emit }) {
         const router = useRouter();
-        const payment = ref(0);
+        const payment = ref(props.payment || 0);
         const formData = reactive({
-            home: '',
-            start_point: '',
-            end_point: '',
-            young: 'N',
-            subsidiary: 'N'
-        });
-        const selectedPayment = ref(null);
+            home: props.memHome || '',
+            start_point: props.startPoint || '',
+            end_point: props.endPoint || '',
+            young: props.memYoungY ? 'Y' : 'N',
+            subsidiary: props.memSubsidiaryYn ? 'Y' : 'N'
+            });
+        const selectedPayment = ref(props.payment);
         const selectedCardId = ref(null);
-        const modalWrapRef = ref(null);
+        const isModalOpen = ref(false);
 
         const updateFormData = (data) => {
-            Object.assign(formData, data);
-        };
-
-        const handleRouteClick = (route) => {
-            selectedPayment.value = route.payment;
-            console.log("Selected route payment:", selectedPayment.value);
-            emit('payment-selected', selectedPayment.value);
+        Object.assign(formData, data);
         };
 
         const modalOpen = (cardId) => {
-            console.log("Opening modal for card:", cardId);
-            selectedCardId.value = cardId;
-            modalWrapRef.value.classList.add('show');
+        console.log("Opening modal for card:", cardId);
+        selectedCardId.value = cardId;
+        isModalOpen.value = true;
         };
 
         const modalClose = () => {
-            selectedCardId.value = null;
-            modalWrapRef.value.classList.remove('show');
-        };
-
-        const filteredSubPaths = (subPaths) => {
-            return subPaths.filter(subPath => subPath.trafficType !== 3);
-        };
-
-        const goToDetail = (cardId) => {
-            console.log(`Navigating to card detail for card id: ${cardId}`);
-            router.push({ name: 'CardDetail', params: { id: cardId } });
+        selectedCardId.value = null;
+        isModalOpen.value = false;
         };
 
         const getFormattedAltText = (altText) => {
-            const parts = altText.split('*');
-            if (parts.length === 2) {
-                return `[${parts[1]}] ${parts[0]}`;
-            } else if (parts.length === 3) {
-                return `[${parts[2]}] ${parts[0]} : ${parts[1]}`;
-            } else if (parts.length === 4) {
-                return `[${parts[2]}: ${parts[3]}] ${parts[0]} : ${parts[1]}`;
-            }
-            return altText;
-        };
-
-        const getTrafficClass = (subPath, isBar = false) => {
-            const prefix = isBar ? 'bar_' : '';
-            if (subPath.trafficType === 2) {
-                const busClass = `${prefix}bus${subPath.lane && subPath.lane[0] ? subPath.lane[0].type : ''}`;
-                return busClass;
-            } else if (subPath.trafficType === 1) {
-                const subClass = `${prefix}sub${subPath.lane && subPath.lane[0] ? subPath.lane[0].subwayCode : ''}`;
-                return subClass;
-            } else {
-                const walkClass = `${prefix}line_walk`;
-                return walkClass;
-            }
+        const parts = altText.split('*');
+        if (parts.length === 2) {
+            return `[${parts[1]}] ${parts[0]}`;
+        } else if (parts.length === 3) {
+            return `[${parts[2]}] ${parts[0]} : ${parts[1]}`;
+        } else if (parts.length === 4) {
+            return `[${parts[2]}: ${parts[3]}] ${parts[0]} : ${parts[1]}`;
+        }
+        return altText;
         };
 
         const sendParameters = async () => {
-            const params = {
-                payment: selectedPayment.value,
-                home: formData.home,
-                start_point: formData.start_point,
-                end_point: formData.end_point,
-                young: formData.young,
-                subsidiary: formData.subsidiary,
-                pre_month: 0
-            };
-            try {
-                const response = await fetch(`https://jiyoung.pythonanywhere.com/calculate/calculate-cost/?${new URLSearchParams(params)}`);
-                const data = await response.json();
-                emit('calculationResult', data);
-            } catch (error) {
-                console.error('Error sending parameters:', error);
-            }
+        const params = {
+            payment: selectedPayment.value,
+            home: formData.home,
+            start_point: formData.start_point,
+            end_point: formData.end_point,
+            young: formData.young,
+            subsidiary: formData.subsidiary,
+            pre_month: 0
+        };
+        try {
+            const response = await fetch(`https://jiyoung.pythonanywhere.com/calculate/calculate-cost/?${new URLSearchParams(params)}`);
+            const data = await response.json();
+            emit('calculationResult', data);
+        } catch (error) {
+            console.error('Error sending parameters:', error);
+        }
         };
 
         watch(() => props.startPoint, (newVal) => {
-            formData.start_point = newVal;
+        formData.start_point = newVal;
         });
 
         watch(() => props.endPoint, (newVal) => {
-            formData.end_point = newVal;
+        formData.end_point = newVal;
         });
 
         watch(selectedPayment, (newVal) => {
-            if (newVal) {
-                sendParameters();
-            }
+        if (newVal) {
+            sendParameters();
+        }
         });
 
         onMounted(() => {
-            console.log('Received routes:', CardRecomMixin.data().routes);
+        console.log('Received routes:', CardRecomMixin.data().routes);
         });
 
         return {
-            payment,
-            formData,
-            selectedPayment,
-            selectedCardId,
-            modalWrapRef,
-            odsayLogo,
-            updateFormData,
-            handleRouteClick,
-            modalOpen,
-            modalClose,
-            filteredSubPaths,
-            goToDetail,
-            getFormattedAltText,
-            getTrafficClass,
-            sendParameters
+        payment,
+        formData,
+        selectedPayment,
+        selectedCardId,
+        isModalOpen,
+        updateFormData,
+        modalOpen,
+        modalClose,
+        getFormattedAltText,
+        sendParameters
         };
     }
 };
 </script>
+
 
 <style scoped src="../assets/css/CardRecom.css"></style>

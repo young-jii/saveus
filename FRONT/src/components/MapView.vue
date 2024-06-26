@@ -100,7 +100,9 @@ export default {
         filteredSubPaths(subPaths) {
             return subPaths.filter(subPath => subPath.trafficType !== 3);
         },
-        
+        handleRouteClick(route) {
+            this.$emit('route-selected', route.payment);
+        }
     },
     async mounted() {
         this.initializeMap();

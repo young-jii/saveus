@@ -90,6 +90,7 @@
             </div>
             <div class="map-view-container">
                 <map-view
+                    @route-selected="onRouteSelected"
                     :memHome="formData.mem_home"
                     :startPoint="formData.start_point"
                     :endPoint="formData.end_point"
@@ -108,7 +109,7 @@
             </div>
         </div>
         <!-- CardRecom 컴포넌트를 props로 데이터를 전달 -->
-        <CardRecom v-if="showCardRecom" :startPoint="inputs.start_point" :endPoint="inputs.end_point" />
+        <CardRecom v-if="showCardRecom" ref="cardRecom" />
     </div>
 </template>
 
@@ -131,6 +132,7 @@ export default {
             showCheckButton: false,
             showCardRecom: false, 
             routes: [],
+            selectedPayment: null,
         };
     },
     methods: {
@@ -142,16 +144,24 @@ export default {
             };
             originalRedirectToSignup.call(this, queryParams);
         },
+        onRouteSelected(payment) {
+            this.selectedPayment = payment;
+        },
         redirectToCardRecom() {
-            this.showCardRecom = true; // Add this line
-            // this.$router.push({
-            //     name: 'CardRecom',
-            //     query: {
-            //         routes: JSON.stringify(this.routes),
-            //         startPoint: this.inputs.start_point,
-            //         endPoint: this.inputs.end_point
-            //     }
-            // });
+            const data = {
+                memHome: this.formData.mem_home,
+                startPoint: this.formData.start_point,
+                endPoint: this.formData.end_point,
+                memYoungY: this.formData.mem_young_y,
+                memYoungN: this.formData.mem_young_n,
+                memSubsidiaryYn: this.formData.mem_subsidiary_yn,
+                payment: this.selectedPayment
+            };
+            console.log('Data being sent to CardRecom:', data);
+            this.showCardRecom = true;
+            this.$nextTick(() => {
+                this.$refs.cardRecom.updateData(data);
+            });
         },
         routesFound(routes) {
             this.routes = routes;
