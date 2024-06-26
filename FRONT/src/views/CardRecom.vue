@@ -1,7 +1,7 @@
 <template>
     <div class="map-view">
         <div class="controls-results-chart-container">
-            <div id="controls">
+            <!-- <div id="controls"> -->
                 <!-- <div class="control-item">
                     <label for="startAddress">출발지</label>
                     <input type="text" id="startAddress" v-model="localStartPoint">
@@ -61,10 +61,9 @@
                         </ul>
                     </div>
                 </div> -->
-                <div id="chat">
-                    <!-- <img :src="odsayLogo" alt="ODsay Logo" class="odsay-logo"/> Add the logo here -->
-                    <ChatBot :selectedPayment="selectedPayment" />
-                </div>
+            <!-- </div> -->
+            <div id="chat">
+                <ChatBot :selectedPayment="selectedPayment" />
             </div>
         </div>
         <div id="cardsList">
@@ -74,30 +73,28 @@
                     <img :src="card.imgSrc" :alt="card.altText">
                     <p>{{ getFormattedAltText(card.altText) }}</p>
                 </div>
-    
-                <!-- Modal -->
-                <Teleport to="body">
-                    <div v-if="isModalOpen" class="modal-overlay" @click="modalClose">
-                        <div class="modal-wrap" @click.stop>
-                        <div class="modal-container">
-                            <div class="modal-content" v-if="selectedCardId">
-                            <CardDetail :id="selectedCardId" />
-                            </div>
-                            <div class="modal-footer">
-                            <button @click="modalClose">close</button>
-                            </div>
-                        </div>
-                        </div>
-                    </div>
-                </Teleport>
             </div>
         </div>
+        <!-- Modal -->
+        <Teleport to="body">
+            <div v-if="isModalOpen" class="modal-overlay" @click="modalClose">
+                <div class="modal-wrap" @click.stop>
+                    <div class="modal-container">
+                        <div class="modal-content" v-if="selectedCardId">
+                        <CardDetail :id="selectedCardId" />
+                        </div>
+                        <div class="modal-footer">
+                            <button @click="modalClose">close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Teleport>
     </div>
 </template>
 
 <script>
 import { ref, reactive, watch, onMounted } from 'vue'; // Vue 3 Composition API
-import { useRouter } from 'vue-router'; // Vue Router
 import CardRecomMixin from '../assets/js/CardRecom.js'; // Mixin
 import CardDetail from './CardDetail.vue'; // Component
 import ChatBot from './ChatBot.vue'; // Component
@@ -117,44 +114,42 @@ export default {
     },
     
     setup(props, { emit }) {
-        const router = useRouter();
-        const payment = ref(props.payment || 0);
         const formData = reactive({
             home: props.memHome || '',
             start_point: props.startPoint || '',
             end_point: props.endPoint || '',
             young: props.memYoungY ? 'Y' : 'N',
             subsidiary: props.memSubsidiaryYn ? 'Y' : 'N'
-            });
+        });
         const selectedPayment = ref(props.payment);
         const selectedCardId = ref(null);
         const isModalOpen = ref(false);
 
         const updateFormData = (data) => {
-        Object.assign(formData, data);
+            Object.assign(formData, data);
         };
 
         const modalOpen = (cardId) => {
-        console.log("Opening modal for card:", cardId);
-        selectedCardId.value = cardId;
-        isModalOpen.value = true;
+            console.log("Opening modal for card:", cardId);
+            selectedCardId.value = cardId;
+            isModalOpen.value = true;
         };
 
         const modalClose = () => {
-        selectedCardId.value = null;
-        isModalOpen.value = false;
+            selectedCardId.value = null;
+            isModalOpen.value = false;
         };
 
         const getFormattedAltText = (altText) => {
         const parts = altText.split('*');
-        if (parts.length === 2) {
-            return `[${parts[1]}] ${parts[0]}`;
-        } else if (parts.length === 3) {
-            return `[${parts[2]}] ${parts[0]} : ${parts[1]}`;
-        } else if (parts.length === 4) {
-            return `[${parts[2]}: ${parts[3]}] ${parts[0]} : ${parts[1]}`;
-        }
-        return altText;
+            if (parts.length === 2) {
+                return `[${parts[1]}] ${parts[0]}`;
+            } else if (parts.length === 3) {
+                return `[${parts[2]}] ${parts[0]} : ${parts[1]}`;
+            } else if (parts.length === 4) {
+                return `[${parts[2]}: ${parts[3]}] ${parts[0]} : ${parts[1]}`;
+            }
+            return altText;
         };
 
         const sendParameters = async () => {
@@ -177,34 +172,33 @@ export default {
         };
 
         watch(() => props.startPoint, (newVal) => {
-        formData.start_point = newVal;
+            formData.start_point = newVal;
         });
 
         watch(() => props.endPoint, (newVal) => {
-        formData.end_point = newVal;
+            formData.end_point = newVal;
         });
 
         watch(selectedPayment, (newVal) => {
-        if (newVal) {
-            sendParameters();
-        }
+            if (newVal) {
+                sendParameters();
+            }
         });
 
         onMounted(() => {
-        console.log('Received routes:', CardRecomMixin.data().routes);
+            console.log('Received routes:', CardRecomMixin.data().routes);
         });
 
         return {
-        payment,
-        formData,
-        selectedPayment,
-        selectedCardId,
-        isModalOpen,
-        updateFormData,
-        modalOpen,
-        modalClose,
-        getFormattedAltText,
-        sendParameters
+            formData,
+            selectedPayment,
+            selectedCardId,
+            isModalOpen,
+            updateFormData,
+            modalOpen,
+            modalClose,
+            getFormattedAltText,
+            sendParameters
         };
     }
 };
