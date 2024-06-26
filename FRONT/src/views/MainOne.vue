@@ -116,6 +116,7 @@
 import mainOne from '../assets/js/MainOne.js';
 import MapView from '../components/MapView.vue';
 import CardRecom from './CardRecom.vue';
+import { useStore } from 'vuex';
 
 export default {
     mixins: [mainOne],
@@ -130,12 +131,11 @@ export default {
             showMapView: false,
             showCheckButton: false,
             showCardRecom: false,
-            store: null,
         };
     },
     methods: {
         handleSubmit() {
-            console.log("handleSubmit 눌림")
+            console.log("handleSubmit 눌림");
             // Form 제출 시 처리
             this.findRoute();
         },
@@ -151,7 +151,7 @@ export default {
         },
         handleResultCheck() {
             // 결과 확인 버튼 처리
-            const selectedRoute = this.store.getters.getSelectedRoute;
+            const selectedRoute = this.$store.getters.getSelectedRoute;
 
             if (selectedRoute && selectedRoute.payment) {
                 this.showCardRecom = true; // CardRecom 컴포넌트 표시
@@ -177,5 +177,6 @@ export default {
         this.store = this.$store; // Vue 컴포넌트 내에서 this.$store를 사용하여 Vuex store에 접근합니다.
     },
 };
+</script>
 
 <style scoped src="@/assets/css/MainOne.css"></style>
