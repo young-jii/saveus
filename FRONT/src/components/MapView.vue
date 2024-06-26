@@ -68,7 +68,7 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useStore } from 'vuex';
 import { EventBus } from '../../eventBus.js';
-import MapView from './MapView.js';
+import MapView from '../assets/js/MapView.js';
 
 export default {
     components: {
