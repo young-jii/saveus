@@ -126,6 +126,7 @@ export default {
     data() {
         return {
             ...mainOne.data(),
+            showMapApi: false,
             showMapView: false,
             showCheckButton: false,
             showCardRecom: false,
@@ -140,6 +141,7 @@ export default {
         },
         findRoute() {
             // 최적 경로 탐색 코드
+            this.showMapApi = true;
             this.showMapView = true; // MapView 표시
         },
         onRouteSelected(route) {
