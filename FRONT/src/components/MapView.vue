@@ -12,13 +12,13 @@
             <button @click="findRoute">길찾기</button>
         </div>
         <div id="results">
-            <h3>  🧭 경로를 선택하세요! 🧭  </h3>
+            <h3>🧭 경로를 선택하세요! 🧭</h3>
 
             <div class="route-list-box">
                 <ul class="route-list">
                     <li v-for="(route, index) in routes" :key="index" class="route-data">
                         <div class="route_con" @click="onRouteClick(route)">
-                            <div class="route_time_header"> [총 소요 시간] {{ formatTime(route.totalTime) }}</div>
+                            <div class="route_time_header">[총 소요 시간] {{ formatTime(route.totalTime) }}</div>
                             <div class="route_time">
                                 <span class="info_sub">
                                     <span>환승 {{ route.subwayTransitCount + route.busTransitCount - 1 }}회 | </span>
@@ -55,11 +55,11 @@
                                         </span>
                                     </li>
                                 </ul>
-                            <div class="maker" style="display: none;">powered by<em>www.ODsay.com</em></div>
+                                <div class="maker" style="display: none;">powered by<em>www.ODsay.com</em></div>
+                            </div>
                         </div>
-                    </div>
-                </li>
-            </ul>
+                    </li>
+                </ul>
             </div>
         </div>
         <img :src="odsayLogo" alt="ODsay Logo" /> <!-- Add the logo here -->
@@ -71,8 +71,10 @@
 import MapView from '../assets/js/MapView.js';
 import odsayLogo from '../assets/img/ODsay_bi_mark.png';
 import { EventBus } from '../../eventBus.js';
+import { defineComponent } from 'vue';
+import { useStore } from 'vuex';
 
-export default {
+export default defineComponent({
     props: {
         startPoint: String,
         endPoint: String,
@@ -83,7 +85,6 @@ export default {
             localStartPoint: this.startPoint,
             localEndPoint: this.endPoint,
             routes: [],
-            map: null,
             odsayLogo,
         };
     },
@@ -103,13 +104,22 @@ export default {
         },
         onRouteClick(route) {
             console.log('onRouteClick method called in MapView.vue');
+            // Vuex store 사용
+            const store = useStore();
+            store.dispatch('selectRoute', route); // Vuex action 호출
+            store.dispatch('setPayment', route.payment); // 결제 정보 저장
+
+            // 이벤트 버스를 통해 다른 컴포넌트로 이벤트 발송
             EventBus.emit('route-selected', route);
-        }
+        },
+        async initializeMap() {
+            // 지도 초기화 로직
+        },
     },
     async mounted() {
         this.initializeMap();
     },
-};
+});
 </script>
 
 <style scoped>

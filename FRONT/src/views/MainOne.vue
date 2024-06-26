@@ -92,21 +92,20 @@
             <div class="map-view-container">
                 <map-view
                     @route-selected="onRouteSelected"
-                    :memHome="formData.mem_home"
-                    :startPoint="formData.start_point"
-                    :endPoint="formData.end_point"
-                    :memYoungY="formData.mem_young_y"
-                    :memYoungN="formData.mem_young_n"
-                    :memSubsidiaryYn="formData.mem_subsidiary_yn"
+                    :memHome="inputs.mem_home"
+                    :startPoint="inputs.start_point"
+                    :endPoint="inputs.end_point"
+                    :memYoungY="inputs.mem_young_y"
+                    :memYoungN="inputs.mem_young_n"
+                    :memSubsidiaryYn="inputs.mem_subsidiary_yn"
                     class="full-width"
                 />
             </div>
         </div>
         <!-- 최종 추천 카드 확인 버튼 -> 해당 버튼을 누르면 회원가입을 하도록 유도 -->
         <div id="check-mycost" v-if="showCheckButton">
-            <div class="check-mycost" v-if="showCheckButton">
+            <div class="check-mycost">
                 <input type="button" value="결과 확인하기" @click="handleResultCheck">
-                <!-- <input type="button" value="회원가입해서 확인하기" @click="redirectToSignup"> -->
             </div>
         </div>
         <!-- CardRecom 컴포넌트를 props로 데이터를 전달 -->
@@ -118,67 +117,56 @@
 import mainOne from '../assets/js/MainOne.js';
 import { redirectToSignup as originalRedirectToSignup } from '../assets/js/login.js';
 import MapView from '../components/MapView.vue';
-import CardRecom from './CardRecom.vue';  // Make sure to import CardRecom
-import { eventBus } from '../../eventBus.js'; // eventBus를 import
+import CardRecom from './CardRecom.vue';
+import { useStore } from 'vuex'; // Vuex에서 useStore를 import
 
 export default {
     mixins: [mainOne],
     components: {
         MapView,
-        CardRecom  // Add CardRecom to components
+        CardRecom
     },  
     data() {
         return {
             ...mainOne.data(),
             showMapView: false,
             showCheckButton: false,
-            showCardRecom: false, 
+            showCardRecom: false,
             routes: [],
-            selectedPayment: null,
         };
     },
     methods: {
-        redirectToSignup() {
-            const queryParams = {
-                routes: JSON.stringify(this.routes),
-                startPoint: this.inputs.start_point,
-                endPoint: this.inputs.end_point
-            };
-            originalRedirectToSignup.call(this, queryParams);
+        handleSubmit() {
+            // Form 제출 시 처리
+            this.findRoute();
+        },
+        findRoute() {
+            // 최적 경로 탐색 코드
+            this.showMapView = true; // MapView 표시
         },
         onRouteSelected(route) {
-            this.selectedPayment = route.payment;
+            // 경로 선택 시 처리
+            this.$store.dispatch('selectRoute', route); // Vuex action 호출
         },
-        redirectToCardRecom() {
-            const data = {
-                memHome: this.formData.mem_home,
-                startPoint: this.formData.start_point,
-                endPoint: this.formData.end_point,
-                memYoungY: this.formData.mem_young_y,
-                memYoungN: this.formData.mem_young_n,
-                memSubsidiaryYn: this.formData.mem_subsidiary_yn,
-                payment: this.selectedPayment
-            };
-            console.log('Data being sent to CardRecom:', data);
-            this.showCardRecom = true;
-            this.$nextTick(() => {
-                this.$refs.cardRecom.updateData(data);
-            });
-        },
-        routesFound(routes) {
-            this.routes = routes;
-            this.showCheckButton = true;
-        },
-        async handleResultCheck() {
-            try {
-                this.redirectToCardRecom();
-                if (this.selectedPayment) {
-                    eventBus.emit('handleRouteClickPayment', this.selectedPayment);
-                } else {
-                    console.error('Selected payment is null or undefined');
-                }
-            } catch (error) {
-                console.error('Error in handleResultCheck:', error);
+        handleResultCheck() {
+            // 결과 확인 버튼 처리
+            if (this.$store.state.selectedRoute.payment) {
+                this.showCardRecom = true; // CardRecom 컴포넌트 표시
+                const data = {
+                    memHome: this.inputs.mem_home,
+                    startPoint: this.inputs.start_point,
+                    endPoint: this.inputs.end_point,
+                    memYoungY: this.inputs.mem_young_y,
+                    memYoungN: this.inputs.mem_young_n,
+                    memSubsidiaryYn: this.inputs.mem_subsidiary_yn,
+                    payment: this.$store.state.selectedRoute.payment
+                };
+                console.log('Data being sent to CardRecom:', data);
+                this.$nextTick(() => {
+                    this.$refs.cardRecom.updateData(data);
+                });
+            } else {
+                console.error('Selected payment is null or undefined');
             }
         },
     },
