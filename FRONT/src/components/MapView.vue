@@ -93,11 +93,33 @@ export default {
         const alert = ref(null);
 
         const findRoute = async () => {
-            await MapView.methods.findRoute.call({ 
-                localStartPoint: localStartPoint.value, 
+            await MapView.methods.findRoute.call({
+                geocode: MapView.methods.geocode,
+                showAlert: MapView.methods.showAlert,
+                localStartPoint: localStartPoint.value,
                 localEndPoint: localEndPoint.value,
-                routes: routes.value
+                routes: routes,
+                $odsayAxios: axiosInstance // axiosInstance가 미리 정의되어 있어야 합니다.
             });
+        };
+
+        const initializeMap = () => {
+            MapView.methods.initializeMap.call({
+                map: map.value,
+                showAlert: MapView.methods.showAlert,
+                polylines: polylines
+            });
+        };
+
+        const handleRouteSelection = (route) => {
+            MapView.methods.handleRouteSelection.call({
+                map: map.value,
+                clearPolylines: MapView.methods.clearPolylines,
+                drawNaverMarker: MapView.methods.drawNaverMarker,
+                drawNaverPolyLine: MapView.methods.drawNaverPolyLine,
+                polylines: polylines,
+                $odsayAxios: axiosInstance // axiosInstance가 미리 정의되어 있어야 합니다.
+            }, route);
         };
 
         const onRouteClick = (route) => {
@@ -106,14 +128,14 @@ export default {
         };
 
         onMounted(async () => {
-            MapView.methods.initializeMap.call({ map: map.value });
+            initializeMap();
             await findRoute();
             // alert.value = MapView.methods.$refs.CustomAlert;
-            EventBus.on('route-selected', MapView.methods.handleRouteSelection);
+            EventBus.on('route-selected', handleRouteSelection);
         });
 
         onBeforeUnmount(() => {
-            EventBus.off('route-selected', MapView.methods.handleRouteSelection);
+            EventBus.off('route-selected', handleRouteSelection);
         });
 
         return {

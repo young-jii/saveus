@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { EventBus } from '../../../eventBus';  // 이벤트 버스 불러오기
-import CustonAlert from '@/components/CustomAlert.vue';  // CustonAlert.vue 임포트
 
 const apiBaseUrl = process.env.VUE_APP_API_BASE_URL || 'https://jiyoung.pythonanywhere.com';
 
@@ -102,9 +101,6 @@ const busLineColors = {
 };
 
 export default {
-    components: {
-        CustonAlert
-    },
     methods: {
         showAlert(message) {
             this.alert.showAlert(message);
@@ -129,7 +125,7 @@ export default {
                 console.log('MapView.js >> Finding route with start point:', this.localStartPoint, 'and end point:', this.localEndPoint);
 
                 if (!this.localStartPoint || !this.localEndPoint) {
-                throw new Error('Start point or end point is missing');
+                    throw new Error('Start point or end point is missing');
                 }
 
                 const startResponse = await this.geocode(this.localStartPoint);
@@ -154,35 +150,35 @@ export default {
                 console.log('MapView.js >> ODSAY API response:', routeResponse.data);
 
                 if (routeResponse.data && routeResponse.data.result && routeResponse.data.result.path) {
-                this.routes = routeResponse.data.result.path.map((path) => {
-                    return {
-                    totalTime: path.info.totalTime,
-                    totalWalk: path.info.totalWalk,
-                    busTransitCount: path.info.busTransitCount,
-                    subwayTransitCount: path.info.subwayTransitCount,
-                    payment: path.info.payment,
-                    totalDistance: path.info.totalDistance,
-                    firstStartStation: path.subPath[0].startName,
-                    startNameKor: path.subPath[0].startName,
-                    endName: path.subPath[path.subPath.length - 1].endName,
-                    lastEndStation: path.subPath[path.subPath.length - 1].endName,
-                    subPaths: path.subPath,
-                    mapObj: path.info.mapObj,
-                    sx: sx,
-                    sy: sy,
-                    ex: ex,
-                    ey: ey
-                    };
-                });
-                console.log('MapView.js >> Emitting route-found event with routes:', this.routes);
-                EventBus.emit('route-found', this.routes);
-                } else {
-                console.error('MapView.js >> No valid route found');
+                    this.routes = routeResponse.data.result.path.map((path) => {
+                        return {
+                            totalTime: path.info.totalTime,
+                            totalWalk: path.info.totalWalk,
+                            busTransitCount: path.info.busTransitCount,
+                            subwayTransitCount: path.info.subwayTransitCount,
+                            payment: path.info.payment,
+                            totalDistance: path.info.totalDistance,
+                            firstStartStation: path.subPath[0].startName,
+                            startNameKor: path.subPath[0].startName,
+                            endName: path.subPath[path.subPath.length - 1].endName,
+                            lastEndStation: path.subPath[path.subPath.length - 1].endName,
+                            subPaths: path.subPath,
+                            mapObj: path.info.mapObj,
+                            sx: sx,
+                            sy: sy,
+                            ex: ex,
+                            ey: ey
+                        };
+                    });
+                    console.log('MapView.js >> Emitting route-found event with routes:', this.routes);
+                    EventBus.emit('route-found', this.routes);
+                    } else {
+                        console.error('MapView.js >> No valid route found');
+                    }
+                } catch (error) {
+                    console.error('MapView.js >> Error finding route:', error);
                 }
-            } catch (error) {
-                console.error('MapView.js >> Error finding route:', error);
-            }
-        },
+            },
         async handleRouteSelection(route) {
             console.log('handleRouteSelection method called in MapView.js');
         try {
