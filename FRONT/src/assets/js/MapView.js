@@ -2,7 +2,6 @@ import axios from 'axios';
 import { EventBus } from '../../../eventBus';  // 이벤트 버스 불러오기
 import CustonAlert from '@/components/CustonAlert.vue';  // CustonAlert.vue 임포트
 
-
 const apiBaseUrl = process.env.VUE_APP_API_BASE_URL || 'https://jiyoung.pythonanywhere.com';
 
 // CSRF 토큰을 가져와 Axios 인스턴스에 추가
@@ -120,7 +119,6 @@ export default {
             localEndPoint: this.endPoint,
             routes: [],
             map: null,
-            // wsClient: null,
             polylines: [],  // 폴리라인을 저장할 배열
             alert: null  // 알림 객체를 저장할 변수
         };
@@ -129,8 +127,10 @@ export default {
         this.initializeMap();
         await this.findRoute();
         this.alert = this.$refs.customAlert;  // CustonAlert 컴포넌트를 참조로 저장
-        // Listen for the route-selected event
-        EventBus.on('route-selected', this.handleRouteClick);
+        EventBus.on('route-selected', this.onRouteClick);
+    },
+    beforeDestroy() {
+        EventBus.off('route-selected', this.onRouteClick);
     },
     methods: {
         showAlert(message) {
@@ -151,11 +151,11 @@ export default {
                 throw error;
             }
         },
-        
+
         async findRoute() {
             try {
                 console.log('MapView.js >> Finding route with start point:', this.localStartPoint, 'and end point:', this.localEndPoint);
-                
+
                 // localStartPoint와 localEndPoint가 유효한지 확인
                 if (!this.localStartPoint || !this.localEndPoint) {
                     throw new Error('Start point or end point is missing');
@@ -166,7 +166,7 @@ export default {
                 console.log('MapView.js >> Start geocode response:', startResponse);
                 const endResponse = await this.geocode(this.localEndPoint);  // GET 메서드를 사용하도록 수정
                 console.log('MapView.js >> End geocode response:', endResponse);
-                
+
                 if (!startResponse || !endResponse) {
                     throw new Error('Failed to get coordinates');
                 }
@@ -176,14 +176,14 @@ export default {
                 const sy = startResponse.y;
                 const ex = endResponse.x;
                 const ey = endResponse.y;
-                
+
                 console.log('MapView.js >> Start coordinates:', { sx, sy });
                 console.log('MapView.js >> End coordinates:', { ex, ey });
-                
+
                 // ODSAY API를 통해 경로 찾기 요청
                 const odsasApiUrl = `searchPubTransPathT?SX=${sx}&SY=${sy}&EX=${ex}&EY=${ey}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
                 console.log('MapView.js >> ODSAY API request URL:', odsasApiUrl); // 요청 URL을 로그에 출력
-                
+
                 const routeResponse = await this.$odsayAxios.get(odsasApiUrl);
                 console.log('MapView.js >> ODSAY API response:', routeResponse.data);
 
@@ -219,8 +219,8 @@ export default {
             }
         },
 
-        async handleRouteClick(route) {
-            console.log('handleRouteClick method called in MapView.js');
+        async onRouteClick(route) {
+            console.log('onRouteClick method called in MapView.js');
             try {
                 const { mapObj, sx, sy, ex, ey } = route;
                 console.log('MapView.vue >> handleRouteClick >> mapObj:', mapObj);
@@ -231,7 +231,7 @@ export default {
 
                 const routeResponse = await this.$odsayAxios.get(odsasApiUrl);
                 console.log('MapView.js >> ODSAY loadLane API response:', routeResponse.data);
-                
+
                 this.clearPolylines();  // 기존 폴리라인 삭제
 
                 this.drawNaverMarker(sx, sy);
@@ -254,7 +254,6 @@ export default {
             this.polylines.forEach(polyline => polyline.setMap(null));
             this.polylines = [];
         },
-
 
         initializeMap() {
             if (window.naver) {
@@ -285,10 +284,10 @@ export default {
                     }
                     // 교통수단에 따른 색상 지정
                     let lineColor = '#000';  // 기본 색상은 검정색
-                    
+
                     const laneClass = data.result.lane[i].class;  // 교통수단 클래스 (1: 버스, 2: 지하철)
                     const laneType = data.result.lane[i].type;  // 교통수단 타입 (지하철 노선 코드 또는 버스 타입)
-                    
+
                     if (laneClass === 1) {
                         /// 버스
                         lineColor = busLineColors[laneType]
@@ -299,7 +298,7 @@ export default {
                         // 도보
                         lineColor = '#EEEEEE';
                     }
-                    
+
                     const polyline = new naver.maps.Polyline({
                         map: this.map,
                         path: lineArray,
@@ -310,7 +309,7 @@ export default {
                 }
             }
         },
-        
+
         displayRouteOnMap(data) {
             try {
                 console.log('MapView.js >> Displaying route on map with data:', data);
@@ -336,7 +335,7 @@ export default {
                 console.error('MapView.js >> Error displaying route:', error);
             }
         },
-        
+
         formatTime(minutes) {
             const hours = Math.floor(minutes / 60);
             const mins = minutes % 60;

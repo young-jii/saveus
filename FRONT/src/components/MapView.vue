@@ -17,7 +17,7 @@
             <div class="route-list-box">
                 <ul class="route-list">
                     <li v-for="(route, index) in routes" :key="index" class="route-data">
-                        <div class="route_con" @click="handleRouteClick(route)">
+                        <div class="route_con" @click="onRouteClick(route)">
                             <div class="route_time_header"> [총 소요 시간] {{ formatTime(route.totalTime) }}</div>
                             <div class="route_time">
                                 <span class="info_sub">
@@ -69,8 +69,8 @@
 
 <script>
 import MapView from '../assets/js/MapView.js';
-import odsayLogo from '../assets/img/ODsay_bi_mark.png' ;
-import { EventBus } from '../../eventBus.js' ;
+import odsayLogo from '../assets/img/ODsay_bi_mark.png';
+import { EventBus } from '../../eventBus.js';
 
 export default {
     props: {
@@ -101,8 +101,8 @@ export default {
         filteredSubPaths(subPaths) {
             return subPaths.filter(subPath => subPath.trafficType !== 3);
         },
-        handleRouteClick(route) {
-            console.log('handleRouteClick method called in MapView.vue');
+        onRouteClick(route) {
+            console.log('onRouteClick method called in MapView.vue');
             EventBus.emit('route-selected', route);
         }
     },
