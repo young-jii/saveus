@@ -17,7 +17,7 @@ const getCsrfToken = async () => {
 
 // Axios 인스턴스 생성 및 기본 설정 추가
 const axiosInstance = axios.create({
-    baseURL: 'https://jiyoung.pythonanywhere.com',
+    baseURL: apiBaseUrl,
     withCredentials: true  // 자격 증명 포함
 });
 
