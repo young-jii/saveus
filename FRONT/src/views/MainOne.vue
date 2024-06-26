@@ -19,6 +19,7 @@
             <div class="input-data">
                 <div class="guide-text">
                     <p>🚎 매일 왕복해서 다니는 곳의 출발지/도착지를 입력하세요. 🚎</p>
+                    <p>📍 해당 주소지를 도로명 주소로 정확하게 입력해 주세요. 📍  </p>
                 </div>
                 <div class="input-wrapper">
                     <span>출발지</span>

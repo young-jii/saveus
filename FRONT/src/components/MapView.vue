@@ -51,7 +51,7 @@
                                     <li :key="route.subPaths.length" class="line">
                                         <span class="icon"></span>
                                         <span class="r_body">
-                                            <span class="r_title">➪ {{ route.lastEndStation }} 하차</span>
+                                            <span class="r_title"> ➜ {{ route.lastEndStation }} 하차</span>
                                         </span>
                                     </li>
                                 </ul>
