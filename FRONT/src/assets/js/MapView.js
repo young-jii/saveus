@@ -127,10 +127,10 @@ export default {
         this.initializeMap();
         await this.findRoute();
         this.alert = this.$refs.customAlert;  // CustonAlert 컴포넌트를 참조로 저장
-        EventBus.on('route-selected', this.onRouteClick);
+        EventBus.on('route-selected', this.handleRouteSelection);
     },
     beforeDestroy() {
-        EventBus.off('route-selected', this.onRouteClick);
+        EventBus.off('route-selected', this.handleRouteSelection);
     },
     methods: {
         showAlert(message) {
@@ -172,10 +172,8 @@ export default {
                 }
 
                 // startResponse와 endResponse에서 올바르게 데이터를 추출
-                const sx = startResponse.x;
-                const sy = startResponse.y;
-                const ex = endResponse.x;
-                const ey = endResponse.y;
+                const { x: sx, y: sy } = startResponse;
+                const { x: ex, y: ey } = endResponse;
 
                 console.log('MapView.js >> Start coordinates:', { sx, sy });
                 console.log('MapView.js >> End coordinates:', { ex, ey });
@@ -219,12 +217,12 @@ export default {
             }
         },
 
-        async onRouteClick(route) {
-            console.log('onRouteClick method called in MapView.js');
+        async handleRouteSelection(route) {
+            console.log('handleRouteSelection method called in MapView.js');
             try {
                 const { mapObj, sx, sy, ex, ey } = route;
-                console.log('MapView.vue >> handleRouteClick >> mapObj:', mapObj);
-                console.log('MapView.vue >> handleRouteClick >> sx, sy, ex, ey:', sx, sy, ex, ey);
+                console.log('MapView.vue >> handleRouteSelection >> mapObj:', mapObj);
+                console.log('MapView.vue >> handleRouteSelection >> sx, sy, ex, ey:', sx, sy, ex, ey);
 
                 const odsasApiUrl = `https://api.odsay.com/v1/api/loadLane?mapObject=0:0@${mapObj}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
                 console.log('MapView.vue >> ODSAY loadLane API request URL:', odsasApiUrl);
@@ -246,7 +244,7 @@ export default {
                     this.map.panToBounds(boundary);
                 }
             } catch (error) {
-                console.error('MapView.vue >> handleRouteClick >> Error:', error);
+                console.error('MapView.vue >> handleRouteSelection >> Error:', error);
             }
         },
 
