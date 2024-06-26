@@ -103,38 +103,11 @@ const busLineColors = {
 
 export default {
     components: {
-        CustonAlert  // CustonAlert 컴포넌트 등록
-    },
-    props: {
-        memHome: String,
-        startPoint: String,
-        endPoint: String,
-        memYoungY: Boolean,
-        memYoungN: Boolean,
-        memSubsidiaryYn: Boolean
-    },
-    data() {
-        return {
-            localStartPoint: this.startPoint,
-            localEndPoint: this.endPoint,
-            routes: [],
-            map: null,
-            polylines: [],  // 폴리라인을 저장할 배열
-            alert: null  // 알림 객체를 저장할 변수
-        };
-    },
-    async mounted() {
-        this.initializeMap();
-        await this.findRoute();
-        this.alert = this.$refs.customAlert;  // CustonAlert 컴포넌트를 참조로 저장
-        EventBus.on('route-selected', this.handleRouteSelection);
-    },
-    beforeDestroy() {
-        EventBus.off('route-selected', this.handleRouteSelection);
+        CustonAlert
     },
     methods: {
         showAlert(message) {
-            this.alert.showAlert(message);  // CustonAlert 컴포넌트의 showAlert 메소드 호출
+            this.alert.showAlert(message);
         },
         async geocode(address) {
             try {
@@ -145,228 +118,199 @@ export default {
             } catch (error) {
                 console.error('MapView.js >> Error geocoding address:', error);
                 if (error.response) {
-                    console.error('MapView.js >> Error response data:', error.response.data);
+                console.error('MapView.js >> Error response data:', error.response.data);
                 }
-                this.showAlert('주소를 도로명 주소로 정확히 다시 입력하세요.');  // 에러 발생 시 알림 표시
+                this.showAlert('주소를 도로명 주소로 정확히 다시 입력하세요.');
                 throw error;
             }
-        },
-
-        async findRoute() {
+            },
+            async findRoute() {
             try {
                 console.log('MapView.js >> Finding route with start point:', this.localStartPoint, 'and end point:', this.localEndPoint);
 
-                // localStartPoint와 localEndPoint가 유효한지 확인
                 if (!this.localStartPoint || !this.localEndPoint) {
-                    throw new Error('Start point or end point is missing');
+                throw new Error('Start point or end point is missing');
                 }
 
-                // Geocoding 주소를 통해 좌표를 가져오는 부분 (백엔드에서 처리)
-                const startResponse = await this.geocode(this.localStartPoint);  // GET 메서드를 사용하도록 수정
+                const startResponse = await this.geocode(this.localStartPoint);
                 console.log('MapView.js >> Start geocode response:', startResponse);
-                const endResponse = await this.geocode(this.localEndPoint);  // GET 메서드를 사용하도록 수정
+                const endResponse = await this.geocode(this.localEndPoint);
                 console.log('MapView.js >> End geocode response:', endResponse);
 
                 if (!startResponse || !endResponse) {
-                    throw new Error('Failed to get coordinates');
+                throw new Error('Failed to get coordinates');
                 }
 
-                // startResponse와 endResponse에서 올바르게 데이터를 추출
                 const { x: sx, y: sy } = startResponse;
                 const { x: ex, y: ey } = endResponse;
 
                 console.log('MapView.js >> Start coordinates:', { sx, sy });
                 console.log('MapView.js >> End coordinates:', { ex, ey });
 
-                // ODSAY API를 통해 경로 찾기 요청
                 const odsasApiUrl = `searchPubTransPathT?SX=${sx}&SY=${sy}&EX=${ex}&EY=${ey}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
-                console.log('MapView.js >> ODSAY API request URL:', odsasApiUrl); // 요청 URL을 로그에 출력
+                console.log('MapView.js >> ODSAY API request URL:', odsasApiUrl);
 
                 const routeResponse = await this.$odsayAxios.get(odsasApiUrl);
                 console.log('MapView.js >> ODSAY API response:', routeResponse.data);
 
                 if (routeResponse.data && routeResponse.data.result && routeResponse.data.result.path) {
-                    this.routes = routeResponse.data.result.path.map((path) => {
-                        return {
-                            totalTime: path.info.totalTime,
-                            totalWalk: path.info.totalWalk,
-                            busTransitCount: path.info.busTransitCount,
-                            subwayTransitCount: path.info.subwayTransitCount,
-                            payment: path.info.payment,
-                            totalDistance: path.info.totalDistance,
-                            firstStartStation: path.subPath[0].startName,
-                            startNameKor: path.subPath[0].startName,
-                            endName: path.subPath[path.subPath.length - 1].endName,
-                            lastEndStation: path.subPath[path.subPath.length - 1].endName,
-                            subPaths: path.subPath,
-                            mapObj: path.info.mapObj,  // mapObj를 여기서 가져옴
-                            sx: sx,  // 출발 좌표
-                            sy: sy,  // 출발 좌표
-                            ex: ex,  // 도착 좌표
-                            ey: ey   // 도착 좌표
-                        };
-                    });
-                    console.log('MapView.js >> Emitting route-found event with routes:', this.routes);
-                    // 이벤트 발생
-                    EventBus.emit('route-found', this.routes);
+                this.routes = routeResponse.data.result.path.map((path) => {
+                    return {
+                    totalTime: path.info.totalTime,
+                    totalWalk: path.info.totalWalk,
+                    busTransitCount: path.info.busTransitCount,
+                    subwayTransitCount: path.info.subwayTransitCount,
+                    payment: path.info.payment,
+                    totalDistance: path.info.totalDistance,
+                    firstStartStation: path.subPath[0].startName,
+                    startNameKor: path.subPath[0].startName,
+                    endName: path.subPath[path.subPath.length - 1].endName,
+                    lastEndStation: path.subPath[path.subPath.length - 1].endName,
+                    subPaths: path.subPath,
+                    mapObj: path.info.mapObj,
+                    sx: sx,
+                    sy: sy,
+                    ex: ex,
+                    ey: ey
+                    };
+                });
+                console.log('MapView.js >> Emitting route-found event with routes:', this.routes);
+                EventBus.emit('route-found', this.routes);
                 } else {
-                    console.error('MapView.js >> No valid route found');
+                console.error('MapView.js >> No valid route found');
                 }
             } catch (error) {
                 console.error('MapView.js >> Error finding route:', error);
             }
         },
-
         async handleRouteSelection(route) {
-            console.log('handleRouteSelection method called in MapView.js');
-            try {
-                const { mapObj, sx, sy, ex, ey } = route;
-                console.log('MapView.vue >> handleRouteSelection >> mapObj:', mapObj);
-                console.log('MapView.vue >> handleRouteSelection >> sx, sy, ex, ey:', sx, sy, ex, ey);
+        console.log('handleRouteSelection method called in MapView.js');
+        try {
+            const { mapObj, sx, sy, ex, ey } = route;
+            console.log('MapView.vue >> handleRouteSelection >> mapObj:', mapObj);
+            console.log('MapView.vue >> handleRouteSelection >> sx, sy, ex, ey:', sx, sy, ex, ey);
 
-                const odsasApiUrl = `https://api.odsay.com/v1/api/loadLane?mapObject=0:0@${mapObj}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
-                console.log('MapView.vue >> ODSAY loadLane API request URL:', odsasApiUrl);
+            const odsasApiUrl = `https://api.odsay.com/v1/api/loadLane?mapObject=0:0@${mapObj}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
+            console.log('MapView.vue >> ODSAY loadLane API request URL:', odsasApiUrl);
 
-                const routeResponse = await this.$odsayAxios.get(odsasApiUrl);
-                console.log('MapView.js >> ODSAY loadLane API response:', routeResponse.data);
+            const routeResponse = await this.$odsayAxios.get(odsasApiUrl);
+            console.log('MapView.js >> ODSAY loadLane API response:', routeResponse.data);
 
-                this.clearPolylines();  // 기존 폴리라인 삭제
+            this.clearPolylines();
 
-                this.drawNaverMarker(sx, sy);
-                this.drawNaverMarker(ex, ey);
-                this.drawNaverPolyLine(routeResponse.data);
+            this.drawNaverMarker(sx, sy);
+            this.drawNaverMarker(ex, ey);
+            this.drawNaverPolyLine(routeResponse.data);
 
-                if (routeResponse.data.result.boundary) {
-                    const boundary = new naver.maps.LatLngBounds(
-                        new naver.maps.LatLng(routeResponse.data.result.boundary.top, routeResponse.data.result.boundary.left),
-                        new naver.maps.LatLng(routeResponse.data.result.boundary.bottom, routeResponse.data.result.boundary.right)
-                    );
-                    this.map.panToBounds(boundary);
-                }
-            } catch (error) {
+            if (routeResponse.data.result.boundary) {
+                const boundary = new naver.maps.LatLngBounds(
+                    new naver.maps.LatLng(routeResponse.data.result.boundary.top, routeResponse.data.result.boundary.left),
+                    new naver.maps.LatLng(routeResponse.data.result.boundary.bottom, routeResponse.data.result.boundary.right)
+                );
+                this.map.panToBounds(boundary);
+            }
+        } catch (error) {
                 console.error('MapView.vue >> handleRouteSelection >> Error:', error);
             }
         },
-
         clearPolylines() {
             this.polylines.forEach(polyline => polyline.setMap(null));
             this.polylines = [];
         },
-
         initializeMap() {
             if (window.naver) {
                 var mapOptions = {
-                    center: new naver.maps.LatLng(37.5665, 126.9780),
-                    zoom: 10
+                center: new naver.maps.LatLng(37.5665, 126.9780),
+                zoom: 10
                 };
                 this.map = new naver.maps.Map('map', mapOptions);
             } else {
                 console.error('MapView.js >> Naver Maps API is not loaded.');
             }
         },
-
         drawNaverMarker(x, y) {
             new naver.maps.Marker({
                 position: new naver.maps.LatLng(y, x),
                 map: this.map
             });
         },
-
         drawNaverPolyLine(data) {
             let lineArray;
             for (let i = 0; i < data.result.lane.length; i++) {
                 for (let j = 0; j < data.result.lane[i].section.length; j++) {
-                    lineArray = [];
-                    for (let k = 0; k < data.result.lane[i].section[j].graphPos.length; k++) {
-                        lineArray.push(new naver.maps.LatLng(data.result.lane[i].section[j].graphPos[k].y, data.result.lane[i].section[j].graphPos[k].x));
-                    }
-                    // 교통수단에 따른 색상 지정
-                    let lineColor = '#000';  // 기본 색상은 검정색
+                lineArray = [];
+                for (let k = 0; k < data.result.lane[i].section[j].graphPos.length; k++) {
+                    lineArray.push(new naver.maps.LatLng(data.result.lane[i].section[j].graphPos[k].y, data.result.lane[i].section[j].graphPos[k].x));
+                }
+                let lineColor = '#000';
 
-                    const laneClass = data.result.lane[i].class;  // 교통수단 클래스 (1: 버스, 2: 지하철)
-                    const laneType = data.result.lane[i].type;  // 교통수단 타입 (지하철 노선 코드 또는 버스 타입)
+                const laneClass = data.result.lane[i].class;
+                const laneType = data.result.lane[i].type;
 
-                    if (laneClass === 1) {
-                        /// 버스
-                        lineColor = busLineColors[laneType]
-                    } else if (laneClass === 2) {
-                        // 지하철
-                        lineColor = subwayLineColors[laneType] || lineColor;
-                    } else if (laneClass === 3) {
-                        // 도보
-                        lineColor = '#EEEEEE';
-                    }
+                if (laneClass === 1) {
+                    lineColor = busLineColors[laneType];
+                } else if (laneClass === 2) {
+                    lineColor = subwayLineColors[laneType] || lineColor;
+                } else if (laneClass === 3) {
+                    lineColor = '#EEEEEE';
+                }
 
-                    const polyline = new naver.maps.Polyline({
-                        map: this.map,
-                        path: lineArray,
-                        strokeWeight: 5,
-                        strokeColor: lineColor
-                    });
-                    this.polylines.push(polyline);  // 폴리라인 저장
+                const polyline = new naver.maps.Polyline({
+                    map: this.map,
+                    path: lineArray,
+                    strokeWeight: 5,
+                    strokeColor: lineColor
+                });
+                this.polylines.push(polyline);
                 }
             }
         },
-
         displayRouteOnMap(data) {
-            try {
-                console.log('MapView.js >> Displaying route on map with data:', data);
+        try {
+            console.log('MapView.js >> Displaying route on map with data:', data);
 
-                const resultJsonData = data.result;
-                if (resultJsonData) {
-                    // 지도에 마커 표시
-                    this.drawNaverMarker(data.sx, data.sy);
-                    this.drawNaverMarker(data.ex, data.ey);
-                    this.drawNaverPolyLine(resultJsonData);
+            const resultJsonData = data.result;
+            if (resultJsonData) {
+            this.drawNaverMarker(data.sx, data.sy);
+            this.drawNaverMarker(data.ex, data.ey);
+            this.drawNaverPolyLine(resultJsonData);
 
-                    if (resultJsonData.result.boundary) {
-                        const boundary = new naver.maps.LatLngBounds(
-                            new naver.maps.LatLng(resultJsonData.result.boundary.top, resultJsonData.result.boundary.left),
-                            new naver.maps.LatLng(resultJsonData.result.boundary.bottom, resultJsonData.result.boundary.right)
-                        );
-                        this.map.panToBounds(boundary);
-                    }
-                } else {
-                    console.error('MapView.js >> Invalid response data:', resultJsonData);
-                }
-            } catch (error) {
-                console.error('MapView.js >> Error displaying route:', error);
+            if (resultJsonData.result.boundary) {
+                const boundary = new naver.maps.LatLngBounds(
+                new naver.maps.LatLng(resultJsonData.result.boundary.top, resultJsonData.result.boundary.left),
+                new naver.maps.LatLng(resultJsonData.result.boundary.bottom, resultJsonData.result.boundary.right)
+                );
+                this.map.panToBounds(boundary);
             }
-        },
-
-        formatTime(minutes) {
-            const hours = Math.floor(minutes / 60);
-            const mins = minutes % 60;
-            return `${hours}시간 ${mins}분`;
-        },
-
-        getLineClass(trafficType, subwaycode) {
-            if (trafficType === 1) {
-                return 'bus';
-            } else if (trafficType === 2) {
-                return `sub${subwaycode}`;
             } else {
-                return 'walk';
+            console.error('MapView.js >> Invalid response data:', resultJsonData);
             }
-        },
-
-        getAction(subPath, startName, lane) {
-            if (subPath.trafficType === 1) {
-                return `지하철 ${lane.map(l => l.name).join(', ')} - ${startName}역`;
-            } else if (subPath.trafficType === 2) {
-                return `버스 ${lane.map(l => l.busNo).join(', ')} 번 - ${startName}`;
-            } else {
-                return `도보 - ${startName}`;
-            }
+        } catch (error) {
+            console.error('MapView.js >> Error displaying route:', error);
         }
-    },
-
-    watch: {
-        startPoint(newStartPoint) {
-            this.localStartPoint = newStartPoint;
         },
-        endPoint(newEndPoint) {
-            this.localEndPoint = newEndPoint;
+        formatTime(minutes) {
+        const hours = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        return `${hours}시간 ${mins}분`;
+        },
+        getLineClass(trafficType, subwaycode) {
+        if (trafficType === 1) {
+            return 'bus';
+        } else if (trafficType === 2) {
+            return `sub${subwaycode}`;
+        } else {
+            return 'walk';
+        }
+        },
+        getAction(subPath, startName, lane) {
+        if (subPath.trafficType === 1) {
+            return `지하철 ${lane.map(l => l.name).join(', ')} - ${startName}역`;
+        } else if (subPath.trafficType === 2) {
+            return `버스 ${lane.map(l => l.busNo).join(', ')} 번 - ${startName}`;
+        } else {
+            return `도보 - ${startName}`;
         }
     }
+}
 };
