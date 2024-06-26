@@ -145,10 +145,10 @@ export default {
                 console.log('MapView.js >> Start coordinates:', { sx, sy });
                 console.log('MapView.js >> End coordinates:', { ex, ey });
 
-                const odsasApiUrl = `https://api.odsay.com/v1/api/searchPubTransPathT?SX=${sx}&SY=${sy}&EX=${ex}&EY=${ey}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
+                const odsasApiUrl = `searchPubTransPathT?SX=${sx}&SY=${sy}&EX=${ex}&EY=${ey}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
                 console.log('MapView.js >> ODSAY API request URL:', odsasApiUrl);
 
-                const routeResponse = await axios.get(odsasApiUrl);
+                const routeResponse = await this.$odsayAxios.get(odsasApiUrl);
                 console.log('MapView.js >> ODSAY API response:', routeResponse.data);
 
                 if (routeResponse.data && routeResponse.data.result && routeResponse.data.result.path) {
@@ -174,38 +174,38 @@ export default {
                     });
                     console.log('MapView.js >> Emitting route-found event with routes:', this.routes);
                     EventBus.emit('route-found', this.routes);
-                } else {
-                    console.error('MapView.js >> No valid route found');
+                    } else {
+                        console.error('MapView.js >> No valid route found');
+                    }
+                } catch (error) {
+                    console.error('MapView.js >> Error finding route:', error);
                 }
-            } catch (error) {
-                console.error('MapView.js >> Error finding route:', error);
-            }
-        },
+            },          
         async handleRouteSelection(route) {
             console.log('handleRouteSelection method called in MapView.js');
-        try {
-            const { mapObj, sx, sy, ex, ey } = route;
-            console.log('MapView.vue >> handleRouteSelection >> mapObj:', mapObj);
-            console.log('MapView.vue >> handleRouteSelection >> sx, sy, ex, ey:', sx, sy, ex, ey);
+            try {
+                const { mapObj, sx, sy, ex, ey } = route;
+                console.log('MapView.vue >> handleRouteSelection >> mapObj:', mapObj);
+                console.log('MapView.vue >> handleRouteSelection >> sx, sy, ex, ey:', sx, sy, ex, ey);
 
-            const odsasApiUrl = `https://api.odsay.com/v1/api/loadLane?mapObject=0:0@${mapObj}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
-            console.log('MapView.vue >> ODSAY loadLane API request URL:', odsasApiUrl);
+                const odsasApiUrl = `https://api.odsay.com/v1/api/loadLane?mapObject=0:0@${mapObj}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
+                console.log('MapView.vue >> ODSAY loadLane API request URL:', odsasApiUrl);
 
-            const routeResponse = await this.$odsayAxios.get(odsasApiUrl);
-            console.log('MapView.js >> ODSAY loadLane API response:', routeResponse.data);
+                const routeResponse = await this.$odsayAxios.get(odsasApiUrl);
+                console.log('MapView.js >> ODSAY loadLane API response:', routeResponse.data);
 
-            this.clearPolylines();
+                this.clearPolylines();
 
-            this.drawNaverMarker(sx, sy);
-            this.drawNaverMarker(ex, ey);
-            this.drawNaverPolyLine(routeResponse.data);
+                this.drawNaverMarker(sx, sy);
+                this.drawNaverMarker(ex, ey);
+                this.drawNaverPolyLine(routeResponse.data);
 
-            if (routeResponse.data.result.boundary) {
-                const boundary = new naver.maps.LatLngBounds(
-                    new naver.maps.LatLng(routeResponse.data.result.boundary.top, routeResponse.data.result.boundary.left),
-                    new naver.maps.LatLng(routeResponse.data.result.boundary.bottom, routeResponse.data.result.boundary.right)
-                );
-                this.map.panToBounds(boundary);
+                if (routeResponse.data.result.boundary) {
+                    const boundary = new naver.maps.LatLngBounds(
+                        new naver.maps.LatLng(routeResponse.data.result.boundary.top, routeResponse.data.result.boundary.left),
+                        new naver.maps.LatLng(routeResponse.data.result.boundary.bottom, routeResponse.data.result.boundary.right)
+                    );
+                    this.map.panToBounds(boundary);
                 }
             } catch (error) {
                 console.error('MapView.vue >> handleRouteSelection >> Error:', error);
@@ -236,79 +236,79 @@ export default {
             let lineArray;
             for (let i = 0; i < data.result.lane.length; i++) {
                 for (let j = 0; j < data.result.lane[i].section.length; j++) {
-                lineArray = [];
-                for (let k = 0; k < data.result.lane[i].section[j].graphPos.length; k++) {
-                    lineArray.push(new naver.maps.LatLng(data.result.lane[i].section[j].graphPos[k].y, data.result.lane[i].section[j].graphPos[k].x));
-                }
-                let lineColor = '#000';
+                    lineArray = [];
+                    for (let k = 0; k < data.result.lane[i].section[j].graphPos.length; k++) {
+                        lineArray.push(new naver.maps.LatLng(data.result.lane[i].section[j].graphPos[k].y, data.result.lane[i].section[j].graphPos[k].x));
+                    }
+                    let lineColor = '#000';
 
-                const laneClass = data.result.lane[i].class;
-                const laneType = data.result.lane[i].type;
+                    const laneClass = data.result.lane[i].class;
+                    const laneType = data.result.lane[i].type;
 
-                if (laneClass === 1) {
-                    lineColor = busLineColors[laneType];
-                } else if (laneClass === 2) {
-                    lineColor = subwayLineColors[laneType] || lineColor;
-                } else if (laneClass === 3) {
-                    lineColor = '#EEEEEE';
-                }
+                    if (laneClass === 1) {
+                        lineColor = busLineColors[laneType];
+                    } else if (laneClass === 2) {
+                        lineColor = subwayLineColors[laneType] || lineColor;
+                    } else if (laneClass === 3) {
+                        lineColor = '#EEEEEE';
+                    }
 
-                const polyline = new naver.maps.Polyline({
-                    map: this.map,
-                    path: lineArray,
-                    strokeWeight: 5,
-                    strokeColor: lineColor
-                });
-                this.polylines.push(polyline);
+                    const polyline = new naver.maps.Polyline({
+                        map: this.map,
+                        path: lineArray,
+                        strokeWeight: 5,
+                        strokeColor: lineColor
+                    });
+                    this.polylines.push(polyline);
                 }
             }
         },
         displayRouteOnMap(data) {
-        try {
-            console.log('MapView.js >> Displaying route on map with data:', data);
+            try {
+                console.log('MapView.js >> Displaying route on map with data:', data);
 
-            const resultJsonData = data.result;
-            if (resultJsonData) {
-            this.drawNaverMarker(data.sx, data.sy);
-            this.drawNaverMarker(data.ex, data.ey);
-            this.drawNaverPolyLine(resultJsonData);
+                const resultJsonData = data.result;
+                if (resultJsonData) {
+                this.drawNaverMarker(data.sx, data.sy);
+                this.drawNaverMarker(data.ex, data.ey);
+                this.drawNaverPolyLine(resultJsonData);
 
-            if (resultJsonData.result.boundary) {
-                const boundary = new naver.maps.LatLngBounds(
-                new naver.maps.LatLng(resultJsonData.result.boundary.top, resultJsonData.result.boundary.left),
-                new naver.maps.LatLng(resultJsonData.result.boundary.bottom, resultJsonData.result.boundary.right)
-                );
-                this.map.panToBounds(boundary);
+                if (resultJsonData.result.boundary) {
+                    const boundary = new naver.maps.LatLngBounds(
+                    new naver.maps.LatLng(resultJsonData.result.boundary.top, resultJsonData.result.boundary.left),
+                    new naver.maps.LatLng(resultJsonData.result.boundary.bottom, resultJsonData.result.boundary.right)
+                    );
+                    this.map.panToBounds(boundary);
+                }
+                } else {
+                console.error('MapView.js >> Invalid response data:', resultJsonData);
+                }
+            } catch (error) {
+                console.error('MapView.js >> Error displaying route:', error);
             }
-            } else {
-            console.error('MapView.js >> Invalid response data:', resultJsonData);
-            }
-        } catch (error) {
-            console.error('MapView.js >> Error displaying route:', error);
-        }
         },
         formatTime(minutes) {
-        const hours = Math.floor(minutes / 60);
-        const mins = minutes % 60;
-        return `${hours}시간 ${mins}분`;
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            return `${hours}시간 ${mins}분`;
         },
         getLineClass(trafficType, subwaycode) {
-        if (trafficType === 1) {
-            return 'bus';
-        } else if (trafficType === 2) {
-            return `sub${subwaycode}`;
-        } else {
-            return 'walk';
-        }
+            if (trafficType === 1) {
+                return 'bus';
+            } else if (trafficType === 2) {
+                return `sub${subwaycode}`;
+            } else {
+                return 'walk';
+            }
         },
         getAction(subPath, startName, lane) {
-        if (subPath.trafficType === 1) {
-            return `지하철 ${lane.map(l => l.name).join(', ')} - ${startName}역`;
-        } else if (subPath.trafficType === 2) {
-            return `버스 ${lane.map(l => l.busNo).join(', ')} 번 - ${startName}`;
-        } else {
-            return `도보 - ${startName}`;
+            if (subPath.trafficType === 1) {
+                return `지하철 ${lane.map(l => l.name).join(', ')} - ${startName}역`;
+            } else if (subPath.trafficType === 2) {
+                return `버스 ${lane.map(l => l.busNo).join(', ')} 번 - ${startName}`;
+            } else {
+                return `도보 - ${startName}`;
+            }
         }
     }
-}
 };
