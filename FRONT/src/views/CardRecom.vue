@@ -2,7 +2,7 @@
     <div class="map-view">
         <div class="controls-results-chart-container">
             <div id="controls">
-                <div class="control-item">
+                <!-- <div class="control-item">
                     <label for="startAddress">출발지</label>
                     <input type="text" id="startAddress" v-model="localStartPoint">
                 </div>
@@ -60,9 +60,9 @@
                             </li>
                         </ul>
                     </div>
-                </div>
+                </div> -->
                 <div id="chat">
-                    <img :src="odsayLogo" alt="ODsay Logo" class="odsay-logo"/> <!-- Add the logo here -->
+                    <!-- <img :src="odsayLogo" alt="ODsay Logo" class="odsay-logo"/> Add the logo here -->
                     <ChatBot :selectedPayment="selectedPayment" />
                 </div>
             </div>
