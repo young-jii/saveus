@@ -125,31 +125,32 @@ export default {
         async findRoute() {
             try {
                 console.log('MapView.js >> Finding route with start point:', this.localStartPoint, 'and end point:', this.localEndPoint);
-
+        
                 if (!this.localStartPoint || !this.localEndPoint) {
                     throw new Error('Start point or end point is missing');
                 }
-
+        
                 const startResponse = await this.geocode(this.localStartPoint);
                 console.log('MapView.js >> Start geocode response:', startResponse);
                 const endResponse = await this.geocode(this.localEndPoint);
                 console.log('MapView.js >> End geocode response:', endResponse);
-
+        
                 if (!startResponse || !endResponse) {
                     throw new Error('Failed to get coordinates');
                 }
-
+        
                 const { x: sx, y: sy } = startResponse;
                 const { x: ex, y: ey } = endResponse;
-
+        
                 console.log('MapView.js >> Start coordinates:', { sx, sy });
                 console.log('MapView.js >> End coordinates:', { ex, ey });
-
-                const odsasApiUrl = `searchPubTransPathT?SX=${sx}&SY=${sy}&EX=${ex}&EY=${ey}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
-                console.log('MapView.js >> ODSAY API request URL:', odsasApiUrl);
-
-                const routeResponse = await this.$odsayAxios.get(odsasApiUrl);
+        
+                const odsayApiUrl = `https://api.odsay.com/v1/api/searchPubTransPathT?SX=${sx}&SY=${sy}&EX=${ex}&EY=${ey}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
+                console.log('MapView.js >> ODSAY API request URL:', odsayApiUrl);
+        
+                const routeResponse = await axios.get(odsayApiUrl);
                 console.log('MapView.js >> ODSAY API response:', routeResponse.data);
+        
 
                 if (routeResponse.data && routeResponse.data.result && routeResponse.data.result.path) {
                     this.routes = routeResponse.data.result.path.map((path) => {
