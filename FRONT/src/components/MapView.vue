@@ -68,12 +68,12 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useStore } from 'vuex';
 import { EventBus } from '../../eventBus.js';
-import CustomAlert from '../components/CustomAlert.vue';
+// import CustomAlert from '../components/CustomAlert.vue';
 import MapView from '../assets/js/MapView.js';
 
 export default {
     components: {
-        CustomAlert
+        // CustomAlert
     },
     props: {
         memHome: String,
@@ -108,7 +108,7 @@ export default {
         onMounted(async () => {
             MapView.methods.initializeMap.call({ map: map.value });
             await findRoute();
-            alert.value = MapView.methods.$refs.CustomAlert;
+            // alert.value = MapView.methods.$refs.CustomAlert;
             EventBus.on('route-selected', MapView.methods.handleRouteSelection);
         });
 
