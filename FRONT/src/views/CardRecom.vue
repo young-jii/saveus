@@ -3,7 +3,7 @@
         <div class="controls-results-chart-container">
             <!-- 결과 및 경로 선택을 위한 컨테이너 -->
             <div id="chat">
-                <ChatBot :selectedPayment="selectedPayment" />
+                <ChatBot :selectedPayment="localSelectedPayment" />
             </div>
         </div>
         <div id="cardsList">
@@ -61,7 +61,7 @@ export default {
             young: props.memYoungY ? 'Y' : 'N',
             subsidiary: props.memSubsidiaryYn ? 'Y' : 'N'
         });
-        const selectedPayment = ref(props.selectedPayment); // selectedPayment의 초기값을 props.selectedPayment로 설정
+        const localSelectedPayment = ref(props.selectedPayment); // props.selectedPayment를 localSelectedPayment로 변경
         const selectedCardId = ref(null);
         const isModalOpen = ref(false);
 
@@ -94,7 +94,7 @@ export default {
 
         const sendParameters = async () => {
             const params = {
-                payment: selectedPayment.value,
+                payment: localSelectedPayment.value,
                 home: formData.home,
                 start_point: formData.start_point,
                 end_point: formData.end_point,
@@ -119,7 +119,7 @@ export default {
             formData.end_point = newVal;
         });
 
-        watch(selectedPayment, (newVal) => {
+        watch(localSelectedPayment, (newVal) => {
             if (newVal) {
                 sendParameters();
             }
@@ -131,7 +131,7 @@ export default {
 
         return {
             formData,
-            selectedPayment,
+            localSelectedPayment,
             selectedCardId,
             isModalOpen,
             updateFormData,
