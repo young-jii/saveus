@@ -96,11 +96,11 @@ ASGI_APPLICATION = 'saveus.asgi.application'
 
 CORS_ALLOWED_ORIGINS = [
     "https://young-jii.github.io",
+    "https://jiyoung.pythonanywhere.com"
     "http://localhost:8080",
     "http://127.0.0.1:8080",
     "https://3.35.141.132",
     "https://ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com",
-    "https://jiyoung.pythonanywhere.com"
 ]
 
 CORS_ALLOW_CREDENTIALS = True   # 자격 증명을 포함한 요청 허용
@@ -114,12 +114,12 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 
 # CSRF 설정
 CSRF_TRUSTED_ORIGINS = [
+    "https://young-jii.github.io",
+    "https://jiyoung.pythonanywhere.com"
     'http://localhost:8080',
     "http://127.0.0.1:8080",
-    "https://young-jii.github.io",
     "https://3.35.141.132",
     "https://ec2-3-35-141-132.ap-northeast-2.compute.amazonaws.com",
-    "https://jiyoung.pythonanywhere.com"
 ]
 
 CSRF_COOKIE_HTTPONLY = False
