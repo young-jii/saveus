@@ -68,7 +68,7 @@
 </template>
 
 <script>
-import MapView from '../assets/js/MapView';
+import MapView from '../assets/js/MapView.js';
 import odsayLogo from '../assets/img/ODsay_bi_mark.png'
 
 export default {
