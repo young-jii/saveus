@@ -151,7 +151,7 @@ export default {
                 console.log('MapView.js >> End coordinates:', { ex, ey });
                 
                 // ODSAY API를 통해 경로 찾기 요청
-                const odsasApiUrl = `searchPubTransPathT?SX=${sx}&SY=${sy}&EX=${ex}&EY=${ey}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
+                const odsasApiUrl = `https://api.odsay.com/v1/api/searchPubTransPathT?SX=${sx}&SY=${sy}&EX=${ex}&EY=${ey}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
                 console.log('MapView.js >> ODSAY API request URL:', odsasApiUrl); // 요청 URL을 로그에 출력
                 
                 const routeResponse = await this.$odsayAxios.get(odsasApiUrl);
