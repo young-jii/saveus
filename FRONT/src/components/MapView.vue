@@ -84,7 +84,6 @@ export default {
         memSubsidiaryYn: Boolean
     },
     setup(props) {
-        const store = useStore();
         const localStartPoint = ref(props.startPoint);
         const localEndPoint = ref(props.endPoint);
         const routes = ref([]);
@@ -98,8 +97,8 @@ export default {
                 localStartPoint: localStartPoint.value, 
                 localEndPoint: localEndPoint.value,
                 routes: routes.value
-        });
-        alert.value = MapView.methods.$refs.customAlert;
+            });
+            alert.value = MapView.methods.$refs.customAlert;
             EventBus.on('route-selected', MapView.methods.handleRouteSelection);
         });
 
@@ -120,4 +119,4 @@ export default {
 };
 </script>
 
-<style scoped src="./MapView.css"></style>
+<style scoped src="../assets/css/MapView.css"></style>

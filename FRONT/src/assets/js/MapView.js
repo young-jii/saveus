@@ -115,14 +115,14 @@ export default {
                 const response = await axiosInstance.get('/odsay/geocode/', { params: { address } });
                 console.log('MapView.js >> Geocode response:', response.data);
                 return response.data;
-            } catch (error) {
-                console.error('MapView.js >> Error geocoding address:', error);
-                if (error.response) {
-                console.error('MapView.js >> Error response data:', error.response.data);
+                } catch (error) {
+                    console.error('MapView.js >> Error geocoding address:', error);
+                    if (error.response) {
+                    console.error('MapView.js >> Error response data:', error.response.data);
+                    }
+                    this.showAlert('주소를 도로명 주소로 정확히 다시 입력하세요.');
+                    throw error;
                 }
-                this.showAlert('주소를 도로명 주소로 정확히 다시 입력하세요.');
-                throw error;
-            }
             },
             async findRoute() {
             try {
@@ -138,7 +138,7 @@ export default {
                 console.log('MapView.js >> End geocode response:', endResponse);
 
                 if (!startResponse || !endResponse) {
-                throw new Error('Failed to get coordinates');
+                    throw new Error('Failed to get coordinates');
                 }
 
                 const { x: sx, y: sy } = startResponse;
@@ -184,7 +184,7 @@ export default {
             }
         },
         async handleRouteSelection(route) {
-        console.log('handleRouteSelection method called in MapView.js');
+            console.log('handleRouteSelection method called in MapView.js');
         try {
             const { mapObj, sx, sy, ex, ey } = route;
             console.log('MapView.vue >> handleRouteSelection >> mapObj:', mapObj);
@@ -208,8 +208,8 @@ export default {
                     new naver.maps.LatLng(routeResponse.data.result.boundary.bottom, routeResponse.data.result.boundary.right)
                 );
                 this.map.panToBounds(boundary);
-            }
-        } catch (error) {
+                }
+            } catch (error) {
                 console.error('MapView.vue >> handleRouteSelection >> Error:', error);
             }
         },
@@ -220,8 +220,8 @@ export default {
         initializeMap() {
             if (window.naver) {
                 var mapOptions = {
-                center: new naver.maps.LatLng(37.5665, 126.9780),
-                zoom: 10
+                    center: new naver.maps.LatLng(37.5665, 126.9780),
+                    zoom: 10
                 };
                 this.map = new naver.maps.Map('map', mapOptions);
             } else {
