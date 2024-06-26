@@ -100,6 +100,8 @@ const busLineColors = {
     36: '#993797'
 };
 
+export { axiosInstance };  // Add this line to export axiosInstance
+
 export default {
     methods: {
         showAlert(message) {
