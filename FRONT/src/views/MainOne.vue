@@ -119,6 +119,7 @@ import mainOne from '../assets/js/MainOne.js';
 import { redirectToSignup as originalRedirectToSignup } from '../assets/js/login.js';
 import MapView from '../components/MapView.vue';
 import CardRecom from './CardRecom.vue';  // Make sure to import CardRecom
+import { eventBus } from '../../eventBus.js'; // eventBus를 import
 
 export default {
     mixins: [mainOne],
@@ -145,7 +146,7 @@ export default {
             };
             originalRedirectToSignup.call(this, queryParams);
         },
-        onRouteSelected(payment) {
+        onRouteSelected(route) {
             this.selectedPayment = route.payment;
         },
         redirectToCardRecom() {
