@@ -84,9 +84,15 @@ export default defineComponent({
         return {
             localStartPoint: this.startPoint,
             localEndPoint: this.endPoint,
-            routes: [],
             odsayLogo,
         };
+    },
+    computed: {
+        routes() {
+            const store = useStore();
+            console.log("mapview.vue >> ", store.state.routes)
+            return store.state.routes; // Vuex state에서 routes 가져오기
+        }
     },
     methods: {
         getTrafficClass(subPath, isBar = false) {
@@ -112,12 +118,6 @@ export default defineComponent({
             // 이벤트 버스를 통해 다른 컴포넌트로 이벤트 발송
             EventBus.emit('route-selected', route);
         },
-        async initializeMap() {
-            // 지도 초기화 로직
-        },
-    },
-    async mounted() {
-        this.initializeMap();
     },
 });
 </script>

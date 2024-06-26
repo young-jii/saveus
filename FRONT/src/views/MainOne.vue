@@ -135,12 +135,14 @@ export default {
     },
     methods: {
         handleSubmit() {
+            console.log("제출하기 버튼 클릭")
             // Form 제출 시 처리
             this.findRoute();
         },
         findRoute() {
             // 최적 경로 탐색 코드
             this.showMapView = true; // MapView 표시
+            console.log("제출하기 버튼 클릭 완료")
         },
         onRouteSelected(route) {
             // 경로 선택 시 처리
