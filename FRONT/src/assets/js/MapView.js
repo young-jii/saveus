@@ -131,7 +131,8 @@ export default {
                 if (!this.localStartPoint || !this.localEndPoint) {
                     throw new Error('Start point or end point is missing');
                 }
-
+        
+                // Geocoding addresses to coordinates
                 const startResponse = await this.geocode(this.localStartPoint);
                 console.log('MapView.js >> Start geocode response:', startResponse);
                 const endResponse = await this.geocode(this.localEndPoint);
@@ -140,7 +141,7 @@ export default {
                 if (!startResponse || !endResponse) {
                     throw new Error('Failed to get coordinates');
                 }
-
+        
                 const sx = startResponse.x;
                 const sy = startResponse.y;
                 const ex = endResponse.x;
@@ -149,23 +150,13 @@ export default {
                 console.log('MapView.js >> Start coordinates:', { sx, sy });
                 console.log('MapView.js >> End coordinates:', { ex, ey });
                 
-                // ODSAY API를 통해 경로 찾기 요청
-                const odsayApiUrl = `${process.env.VUE_APP_API_BASE_URL}/searchPubTransPathT`;
+                // Directly call ODsay API
+                const odsayApiUrl = `https://api.odsay.com/v1/api/searchPubTransPathT?SX=${sx}&SY=${sy}&EX=${ex}&EY=${ey}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
                 console.log('MapView.js >> ODSAY API request URL:', odsayApiUrl);
                 
-                const routeResponse = await axios.get(odsayApiUrl, {
-                    params: {
-                        SX: sx,
-                        SY: sy,
-                        EX: ex,
-                        EY: ey,
-                        apiKey: encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)
-                    }
-                });
+                const routeResponse = await axios.get(odsayApiUrl);
                 console.log('MapView.js >> ODSAY API response:', routeResponse.data);
-    
         
-
                 if (routeResponse.data && routeResponse.data.result && routeResponse.data.result.path) {
                     this.routes = routeResponse.data.result.path.map((path) => {
                         return {
@@ -196,40 +187,37 @@ export default {
                 console.error('MapView.js >> Error finding route:', error);
             }
         },
-        async handleRouteSelection(route) {
-            console.log('handleRouteSelection method called in MapView.js');
+        
+        async handleRouteClick(route) {
             try {
                 const { mapObj, sx, sy, ex, ey } = route;
-                console.log('MapView.vue >> handleRouteSelection >> mapObj:', mapObj);
-                console.log('MapView.vue >> handleRouteSelection >> sx, sy, ex, ey:', sx, sy, ex, ey);
-
-                const odsayApiUrl = `${process.env.VUE_APP_API_BASE_URL}/searchPubTransPathT`;
-                const response = await axios.get(odsayApiUrl, {
-                    params: {
-                        mapObject: `0:0@${mapObj}`,
-                        apiKey: encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)
-                    }
-                });
+                console.log('MapView.vue >> handleRouteClick >> mapObj:', mapObj);
+                console.log('MapView.vue >> handleRouteClick >> sx, sy, ex, ey:', sx, sy, ex, ey);
         
-                console.log('MapView.js >> ODSAY loadLane API response:', response.data);
+                const odsayApiUrl = `https://api.odsay.com/v1/api/loadLane?mapObject=0:0@${mapObj}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
+                console.log('MapView.vue >> ODSAY loadLane API request URL:', odsayApiUrl);
         
+                const routeResponse = await axios.get(odsayApiUrl);
+                console.log('MapView.js >> ODSAY loadLane API response:', routeResponse.data);
+                
                 this.clearPolylines();
-
+        
                 this.drawNaverMarker(sx, sy);
                 this.drawNaverMarker(ex, ey);
-                this.drawNaverPolyLine(response.data);
-
-                if (response.data.result.boundary) {
+                this.drawNaverPolyLine(routeResponse.data);
+        
+                if (routeResponse.data.result.boundary) {
                     const boundary = new naver.maps.LatLngBounds(
-                        new naver.maps.LatLng(response.data.result.boundary.top, response.data.result.boundary.left),
-                        new naver.maps.LatLng(response.data.result.boundary.bottom, response.data.result.boundary.right)
+                        new naver.maps.LatLng(routeResponse.data.result.boundary.top, routeResponse.data.result.boundary.left),
+                        new naver.maps.LatLng(routeResponse.data.result.boundary.bottom, routeResponse.data.result.boundary.right)
                     );
                     this.map.panToBounds(boundary);
                 }
             } catch (error) {
-                console.error('MapView.vue >> handleRouteSelection >> Error:', error);
+                console.error('MapView.vue >> handleRouteClick >> Error:', error);
             }
         },
+        
         clearPolylines() {
             this.polylines.forEach(polyline => polyline.setMap(null));
             this.polylines = [];
