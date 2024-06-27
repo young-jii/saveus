@@ -23,7 +23,9 @@ jobs:
           npm ci
 
       - name: Build
-        run: npm run build
+        run: |
+          cd FRONT
+          npm run build
         env:
           VUE_APP_API_BASE_URL: ${{ secrets.VUE_APP_API_BASE_URL }}
           VUE_APP_ODSAY_API_KEY: ${{ secrets.VUE_APP_ODSAY_API_KEY }}
