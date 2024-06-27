@@ -154,7 +154,7 @@ export default {
                 const odsayApiUrl = `https://api.odsay.com/v1/api/searchPubTransPathT?SX=${sx}&SY=${sy}&EX=${ex}&EY=${ey}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
                 console.log('MapView.js >> ODSAY API request URL:', odsayApiUrl);
                 
-                const routeResponse = await axios.get(odsayApiUrl);
+                const routeResponse = await axios.get(odsayApiUrl, {withCredentials: false});
                 console.log('MapView.js >> ODSAY API response:', routeResponse.data);
         
                 if (routeResponse.data && routeResponse.data.result && routeResponse.data.result.path) {
@@ -187,7 +187,7 @@ export default {
                 console.error('MapView.js >> Error finding route:', error);
             }
         },
-        
+
         async handleRouteClick(route) {
             try {
                 const { mapObj, sx, sy, ex, ey } = route;
