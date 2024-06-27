@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { EventBus } from '../../../eventBus';  // 이벤트 버스 불러오기
 
-const apiBaseUrl = process.env.VUE_APP_API_BASE_URL || 'https://jiyoung.pythonanywhere.com';
+const apiBaseUrl = import.meta.env.VUE_APP_API_BASE_URL || 'https://jiyoung.pythonanywhere.com';
 
 // CSRF 토큰을 가져와 Axios 인스턴스에 추가
 const getCsrfToken = async () => {
