@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { EventBus } from '../../../eventBus';  // 이벤트 버스 불러오기
 
-const apiBaseUrl = import.meta.env.VUE_APP_API_BASE_URL || 'https://jiyoung.pythonanywhere.com';
+const apiBaseUrl = process.env.VUE_APP_API_BASE_URL || 'https://jiyoung.pythonanywhere.com';
 
 // CSRF 토큰을 가져와 Axios 인스턴스에 추가
 const getCsrfToken = async () => {
@@ -123,8 +123,8 @@ export default {
             }
         },
         async findRoute() {
-            console.log('VUE_APP_API_BASE_URL:', import.meta.env.VUE_APP_API_BASE_URL);
-            console.log('VUE_APP_ODSAY_API_KEY:', import.meta.env.VUE_APP_ODSAY_API_KEY);
+            console.log('VUE_APP_API_BASE_URL:', process.env.VUE_APP_API_BASE_URL);
+            console.log('VUE_APP_ODSAY_API_KEY:', process.env.VUE_APP_ODSAY_API_KEY);
             try {
                 console.log('MapView.js >> Finding route with start point:', this.localStartPoint, 'and end point:', this.localEndPoint);
                 
@@ -150,7 +150,7 @@ export default {
                 console.log('MapView.js >> End coordinates:', { ex, ey });
                 
                 // ODSAY API를 통해 경로 찾기 요청
-                const odsayApiUrl = `${import.meta.env.VUE_APP_API_BASE_URL}/searchPubTransPathT`;
+                const odsayApiUrl = `${process.env.VUE_APP_API_BASE_URL}/searchPubTransPathT`;
                 console.log('MapView.js >> ODSAY API request URL:', odsayApiUrl);
                 
                 const routeResponse = await axios.get(odsayApiUrl, {
@@ -159,10 +159,11 @@ export default {
                         SY: sy,
                         EX: ex,
                         EY: ey,
-                        apiKey: encodeURIComponent(import.meta.env.VUE_APP_ODSAY_API_KEY)
+                        apiKey: encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)
                     }
                 });
                 console.log('MapView.js >> ODSAY API response:', routeResponse.data);
+    
         
 
                 if (routeResponse.data && routeResponse.data.result && routeResponse.data.result.path) {
@@ -202,11 +203,11 @@ export default {
                 console.log('MapView.vue >> handleRouteSelection >> mapObj:', mapObj);
                 console.log('MapView.vue >> handleRouteSelection >> sx, sy, ex, ey:', sx, sy, ex, ey);
 
-                const odsayApiUrl = `${import.meta.env.VUE_APP_API_BASE_URL}/searchPubTransPathT`;
+                const odsayApiUrl = `${process.env.VUE_APP_API_BASE_URL}/searchPubTransPathT`;
                 const response = await axios.get(odsayApiUrl, {
                     params: {
                         mapObject: `0:0@${mapObj}`,
-                        apiKey: encodeURIComponent(import.meta.env.VUE_APP_ODSAY_API_KEY)
+                        apiKey: encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)
                     }
                 });
         
