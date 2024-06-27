@@ -123,6 +123,8 @@ export default {
             }
         },
         async findRoute() {
+            console.log('VUE_APP_API_BASE_URL:', import.meta.env.VUE_APP_API_BASE_URL);
+            console.log('VUE_APP_ODSAY_API_KEY:', import.meta.env.VUE_APP_ODSAY_API_KEY);
             try {
                 console.log('MapView.js >> Finding route with start point:', this.localStartPoint, 'and end point:', this.localEndPoint);
                 
@@ -148,7 +150,7 @@ export default {
                 console.log('MapView.js >> End coordinates:', { ex, ey });
                 
                 // ODSAY API를 통해 경로 찾기 요청
-                const odsayApiUrl = `${process.env.VUE_APP_API_BASE_URL}/searchPubTransPathT`;
+                const odsayApiUrl = `${import.meta.env.VUE_APP_API_BASE_URL}/searchPubTransPathT`;
                 console.log('MapView.js >> ODSAY API request URL:', odsayApiUrl);
                 
                 const routeResponse = await axios.get(odsayApiUrl, {
@@ -157,7 +159,7 @@ export default {
                         SY: sy,
                         EX: ex,
                         EY: ey,
-                        apiKey: process.env.VUE_APP_ODSAY_API_KEY
+                        apiKey: encodeURIComponent(import.meta.env.VUE_APP_ODSAY_API_KEY)
                     }
                 });
                 console.log('MapView.js >> ODSAY API response:', routeResponse.data);
@@ -200,11 +202,11 @@ export default {
                 console.log('MapView.vue >> handleRouteSelection >> mapObj:', mapObj);
                 console.log('MapView.vue >> handleRouteSelection >> sx, sy, ex, ey:', sx, sy, ex, ey);
 
-                const odsayApiUrl = `${process.env.VUE_APP_API_BASE_URL}/searchPubTransPathT`;
+                const odsayApiUrl = `${import.meta.env.VUE_APP_API_BASE_URL}/searchPubTransPathT`;
                 const response = await axios.get(odsayApiUrl, {
                     params: {
                         mapObject: `0:0@${mapObj}`,
-                        apiKey: process.env.VUE_APP_ODSAY_API_KEY
+                        apiKey: encodeURIComponent(import.meta.env.VUE_APP_ODSAY_API_KEY)
                     }
                 });
         
