@@ -195,7 +195,8 @@ export default {
                     baseURL: 'https://api.odsay.com/v1/api',
                     params: {
                         apiKey: process.env.VUE_APP_ODSAY_API_KEY
-                    }
+                    },
+                    withCredentials: false  // Add this line
                 });
 
                 const routeResponse = await odsayApi.get('/searchPubTransPathT', {
@@ -261,7 +262,8 @@ export default {
                     baseURL: 'https://api.odsay.com/v1/api',
                     params: {
                         apiKey: process.env.VUE_APP_ODSAY_API_KEY
-                    }
+                    },
+                    withCredentials: false  // Add this line
                 });
 
                 const routeResponse = await odsayApi.get('/loadLane', {
