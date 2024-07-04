@@ -3,15 +3,18 @@ import { EventBus } from '../../../eventBus';  // 이벤트 버스 불러오기
 
 const apiBaseUrl = process.env.VUE_APP_API_BASE_URL || 'https://jiyoung.pythonanywhere.com';
 
-// CSRF 토큰을 가져와 Axios 인스턴스에 추가
+let csrfToken = null;
+
 const getCsrfToken = async () => {
+    if (csrfToken) return csrfToken;
     try {
         const response = await axios.get(`${apiBaseUrl}/api/set-csrf-token/`, { withCredentials: true });
-        console.log('MapView.js >> CSRF token received:', response.data);
-        return response.data.csrfToken;
+        csrfToken = response.data.csrfToken;
+        console.log('MapView.js >> CSRF token received:', csrfToken);
+        return csrfToken;
     } catch (error) {
         console.error('MapView.js >> Error fetching CSRF token:', error);
-        throw error;  // 에러 발생 시 throw로 전달
+        throw error;
     }
 };
 
@@ -21,17 +24,38 @@ const axiosInstance = axios.create({
     withCredentials: true  // 자격 증명 포함
 });
 
-axiosInstance.interceptors.request.use(async (config) => {
-    try {
-        const token = await getCsrfToken();
-        config.headers['X-CSRFToken'] = token;
-        console.log('MapView.js >> CSRF token set in request headers:', token);
-        return config;
-    } catch (error) {
-        console.error('MapView.js >> Failed to set CSRF token in request headers:', error);
-        return Promise.reject(error);  // 에러 발생 시 요청 중단
+axiosInstance.interceptors.request.use(
+    async (config) => {
+        try {
+            const token = await getCsrfToken();
+            config.headers['X-CSRFToken'] = token;
+            console.log('MapView.js >> CSRF token set in request headers:', token);
+            return config;
+        } catch (error) {
+            console.error('MapView.js >> Failed to set CSRF token in request headers:', error);
+            return Promise.reject(error);
+        }
+    },
+    (error) => {
+        console.error('MapView.js >> Request interceptor error:', error);
+        return Promise.reject(error);
     }
-});
+);
+
+axiosInstance.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+        if (error.response && error.response.status === 403 && error.response.data.code === 'csrf_token_missing') {
+            // CSRF 토큰 오류 시 토큰을 새로 가져오고 요청 재시도
+            csrfToken = null; // 캐시된 토큰 초기화
+            const originalRequest = error.config;
+            const token = await getCsrfToken();
+            originalRequest.headers['X-CSRFToken'] = token;
+            return axiosInstance(originalRequest);
+        }
+        return Promise.reject(error);
+    }
+);
 
 // 지하철 노선 색상 매핑 객체
 const subwayLineColors = {
