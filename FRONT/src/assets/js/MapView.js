@@ -136,16 +136,29 @@ export default {
         async geocode(address) {
             try {
                 console.log('MapView.js >> Geocoding address:', address);
-                const response = await api.get('/odsay/geocode/', { params: { address } });
+                const response = await api.get('/odsay/geocode', {
+                    params: { 
+                        address,
+                        apiKey: process.env.VUE_APP_ODSAY_API_KEY
+                    }
+                });
                 console.log('MapView.js >> Geocode response:', response.data);
-                return response.data;
+                
+                if (response.data.result) {
+                    return {
+                        x: response.data.result.x,
+                        y: response.data.result.y
+                    };
+                } else {
+                    throw new Error('No result found');
+                }
             } catch (error) {
                 console.error('MapView.js >> Error geocoding address:', error);
                 if (error.response) {
                     console.error('MapView.js >> Error response data:', error.response.data);
                 }
                 this.showAlert('주소를 도로명 주소로 정확히 다시 입력하세요.');
-                throw error;
+                return null;
             }
         },
         async findRoute() {
