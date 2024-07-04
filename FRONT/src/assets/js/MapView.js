@@ -19,9 +19,12 @@ const getCsrfToken = async () => {
 };
 
 // Axios 인스턴스 생성 및 기본 설정 추가
-const axiosInstance = axios.create({
-    baseURL: apiBaseUrl,
-    withCredentials: true  // 자격 증명 포함
+const api = axios.create({
+    baseURL: 'https://api.odsay.com/v1/api',
+    headers: {
+        'Content-Type': 'application/json',
+        'Origin': 'https://young-jii.github.io'
+    }
 });
 
 axiosInstance.interceptors.request.use(
@@ -175,10 +178,12 @@ export default {
                 console.log('MapView.js >> End coordinates:', { ex, ey });
                 
                 // Directly call ODsay API
-                const odsayApiUrl = `https://api.odsay.com/v1/api/searchPubTransPathT?SX=${sx}&SY=${sy}&EX=${ex}&EY=${ey}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
+                const odsayApiUrl = `/searchPubTransPathT?SX=${sx}&SY=${sy}&EX=${ex}&EY=${ey}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
                 console.log('MapView.js >> ODSAY API request URL:', odsayApiUrl);
                 
-                const routeResponse = await axios.get(odsayApiUrl, {withCredentials: false});
+                const routeResponse = await api.get(odsayApiUrl);
+                console.log('MapView.js >> ODSAY API response:', routeResponse.data);
+
                 console.log('MapView.js >> ODSAY API response:', routeResponse.data);
         
                 if (routeResponse.data && routeResponse.data.result && routeResponse.data.result.path) {
@@ -209,6 +214,15 @@ export default {
                 }
             } catch (error) {
                 console.error('MapView.js >> Error finding route:', error);
+                if (error.response) {
+                    console.error('Error response:', error.response.data);
+                    console.error('Error status:', error.response.status);
+                    console.error('Error headers:', error.response.headers);
+                } else if (error.request) {
+                console.error('Error request:', error.request);
+                } else {
+                console.error('Error message:', error.message);
+                }
             }
         },
 
@@ -217,12 +231,13 @@ export default {
                 const { mapObj, sx, sy, ex, ey } = route;
                 console.log('MapView.vue >> handleRouteClick >> mapObj:', mapObj);
                 console.log('MapView.vue >> handleRouteClick >> sx, sy, ex, ey:', sx, sy, ex, ey);
-        
-                const odsayApiUrl = `https://api.odsay.com/v1/api/loadLane?mapObject=0:0@${mapObj}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
+                    
+                const odsayApiUrl = `/loadLane?mapObject=0:0@${mapObj}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
                 console.log('MapView.vue >> ODSAY loadLane API request URL:', odsayApiUrl);
-        
-                const routeResponse = await axios.get(odsayApiUrl);
+
+                const routeResponse = await api.get(odsayApiUrl);
                 console.log('MapView.js >> ODSAY loadLane API response:', routeResponse.data);
+                
                 
                 this.clearPolylines();
         
