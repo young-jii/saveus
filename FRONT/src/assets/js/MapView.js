@@ -27,7 +27,7 @@ const api = axios.create({
     }
 });
 
-axiosInstance.interceptors.request.use(
+api.interceptors.request.use(
     async (config) => {
         try {
             const token = await getCsrfToken();
@@ -45,7 +45,7 @@ axiosInstance.interceptors.request.use(
     }
 );
 
-axiosInstance.interceptors.response.use(
+api.interceptors.response.use(
     (response) => response,
     async (error) => {
         if (error.response && error.response.status === 403 && error.response.data.code === 'csrf_token_missing') {
@@ -54,7 +54,7 @@ axiosInstance.interceptors.response.use(
             const originalRequest = error.config;
             const token = await getCsrfToken();
             originalRequest.headers['X-CSRFToken'] = token;
-            return axiosInstance(originalRequest);
+            return api(originalRequest);
         }
         return Promise.reject(error);
     }
@@ -127,7 +127,7 @@ const busLineColors = {
     36: '#993797'
 };
 
-export { axiosInstance };  // Add this line to export axiosInstance
+export { api };  // Add this line to export api
 
 export default {
     methods: {
@@ -137,7 +137,7 @@ export default {
         async geocode(address) {
             try {
                 console.log('MapView.js >> Geocoding address:', address);
-                const response = await axiosInstance.get('/odsay/geocode/', { params: { address } });
+                const response = await api.get('/odsay/geocode/', { params: { address } });
                 console.log('MapView.js >> Geocode response:', response.data);
                 return response.data;
             } catch (error) {
