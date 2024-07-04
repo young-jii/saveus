@@ -46,7 +46,12 @@ export default {
 
                 const cookieCsrfToken = getCookie('csrftoken');
                 console.log('IntroPage Retrieved CSRF token from cookie:', cookieCsrfToken);
+               // 쿠키에서 토큰을 가져오지 못했다면 응답 본문의 토큰을 사용
                 this.csrfToken = cookieCsrfToken || csrfToken;
+
+                if (!this.csrfToken) {
+                    throw new Error('CSRF token not found in cookie or response');
+                }
 
                 console.log('IntroPage CSRF 토큰:', this.csrfToken);
                 return this.csrfToken;
