@@ -205,7 +205,8 @@ export default {
                         SY: sy,
                         EX: ex,
                         EY: ey
-                    }
+                    },
+                    withCredentials: false  // Ensure this is set to false
                 });
                 
                 console.log('MapView.js >> ODSAY API response:', routeResponse.data);
@@ -269,7 +270,8 @@ export default {
                 const routeResponse = await odsayApi.get('/loadLane', {
                     params: {
                         mapObject: `0:0@${mapObj}`
-                    }
+                    },
+                    withCredentials: false  // Ensure this is set to false
                 });
 
                 console.log('MapView.js >> ODSAY loadLane API response:', routeResponse.data);
