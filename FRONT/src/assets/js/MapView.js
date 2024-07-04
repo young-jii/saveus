@@ -20,7 +20,7 @@ const getCsrfToken = async () => {
 
 // Axios 인스턴스 생성 및 기본 설정 추가
 const api = axios.create({
-    baseURL: 'https://api.odsay.com/v1/api',
+    baseURL: 'https://jiyoung.pythonanywhere.com',
     headers: {
         'Content-Type': 'application/json',
     }
@@ -129,36 +129,36 @@ const busLineColors = {
 export { api };  // Add this line to export api
 
 export default {
+    props: {
+        memHome: String,
+        startPoint: String,
+        endPoint: String,
+        memYoungY: Boolean,
+        memYoungN: Boolean,
+        memSubsidiaryYn: Boolean
+    },
+    data() {
+        return {
+            localStartPoint: this.startPoint,
+            localEndPoint: this.endPoint,
+            routes: [],
+            map: null,
+            polylines: []  // 폴리라인을 저장할 배열
+        };
+    },
     methods: {
-        // showAlert(message) {
-        //     this.alert.showAlert(message);
-        // },
         async geocode(address) {
             try {
                 console.log('MapView.js >> Geocoding address:', address);
-                const response = await api.get('/odsay/geocode', {
-                    params: { 
-                        address,
-                        apiKey: process.env.VUE_APP_ODSAY_API_KEY
-                    }
-                });
+                const response = await api.get('/odsay/geocode/', { params: { address } });
                 console.log('MapView.js >> Geocode response:', response.data);
-                
-                if (response.data.result) {
-                    return {
-                        x: response.data.result.x,
-                        y: response.data.result.y
-                    };
-                } else {
-                    throw new Error('No result found');
+                return response.data;
+            } catch (error) {
+                console.error('MapView.js >> Error geocoding address:', error);
+                if (error.response) {
+                    console.error('MapView.js >> Error response data:', error.response.data);
                 }
-                } catch (error) {
-                    console.error('MapView.js >> Error geocoding address:', error);
-                    if (error.response) {
-                        console.error('MapView.js >> Error response data:', error.response.data);
-                    }
-                // this.showAlert('주소를 도로명 주소로 정확히 다시 입력하세요.');
-                // return null;
+                throw error;
             }
         },
         async findRoute() {
