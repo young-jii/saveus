@@ -130,16 +130,16 @@ export { api };  // Add this line to export api
 
 export default {
     methods: {
-        showAlert(message) {
-            this.alert.showAlert(message);
-        },
+        // showAlert(message) {
+        //     this.alert.showAlert(message);
+        // },
         async geocode(address) {
             try {
                 console.log('MapView.js >> Geocoding address:', address);
                 const response = await api.get('/odsay/geocode', {
-                    params: { 
-                        address,
-                        apiKey: process.env.VUE_APP_ODSAY_API_KEY
+                    params: { address },
+                    headers: {
+                        'Authorization': `Bearer ${process.env.VUE_APP_ODSAY_API_KEY}`
                     }
                 });
                 console.log('MapView.js >> Geocode response:', response.data);
@@ -157,8 +157,8 @@ export default {
                 if (error.response) {
                     console.error('MapView.js >> Error response data:', error.response.data);
                 }
-                this.showAlert('주소를 도로명 주소로 정확히 다시 입력하세요.');
-                return null;
+                // this.showAlert('주소를 도로명 주소로 정확히 다시 입력하세요.');
+                // return null;
             }
         },
         async findRoute() {
