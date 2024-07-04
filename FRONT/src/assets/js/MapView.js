@@ -23,7 +23,6 @@ const api = axios.create({
     baseURL: 'https://api.odsay.com/v1/api',
     headers: {
         'Content-Type': 'application/json',
-        'Origin': 'https://young-jii.github.io'
     }
 });
 

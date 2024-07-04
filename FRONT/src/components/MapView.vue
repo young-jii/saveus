@@ -68,7 +68,7 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 import { useStore } from 'vuex';
 import { EventBus } from '../../eventBus.js';
-import { axiosInstance } from '../assets/js/MapView.js';  // Import axiosInstance
+import { api } from '../assets/js/MapView.js';  // Import axiosInstance
 // import CustomAlert from '../components/CustomAlert.vue';
 import MapView from '../assets/js/MapView.js';
 import odsayLogo from '../assets/img/ODsay_bi_mark.png';
@@ -101,7 +101,7 @@ export default {
                 localStartPoint: localStartPoint.value,
                 localEndPoint: localEndPoint.value,
                 routes: routes,
-                $odsayAxios: axiosInstance // axiosInstance가 미리 정의되어 있어야 합니다.
+                $odsayAxios: api // axiosInstance가 미리 정의되어 있어야 합니다.
             });
         };
 
@@ -120,7 +120,7 @@ export default {
                 drawNaverMarker: MapView.methods.drawNaverMarker,
                 drawNaverPolyLine: MapView.methods.drawNaverPolyLine,
                 polylines: polylines,
-                $odsayAxios: axiosInstance // axiosInstance가 미리 정의되어 있어야 합니다.
+                $odsayAxios: api // axiosInstance가 미리 정의되어 있어야 합니다.
             }, route);
         };
 
