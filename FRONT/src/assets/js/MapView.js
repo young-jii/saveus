@@ -162,8 +162,8 @@ export default {
             }
         },
         async findRoute() {
-            console.log('VUE_APP_API_BASE_URL:', process.env.VUE_APP_API_BASE_URL);
             console.log('VUE_APP_ODSAY_API_KEY:', process.env.VUE_APP_ODSAY_API_KEY);
+
             try {
                 console.log('MapView.js >> Finding route with start point:', this.localStartPoint, 'and end point:', this.localEndPoint);
                 
@@ -173,8 +173,9 @@ export default {
         
                 // Geocoding addresses to coordinates
                 const startResponse = await this.geocode(this.localStartPoint);
-                console.log('MapView.js >> Start geocode response:', startResponse);
                 const endResponse = await this.geocode(this.localEndPoint);
+
+                console.log('MapView.js >> Start geocode response:', startResponse);
                 console.log('MapView.js >> End geocode response:', endResponse);
                 
                 if (!startResponse || !endResponse) {
@@ -188,16 +189,26 @@ export default {
                 
                 console.log('MapView.js >> Start coordinates:', { sx, sy });
                 console.log('MapView.js >> End coordinates:', { ex, ey });
+
+                // Create a separate Axios instance for ODsay API
+                const odsayApi = axios.create({
+                    baseURL: 'https://api.odsay.com/v1/api',
+                    params: {
+                        apiKey: process.env.VUE_APP_ODSAY_API_KEY
+                    }
+                });
+
+                const routeResponse = await odsayApi.get('/searchPubTransPathT', {
+                    params: {
+                        SX: sx,
+                        SY: sy,
+                        EX: ex,
+                        EY: ey
+                    }
+                });
                 
-                // Directly call ODsay API
-                const odsayApiUrl = `/searchPubTransPathT?SX=${sx}&SY=${sy}&EX=${ex}&EY=${ey}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
-                console.log('MapView.js >> ODSAY API request URL:', odsayApiUrl);
-                
-                const routeResponse = await api.get(odsayApiUrl);
                 console.log('MapView.js >> ODSAY API response:', routeResponse.data);
 
-                console.log('MapView.js >> ODSAY API response:', routeResponse.data);
-        
                 if (routeResponse.data && routeResponse.data.result && routeResponse.data.result.path) {
                     this.routes = routeResponse.data.result.path.map((path) => {
                         return {
@@ -244,10 +255,21 @@ export default {
                 console.log('MapView.vue >> handleRouteClick >> mapObj:', mapObj);
                 console.log('MapView.vue >> handleRouteClick >> sx, sy, ex, ey:', sx, sy, ex, ey);
                     
-                const odsayApiUrl = `/loadLane?mapObject=0:0@${mapObj}&apiKey=${encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY)}`;
-                console.log('MapView.vue >> ODSAY loadLane API request URL:', odsayApiUrl);
+                
+                // Create a separate Axios instance for ODsay API
+                const odsayApi = axios.create({
+                    baseURL: 'https://api.odsay.com/v1/api',
+                    params: {
+                        apiKey: process.env.VUE_APP_ODSAY_API_KEY
+                    }
+                });
 
-                const routeResponse = await api.get(odsayApiUrl);
+                const routeResponse = await odsayApi.get('/loadLane', {
+                    params: {
+                        mapObject: `0:0@${mapObj}`
+                    }
+                });
+
                 console.log('MapView.js >> ODSAY loadLane API response:', routeResponse.data);
                 
                 
@@ -266,6 +288,15 @@ export default {
                 }
             } catch (error) {
                 console.error('MapView.vue >> handleRouteClick >> Error:', error);
+                if (error.response) {
+                    console.error('Error response:', error.response.data);
+                    console.error('Error status:', error.response.status);
+                    console.error('Error headers:', error.response.headers);
+                } else if (error.request) {
+                    console.error('Error request:', error.request);
+                } else {
+                    console.error('Error message:', error.message);
+                }
             }
         },
         
