@@ -20,7 +20,7 @@ const getCsrfToken = async () => {
 
 // Axios 인스턴스 생성 및 기본 설정 추가
 const api = axios.create({
-    baseURL: 'https://jiyoung.pythonanywhere.com',
+    baseURL: apiBaseUrl,
     headers: {
         'Content-Type': 'application/json',
     }
@@ -161,97 +161,16 @@ export default {
                 throw error;
             }
         },
-        // async findRoute() {
-        //     console.log('VUE_APP_ODSAY_API_KEY:', process.env.VUE_APP_ODSAY_API_KEY);
-
-        //     try {
-        //         console.log('MapView.js >> Finding route with start point:', this.localStartPoint, 'and end point:', this.localEndPoint);
-                
-        //         if (!this.localStartPoint || !this.localEndPoint) {
-        //             throw new Error('Start point or end point is missing');
-        //         }
-        
-        //         // Geocoding addresses to coordinates
-        //         const startResponse = await this.geocode(this.localStartPoint);
-        //         const endResponse = await this.geocode(this.localEndPoint);
-
-        //         console.log('MapView.js >> Start geocode response:', startResponse);
-        //         console.log('MapView.js >> End geocode response:', endResponse);
-                
-        //         if (!startResponse || !endResponse) {
-        //             throw new Error('Failed to get coordinates');
-        //         }
-        
-        //         const sx = startResponse.x;
-        //         const sy = startResponse.y;
-        //         const ex = endResponse.x;
-        //         const ey = endResponse.y;
-                
-        //         console.log('MapView.js >> Start coordinates:', { sx, sy });
-        //         console.log('MapView.js >> End coordinates:', { ex, ey });
-
-        //         // Create a separate Axios instance for ODsay API
-        //         const odsayApi = axios.create({
-        //             baseURL: 'https://api.odsay.com/v1/api',
-        //             params: {
-        //                 apiKey: process.env.VUE_APP_ODSAY_API_KEY
-        //             },
-        //             withCredentials: false  // Add this line
-        //         });
-
-        //         const routeResponse = await odsayApi.get('/searchPubTransPathT', {
-        //             params: {
-        //                 SX: sx,
-        //                 SY: sy,
-        //                 EX: ex,
-        //                 EY: ey
-        //             },
-        //             withCredentials: false  // Ensure this is set to false
-        //         });
-                
-        //         console.log('MapView.js >> ODSAY API response:', routeResponse.data);
-
-        //         if (routeResponse.data && routeResponse.data.result && routeResponse.data.result.path) {
-        //             this.routes = routeResponse.data.result.path.map((path) => {
-        //                 return {
-        //                     totalTime: path.info.totalTime,
-        //                     totalWalk: path.info.totalWalk,
-        //                     busTransitCount: path.info.busTransitCount,
-        //                     subwayTransitCount: path.info.subwayTransitCount,
-        //                     payment: path.info.payment,
-        //                     totalDistance: path.info.totalDistance,
-        //                     firstStartStation: path.subPath[0].startName,
-        //                     startNameKor: path.subPath[0].startName,
-        //                     endName: path.subPath[path.subPath.length - 1].endName,
-        //                     lastEndStation: path.subPath[path.subPath.length - 1].endName,
-        //                     subPaths: path.subPath,
-        //                     mapObj: path.info.mapObj,
-        //                     sx: sx,
-        //                     sy: sy,
-        //                     ex: ex,
-        //                     ey: ey
-        //                 };
-        //             });
-        //             console.log('MapView.js >> Emitting route-found event with routes:', this.routes);
-        //             EventBus.emit('route-found', this.routes);
-        //         } else {
-        //             console.error('MapView.js >> No valid route found');
-        //         }
-        //     } catch (error) {
-        //         console.error('MapView.js >> Error finding route:', error);
-        //         if (error.response) {
-        //             console.error('Error response:', error.response.data);
-        //             console.error('Error status:', error.response.status);
-        //             console.error('Error headers:', error.response.headers);
-        //         } else if (error.request) {
-        //         console.error('Error request:', error.request);
-        //         } else {
-        //         console.error('Error message:', error.message);
-        //         }
-        //     }
-        // },
         async findRoute() {
+            console.log('VUE_APP_ODSAY_API_KEY:', process.env.VUE_APP_ODSAY_API_KEY);
+
             try {
+                console.log('MapView.js >> Finding route with start point:', this.localStartPoint, 'and end point:', this.localEndPoint);
+                
+                if (!this.localStartPoint || !this.localEndPoint) {
+                    throw new Error('Start point or end point is missing');
+                }
+        
                 // Geocoding addresses to coordinates
                 const startResponse = await this.geocode(this.localStartPoint);
                 const endResponse = await this.geocode(this.localEndPoint);
@@ -270,30 +189,64 @@ export default {
                 
                 console.log('MapView.js >> Start coordinates:', { sx, sy });
                 console.log('MapView.js >> End coordinates:', { ex, ey });
+
                 
-                const response = await axios.get('https://api.odsay.com/v1/api/searchPubTransPathT', {
-                    params: {
-                        apiKey: process.env.VUE_APP_ODSAY_API_KEY,
-                        SX: sx,
-                        SY: sy,
-                        EX: ex,
-                        EY: ey
-                    },
-                    withCredentials: false  // Ensure this is set to false
+                const encodedApiKey = encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY);
+                const url = `https://api.odsay.com/v1/api/searchPubTransPathT?SX=${sx}&SY=${sy}&EX=${ex}&EY=${ey}&apiKey=${encodedApiKey}`;
+
+                const response = await new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open("GET", url, true);
+                    xhr.onload = () => {
+                        if (xhr.status === 200) {
+                            resolve(xhr.responseText);
+                        } else {
+                            reject(new Error(`HTTP error! status: ${xhr.status}`));
+                        }
+                    };
+                    xhr.onerror = () => reject(new Error('Network error'));
+                    xhr.send();
                 });
-        
-                console.log('ODsay API response:', response.data);
-                // Handle the response data
+
+                const routeResponse = JSON.parse(response);
+                console.log('MapView.js >> ODSAY API response:', routeResponse);
+
+                if (routeResponse.data && routeResponse.data.result && routeResponse.data.result.path) {
+                    this.routes = routeResponse.data.result.path.map((path) => {
+                        return {
+                            totalTime: path.info.totalTime,
+                            totalWalk: path.info.totalWalk,
+                            busTransitCount: path.info.busTransitCount,
+                            subwayTransitCount: path.info.subwayTransitCount,
+                            payment: path.info.payment,
+                            totalDistance: path.info.totalDistance,
+                            firstStartStation: path.subPath[0].startName,
+                            startNameKor: path.subPath[0].startName,
+                            endName: path.subPath[path.subPath.length - 1].endName,
+                            lastEndStation: path.subPath[path.subPath.length - 1].endName,
+                            subPaths: path.subPath,
+                            mapObj: path.info.mapObj,
+                            sx: sx,
+                            sy: sy,
+                            ex: ex,
+                            ey: ey
+                        };
+                    });
+                    console.log('MapView.js >> Emitting route-found event with routes:', this.routes);
+                    EventBus.emit('route-found', this.routes);
+                } else {
+                    console.error('MapView.js >> No valid route found');
+                }
             } catch (error) {
-                console.error('Error in findRoute:', error);
+                console.error('MapView.js >> Error finding route:', error);
                 if (error.response) {
                     console.error('Error response:', error.response.data);
                     console.error('Error status:', error.response.status);
                     console.error('Error headers:', error.response.headers);
                 } else if (error.request) {
-                    console.error('Error request:', error.request);
+                console.error('Error request:', error.request);
                 } else {
-                    console.error('Error message:', error.message);
+                console.error('Error message:', error.message);
                 }
             }
         },
