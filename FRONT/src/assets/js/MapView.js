@@ -252,7 +252,24 @@ export default {
         // },
         async findRoute() {
             try {
-                const { sx, sy, ex, ey } = this.getCoordinates();
+                // Geocoding addresses to coordinates
+                const startResponse = await this.geocode(this.localStartPoint);
+                const endResponse = await this.geocode(this.localEndPoint);
+
+                console.log('MapView.js >> Start geocode response:', startResponse);
+                console.log('MapView.js >> End geocode response:', endResponse);
+                
+                if (!startResponse || !endResponse) {
+                    throw new Error('Failed to get coordinates');
+                }
+        
+                const sx = startResponse.x;
+                const sy = startResponse.y;
+                const ex = endResponse.x;
+                const ey = endResponse.y;
+                
+                console.log('MapView.js >> Start coordinates:', { sx, sy });
+                console.log('MapView.js >> End coordinates:', { ex, ey });
                 
                 const response = await axios.get('https://api.odsay.com/v1/api/searchPubTransPathT', {
                     params: {
