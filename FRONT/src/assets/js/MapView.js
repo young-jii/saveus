@@ -212,7 +212,7 @@ export default {
                 console.log('MapView.js >> ODSAY API response:', routeResponse);
 
                 if (routeResponse && routeResponse.result && routeResponse.result.path) {
-                    this.routes = routeResponse.data.result.path.map((path) => {
+                    this.routes = routeResponse.result.path.map((path) => {
                         return {
                             totalTime: path.info.totalTime,
                             totalWalk: path.info.totalWalk,
