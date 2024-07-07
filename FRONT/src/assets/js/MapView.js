@@ -211,7 +211,7 @@ export default {
                 const routeResponse = JSON.parse(response);
                 console.log('MapView.js >> ODSAY API response:', routeResponse);
 
-                if (routeResponse.data && routeResponse.data.result && routeResponse.data.result.path) {
+                if (routeResponse && routeResponse.result && routeResponse.result.path) {
                     this.routes = routeResponse.data.result.path.map((path) => {
                         return {
                             totalTime: path.info.totalTime,
