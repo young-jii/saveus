@@ -154,10 +154,5 @@ export default {
     },
     mounted() {
         this.getCsrfToken();
-        this.$root.$on('formSubmitted', (formData) => {
-            this.inputs.start_point = formData.start_point;
-            this.inputs.end_point = formData.end_point;
-            this.showMapApi = true;
-        });
     },
 }

@@ -419,6 +419,7 @@ export default {
             const mins = minutes % 60;
             return `${hours}시간 ${mins}분`;
         },
+
         getLineClass(trafficType, subwaycode) {
             if (trafficType === 1) {
                 return 'bus';
@@ -428,6 +429,7 @@ export default {
                 return 'walk';
             }
         },
+        
         getAction(subPath, startName, lane) {
             if (subPath.trafficType === 1) {
                 return `지하철 ${lane.map(l => l.name).join(', ')} - ${startName}역`;

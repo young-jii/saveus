@@ -2,9 +2,7 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
 import axios from 'axios';
-import mitt from 'mitt';
-
-const eventBus = mitt();
+import EventBus from '../eventBus';
 
 // Axios 기본 설정
 axios.defaults.withCredentials = true;
@@ -42,6 +40,6 @@ const app = createApp(App);
 app.config.globalProperties.$axios = axios;
 app.config.globalProperties.$odsayAxios = odsayAxiosInstance;
 app.config.globalProperties.$apiBaseUrl = apiBaseUrl;
-app.config.globalProperties.$eventBus = eventBus;
+app.config.globalProperties.EventBus = EventBus ;
 
 app.use(router).mount('#app');

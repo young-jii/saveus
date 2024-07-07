@@ -175,6 +175,11 @@ export default {
     },
     mounted() {
         this.store = this.$store; // Vue 컴포넌트 내에서 this.$store를 사용하여 Vuex store에 접근합니다.
+        this.EventBus.on('formSubmitted', (formData) => {
+            this.inputs.start_point = formData.start_point;
+            this.inputs.end_point = formData.end_point;
+            this.showMapApi = true;
+        });
     },
 };
 </script>
