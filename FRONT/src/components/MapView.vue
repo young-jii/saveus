@@ -65,9 +65,9 @@
 </template>
 
 <script>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
-import { useStore } from 'vuex';
-import { EventBus } from '../../eventBus.js';
+import { ref, onMounted } from 'vue';
+// import { useStore } from 'vuex';
+// import { EventBus } from '../../eventBus.js';
 import { api } from '../assets/js/MapView.js';  // Import axiosInstance
 // import CustomAlert from '../components/CustomAlert.vue';
 import MapView from '../assets/js/MapView.js';
