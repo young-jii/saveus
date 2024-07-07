@@ -164,7 +164,11 @@ export default {
             document.head.appendChild(script);
             script.onload = () => {
                 initializeMap();
-                findRoute();
+                if (props.startPoint && props.endPoint) {
+                    findRoute();
+                } else {
+                    console.warn('Start point or end point is not provided');
+                }
             };
         });
 

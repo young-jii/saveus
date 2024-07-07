@@ -87,6 +87,7 @@ export default {
         async handleSubmit(event) {
             event.preventDefault();
             await this.checkInputs();
+            this.showMapApi = true; // MapView 컴포넌트 표시
         },
 
         async checkInputs() {
@@ -153,5 +154,10 @@ export default {
     },
     mounted() {
         this.getCsrfToken();
+        this.$root.$on('formSubmitted', (formData) => {
+            this.inputs.start_point = formData.start_point;
+            this.inputs.end_point = formData.end_point;
+            this.showMapApi = true;
+        });
     },
 }
