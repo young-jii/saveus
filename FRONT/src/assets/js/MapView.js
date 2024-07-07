@@ -225,11 +225,21 @@ export default {
                             subPaths: path.subPath,
                             mapObj: path.info.mapObj,
                             busStopList: path.subPath
-                            .filter(subPath => subPath.trafficType === 2)
-                            .flatMap(subPath => subPath.passStopList?.map(stop => stop.stationName) || []),
-                        subwayStopList: path.subPath
-                            .filter(subPath => subPath.trafficType === 3)
-                            .flatMap(subPath => subPath.passStopList?.map(stop => stop.stationName) || []),
+                                .filter(subPath => subPath.trafficType === 2)
+                                .flatMap(subPath => {
+                                    if (subPath.passStopList && Array.isArray(subPath.passStopList.stations)) {
+                                        return subPath.passStopList.stations.map(station => station.stationName);
+                                    }
+                                    return [];
+                                }),
+                            subwayStopList: path.subPath
+                                .filter(subPath => subPath.trafficType === 1)
+                                .flatMap(subPath => {
+                                    if (subPath.passStopList && Array.isArray(subPath.passStopList.stations)) {
+                                        return subPath.passStopList.stations.map(station => station.stationName);
+                                    }
+                                    return [];
+                                }),
                             sx: sx,
                             sy: sy,
                             ex: ex,
