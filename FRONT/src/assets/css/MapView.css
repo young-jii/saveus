@@ -176,15 +176,191 @@ body {
 .line_walk {
     background-color: #d3d3d3;
 }
-/* .line_bus1 {
-    background-color: #1e90ff;
+
+/* Subway Line Colors */
+.line_sub1 {
+    background-color: #133499;
 }
 .line_sub2 {
-    background-color: #32cd32;
+    background-color: #36B12A;
+}
+.line_sub3 {
+    background-color: #F55F2C;
 }
 .line_sub4 {
-    background-color: #0000ff;
-} */
+    background-color: #1C97DB;
+}
+.line_sub5 {
+    background-color: #893CB6;
+}
+.line_sub6 {
+    background-color: #9A4F10;
+}
+.line_sub7 {
+    background-color: #5F6D00;
+}
+.line_sub8 {
+    background-color: #E71F6E;
+}
+.line_sub9 {
+    background-color: #BF9F1D;
+}
+.line_sub21 {
+    background-color: #6691C9;
+}
+.line_sub22 {
+    background-color: #ED8000;
+}
+.line_sub101 {
+    background-color: #0095D4;
+}
+.line_sub102 {
+    background-color: #F78D46;
+}
+.line_sub104 {
+    background-color: #7DC4A5;
+}
+.line_sub107 {
+    background-color: #9AD296;
+}
+.line_sub108 {
+    background-color: #26A97F;
+}
+.line_sub109 {
+    background-color: #A8022D;
+}
+.line_sub110 {
+    background-color: #FF8E00;
+}
+.line_sub112 {
+    background-color: #003499;
+}
+.line_sub113 {
+    background-color: #B6C15D;
+}
+.line_sub114 {
+    background-color: #80A62C;
+}
+.line_sub115 {
+    background-color: #AD8602;
+}
+.line_sub116 {
+    background-color: #EDB217;
+}
+.line_sub117 {
+    background-color: #6789CA;
+}
+.line_sub31 {
+    background-color: #36B42D;
+}
+.line_sub41 {
+    background-color: #FA5F2D;
+}
+.line_sub42 {
+    background-color: #36B42D;
+}
+.line_sub43 {
+    background-color: #EDB217;
+}
+.line_sub51 {
+    background-color: #36B42D;
+}
+.line_sub71 {
+    background-color: #FA5F2D;
+}
+.line_sub72 {
+    background-color: #34B12B;
+}
+.line_sub73 {
+    background-color: #BF9F1D;
+}
+.line_sub74 {
+    background-color: #6F8CC0;
+}
+.line_sub78 {
+    background-color: #0054A6;
+}
+.line_sub79 {
+    background-color: #893CB6;
+}
+.line_sub91 {
+    background-color: #996883;
+}
+.line_sub92 {
+    background-color: #2e81e2;
+}
+.line_sub93 {
+    background-color: #00ad79;
+}
+.line_sub94 {
+    background-color: #756be9;
+}
+.line_sub95 {
+    background-color: #ee7a0c;
+}
+.line_sub96 {
+    background-color: #fcb706;
+}
+
+/* Bus Line Colors */
+.line_bus1 {
+    background-color: #39f;
+}
+.line_bus2 {
+    background-color: #3d5bab;
+}
+.line_bus3 {
+    background-color: #53b332;
+}
+.line_bus4 {
+    background-color: #f30;
+}
+.line_bus5 {
+    background-color: #00a0e9;
+}
+.line_bus6 {
+    background-color: #f30;
+}
+.line_bus10 {
+    background-color: #53b332;
+}
+.line_bus11 {
+    background-color: #1c78cf;
+}
+.line_bus12 {
+    background-color: #53b332;
+}
+.line_bus13 {
+    background-color: #f2b70a;
+}
+.line_bus14 {
+    background-color: #e60012;
+}
+.line_bus15 {
+    background-color: #f30;
+}
+.line_bus16 {
+    background-color: #ffba00;
+}
+.line_bus20 {
+    background-color: #ed8b32;
+}
+.line_bus21 {
+    background-color: #21b3f5;
+}
+.line_bus22 {
+    background-color: #b84efc;
+}
+.line_bus26 {
+    background-color: #f30;
+}
+.line_bus34 {
+    background-color: #c91017;
+}
+.line_bus36 {
+    background-color: #993797;
+}
+
 
 .r_body {
     display: flex;
@@ -196,6 +372,10 @@ body {
 .r_action {
     font-size: 12px;
     color: #171616;
+}
+
+.walk {
+    background-color: #d3d3d3;
 }
 
 /* 필요한 다른 노선 및 버스 타입 색상 추가 */

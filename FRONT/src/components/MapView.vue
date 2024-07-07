@@ -39,8 +39,8 @@
                             </div>
                             <div class="route_detail">
                                 <ul class="route-detail-list">
-                                    <li v-for="(subPath, subIndex) in getLineClass(route.subPaths)" :key="subIndex" class="line">
-                                        <span class="icon" :class="getTrafficClass(subPath)"></span>
+                                    <li v-for="(subPath, subIndex) in route.subPaths" :key="subIndex" class="line">
+                                        <span class="icon" :class="getTrafficDetail(subPath)"></span>
                                         <span class="r_body">
                                             <span class="r_action">{{ getAction(subPath, subPath.startName, subPath.lane) }}</span>
                                         </span>

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { EventBus } from '../../../eventBus';  // 이벤트 버스 불러오기
+import EventBus from '../../../eventBus';  // 이벤트 버스 불러오기
 
 const apiBaseUrl = process.env.VUE_APP_API_BASE_URL || 'https://jiyoung.pythonanywhere.com';
 
@@ -248,7 +248,7 @@ export default {
                         };
                     });
                     console.log('MapView.js >> Emitting route-found event with routes:', this.routes);
-                    EventBus.emit('route-found', this.routes);
+                    EventBus.emit('route-found', this.route)
                 } else {
                     console.error('MapView.js >> No valid route found');
                 }
@@ -272,50 +272,40 @@ export default {
                 console.log('MapView.vue >> handleRouteClick >> mapObj:', mapObj);
                 console.log('MapView.vue >> handleRouteClick >> sx, sy, ex, ey:', sx, sy, ex, ey);
                     
-                
-                // Create a separate Axios instance for ODsay API
-                const odsayApi = axios.create({
-                    baseURL: 'https://api.odsay.com/v1/api',
-                    params: {
-                        apiKey: process.env.VUE_APP_ODSAY_API_KEY
-                    },
-                    withCredentials: false  // Add this line
-                });
+                const xhr = new XMLHttpRequest();
+                const url = `https://api.odsay.com/v1/api/loadLane?apiKey=${process.env.VUE_APP_ODSAY_API_KEY}&mapObject=0:0@${mapObj}`;
 
-                const routeResponse = await odsayApi.get('/loadLane', {
-                    params: {
-                        mapObject: `0:0@${mapObj}`
-                    },
-                    withCredentials: false  // Ensure this is set to false
-                });
+                xhr.open("GET", url, true);
+                xhr.onreadystatechange = () => {
+                    if (xhr.readyState === 4) {
+                        if (xhr.status === 200) {
+                            const routeResponse = JSON.parse(xhr.responseText);
+                            console.log('MapView.js >> ODSAY loadLane API response:', routeResponse);
 
-                console.log('MapView.js >> ODSAY loadLane API response:', routeResponse.data);
-                
-                
-                this.clearPolylines();
-        
-                this.drawNaverMarker(sx, sy);
-                this.drawNaverMarker(ex, ey);
-                this.drawNaverPolyLine(routeResponse.data);
-        
-                if (routeResponse.data.result.boundary) {
-                    const boundary = new naver.maps.LatLngBounds(
-                        new naver.maps.LatLng(routeResponse.data.result.boundary.top, routeResponse.data.result.boundary.left),
-                        new naver.maps.LatLng(routeResponse.data.result.boundary.bottom, routeResponse.data.result.boundary.right)
-                    );
-                    this.map.panToBounds(boundary);
-                }
+                            this.clearPolylines();
+                            this.drawNaverMarker(sx, sy);
+                            this.drawNaverMarker(ex, ey);
+                            this.drawNaverPolyLine(routeResponse);
+
+                            if (routeResponse.result.boundary) {
+                                const boundary = new naver.maps.LatLngBounds(
+                                    new naver.maps.LatLng(routeResponse.result.boundary.top, routeResponse.result.boundary.left),
+                                    new naver.maps.LatLng(routeResponse.result.boundary.bottom, routeResponse.result.boundary.right)
+                                );
+                                this.map.panToBounds(boundary);
+                            }
+                        } else {
+                            console.error('MapView.vue >> handleRouteClick >> Error:', xhr.status, xhr.statusText);
+                        }
+                    }
+                };
+                xhr.onerror = (error) => {
+                    console.error('MapView.vue >> handleRouteClick >> Error:', error);
+                };
+                xhr.send();
+
             } catch (error) {
                 console.error('MapView.vue >> handleRouteClick >> Error:', error);
-                if (error.response) {
-                    console.error('Error response:', error.response.data);
-                    console.error('Error status:', error.response.status);
-                    console.error('Error headers:', error.response.headers);
-                } else if (error.request) {
-                    console.error('Error request:', error.request);
-                } else {
-                    console.error('Error message:', error.message);
-                }
             }
         },
 
@@ -400,15 +390,31 @@ export default {
         
         getTrafficClass(subPath) {
             if (subPath.trafficType === 2) {
+                const busClass = `line_bus${subPath.lane && subPath.lane[0] ? subPath.lane[0].type : ''}`;
+                // console.log('Bus class:', busClass);
+                return busClass;
+            } else if (subPath.trafficType === 1) {
+                const subwayClass = `line_sub${subPath.lane && subPath.lane[0] ? subPath.lane[0].subwayCode : ''}`;
+                // console.log('Subway class:', subClass);
+                return subwayClass;
+            } else {
+                const walkClass = 'line_walk';
+                // console.log('Walk class:', walkClass);
+                return walkClass;
+            }
+        },
+
+        getTrafficDetail(subPath) {
+            if (subPath.trafficType === 2) {
                 const busClass = `bus${subPath.lane && subPath.lane[0] ? subPath.lane[0].type : ''}`;
                 // console.log('Bus class:', busClass);
                 return busClass;
             } else if (subPath.trafficType === 1) {
-                const subClass = `sub${subPath.lane && subPath.lane[0] ? subPath.lane[0].subwayCode : ''}`;
+                const subwayClass = `sub${subPath.lane && subPath.lane[0] ? subPath.lane[0].subwayCode : ''}`;
                 // console.log('Subway class:', subClass);
-                return subClass;
+                return subwayClass;
             } else {
-                const walkClass = 'line_walk';
+                const walkClass = 'walk';
                 // console.log('Walk class:', walkClass);
                 return walkClass;
             }
@@ -429,7 +435,7 @@ export default {
                 return 'walk';
             }
         },
-        
+
         getAction(subPath, startName, lane) {
             if (subPath.trafficType === 1) {
                 return `지하철 ${lane.map(l => l.name).join(', ')} - ${startName}역`;
