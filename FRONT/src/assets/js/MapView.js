@@ -316,6 +316,8 @@ export default {
                 }
             }
         },
+
+
         
         clearPolylines() {
             this.polylines.forEach(polyline => polyline.setMap(null));
@@ -393,6 +395,23 @@ export default {
                 console.error('MapView.js >> Error displaying route:', error);
             }
         },
+        
+        getTrafficClass(subPath) {
+            if (subPath.trafficType === 2) {
+                const busClass = `bus${subPath.lane && subPath.lane[0] ? subPath.lane[0].type : ''}`;
+                // console.log('Bus class:', busClass);
+                return busClass;
+            } else if (subPath.trafficType === 1) {
+                const subClass = `sub${subPath.lane && subPath.lane[0] ? subPath.lane[0].subwayCode : ''}`;
+                // console.log('Subway class:', subClass);
+                return subClass;
+            } else {
+                const walkClass = 'line_walk';
+                // console.log('Walk class:', walkClass);
+                return walkClass;
+            }
+        },
+        
         formatTime(minutes) {
             const hours = Math.floor(minutes / 60);
             const mins = minutes % 60;
