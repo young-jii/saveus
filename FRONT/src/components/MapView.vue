@@ -86,7 +86,7 @@ export default {
         memSubsidiaryYn: Boolean
     },
     setup(props) {
-        const store = useStore();
+        // const store = useStore();
         const localStartPoint = ref(props.startPoint);
         const localEndPoint = ref(props.endPoint);
         const routes = ref([]);
@@ -133,11 +133,6 @@ export default {
                 initializeMap();
                 findRoute();
             };
-            EventBus.on('route-selected', handleRouteSelection);
-        });
-
-        onBeforeUnmount(() => {
-            EventBus.off('route-selected', handleRouteSelection);
         });
 
         return {
