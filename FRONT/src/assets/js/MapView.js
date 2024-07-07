@@ -333,6 +333,11 @@ export default {
             });
         },
         drawNaverPolyLine(data) {
+            if (!data?.result?.lane) {
+                console.error('Invalid data structure:', data);
+                return;
+            }
+        
             let lineArray;
             for (let i = 0; i < data.result.lane.length; i++) {
                 for (let j = 0; j < data.result.lane[i].section.length; j++) {
@@ -413,11 +418,8 @@ export default {
                 const subwayClass = `sub${subPath.lane && subPath.lane[0] ? subPath.lane[0].subwayCode : ''}`;
                 // console.log('Subway class:', subClass);
                 return subwayClass;
-            } else {
-                const walkClass = 'walk';
-                // console.log('Walk class:', walkClass);
-                return walkClass;
-            }
+            } 
+            return
         },
         
         formatTime(minutes) {
