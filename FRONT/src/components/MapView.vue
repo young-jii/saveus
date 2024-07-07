@@ -66,17 +66,11 @@
 
 <script>
 import { ref, onMounted } from 'vue';
-// import { useStore } from 'vuex';
-// import { EventBus } from '../../eventBus.js';
-import { api } from '../assets/js/MapView.js';  // Import axiosInstance
-// import CustomAlert from '../components/CustomAlert.vue';
+import { api } from '../assets/js/MapView.js';
 import MapView from '../assets/js/MapView.js';
 import odsayLogo from '../assets/img/ODsay_bi_mark.png';
 
 export default {
-    components: {
-        // CustomAlert
-    },
     props: {
         memHome: String,
         startPoint: String,
@@ -86,24 +80,22 @@ export default {
         memSubsidiaryYn: Boolean
     },
     setup(props) {
-        // const store = useStore();
         const localStartPoint = ref(props.startPoint);
         const localEndPoint = ref(props.endPoint);
         const routes = ref([]);
         const map = ref(null);
         const polylines = ref([]);
-        const alert = ref(null);
 
         const findRoute = async () => {
-            await MapView.methods.findRoute.call({
+            const result = await MapView.methods.findRoute({
                 geocode: MapView.methods.geocode,
                 showAlert: MapView.methods.showAlert,
                 localStartPoint: localStartPoint.value,
                 localEndPoint: localEndPoint.value,
-                routes: routes,
-                $odsayAxios: api // axiosInstance가 미리 정의되어 있어야 합니다.
+                $odsayAxios: api
             });
-        };
+            routes.value = result;
+            };
 
         const initializeMap = () => {
             MapView.methods.initializeMap.call({
@@ -113,18 +105,58 @@ export default {
             });
         };
 
-        const handleRouteClick = (route) => {
-            MapView.methods.handleRouteClick.call({
-                map: map.value,
-                clearPolylines: MapView.methods.clearPolylines,
-                drawNaverMarker: MapView.methods.drawNaverMarker,
-                drawNaverPolyLine: MapView.methods.drawNaverPolyLine,
-                polylines: polylines,
-                $odsayAxios: api
-            }, route);
+        const handleRouteClick = async (route) => {
+            try {
+                const { mapObj, sx, sy, ex, ey } = route;
+                console.log('MapView.vue >> handleRouteClick >> mapObj:', mapObj);
+                console.log('MapView.vue >> handleRouteClick >> sx, sy, ex, ey:', sx, sy, ex, ey);
+
+                // ODsay API를 위한 별도의 Axios 인스턴스 생성
+                const odsayApi = axios.create({
+                baseURL: 'https://api.odsay.com/v1/api',
+                params: {
+                    apiKey: process.env.VUE_APP_ODSAY_API_KEY
+                },
+                withCredentials: false
+                });
+
+                const routeResponse = await odsayApi.get('/loadLane', {
+                params: {
+                    mapObject: `0:0@${mapObj}`
+                },
+                withCredentials: false
+                });
+
+                console.log('MapView.vue >> ODSAY loadLane API response:', routeResponse.data);
+
+                // MapView.js의 메서드 호출
+                MapView.methods.clearPolylines.call({ polylines: polylines.value });
+                MapView.methods.drawNaverMarker.call({ map: map.value }, sx, sy);
+                MapView.methods.drawNaverMarker.call({ map: map.value }, ex, ey);
+                MapView.methods.drawNaverPolyLine.call({ map: map.value, polylines: polylines.value }, routeResponse.data);
+
+                if (routeResponse.data.result.boundary) {
+                const boundary = new window.naver.maps.LatLngBounds(
+                    new window.naver.maps.LatLng(routeResponse.data.result.boundary.top, routeResponse.data.result.boundary.left),
+                    new window.naver.maps.LatLng(routeResponse.data.result.boundary.bottom, routeResponse.data.result.boundary.right)
+                );
+                map.value.panToBounds(boundary);
+                }
+            } catch (error) {
+                console.error('MapView.vue >> handleRouteClick >> Error:', error);
+                if (error.response) {
+                console.error('Error response:', error.response.data);
+                console.error('Error status:', error.response.status);
+                console.error('Error headers:', error.response.headers);
+                } else if (error.request) {
+                console.error('Error request:', error.request);
+                } else {
+                console.error('Error message:', error.message);
+                }
+            }
         };
 
-        onMounted(async () => {
+        onMounted(() => {
             const script = document.createElement('script');
             script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.VUE_APP_NAVER_CLIENT_ID}`;
             script.async = true;
@@ -141,7 +173,6 @@ export default {
             routes,
             map,
             polylines,
-            alert,
             findRoute,
             handleRouteClick,
             odsayLogo,

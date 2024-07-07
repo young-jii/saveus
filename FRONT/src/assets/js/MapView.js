@@ -161,6 +161,7 @@ export default {
                 throw error;
             }
         },
+        
         async findRoute() {
             console.log('VUE_APP_ODSAY_API_KEY:', process.env.VUE_APP_ODSAY_API_KEY);
 
@@ -264,6 +265,7 @@ export default {
                 }
             }
         },
+
         async handleRouteClick(route) {
             try {
                 const { mapObj, sx, sy, ex, ey } = route;
