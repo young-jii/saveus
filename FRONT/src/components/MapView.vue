@@ -16,7 +16,7 @@
             <div class="route-list-box">
                 <ul class="route-list">
                     <li v-for="(route, index) in routes" :key="index" class="route-data">
-                        <div class="route_con" @click="onRouteClick(route)">
+                        <div class="route_con" @click="handleRouteClick(route)">
                             <div class="route_time_header">[총 소요 시간] {{ formatTime(route.totalTime) }}</div>
                             <div class="route_time">
                                 <span class="info_sub">
@@ -113,26 +113,26 @@ export default {
             });
         };
 
-        const handleRouteSelection = (route) => {
-            MapView.methods.handleRouteSelection.call({
+        const handleRouteClick = (route) => {
+            MapView.methods.handleRouteClick.call({
                 map: map.value,
                 clearPolylines: MapView.methods.clearPolylines,
                 drawNaverMarker: MapView.methods.drawNaverMarker,
                 drawNaverPolyLine: MapView.methods.drawNaverPolyLine,
                 polylines: polylines,
-                $odsayAxios: api // axiosInstance가 미리 정의되어 있어야 합니다.
+                $odsayAxios: api
             }, route);
         };
 
-        const onRouteClick = (route) => {
-            console.log('onRouteClick method called in MapView.vue');
-            store.dispatch('setSelectedRoute', route);
-        };
-
         onMounted(async () => {
-            initializeMap();
-            await findRoute();
-            // alert.value = MapView.methods.$refs.CustomAlert;
+            const script = document.createElement('script');
+            script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.VUE_APP_NAVER_CLIENT_ID}`;
+            script.async = true;
+            document.head.appendChild(script);
+            script.onload = () => {
+                initializeMap();
+                findRoute();
+            };
             EventBus.on('route-selected', handleRouteSelection);
         });
 
@@ -148,7 +148,7 @@ export default {
             polylines,
             alert,
             findRoute,
-            onRouteClick,
+            handleRouteClick,
             odsayLogo,
             ...MapView.methods
         };

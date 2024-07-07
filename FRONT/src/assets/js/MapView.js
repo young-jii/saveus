@@ -220,12 +220,16 @@ export default {
                             subwayTransitCount: path.info.subwayTransitCount,
                             payment: path.info.payment,
                             totalDistance: path.info.totalDistance,
-                            firstStartStation: path.subPath[0].startName,
-                            startNameKor: path.subPath[0].startName,
-                            endName: path.subPath[path.subPath.length - 1].endName,
-                            lastEndStation: path.subPath[path.subPath.length - 1].endName,
+                            startNameKor: path.info.firstStartStation,
+                            endName: path.info.lastEndStation,
                             subPaths: path.subPath,
                             mapObj: path.info.mapObj,
+                            busStopList: path.subPath
+                            .filter(subPath => subPath.trafficType === 2)
+                            .flatMap(subPath => subPath.passStopList?.map(stop => stop.stationName) || []),
+                        subwayStopList: path.subPath
+                            .filter(subPath => subPath.trafficType === 3)
+                            .flatMap(subPath => subPath.passStopList?.map(stop => stop.stationName) || []),
                             sx: sx,
                             sy: sy,
                             ex: ex,
