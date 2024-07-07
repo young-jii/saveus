@@ -67,6 +67,7 @@
 <script>
 import { ref, onMounted } from 'vue';
 import { api } from '../assets/js/MapView.js';
+import axios from 'axios';
 import MapView from '../assets/js/MapView.js';
 import odsayLogo from '../assets/img/ODsay_bi_mark.png';
 
