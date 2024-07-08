@@ -86,6 +86,24 @@ export default {
         const routes = ref([]);
         const map = ref(null);
         const polylines = ref([]);
+        const isComponentMounted = ref(false);
+
+        onMounted(() => {
+            isComponentMounted.value = true;
+            const script = document.createElement('script');
+            script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.VUE_APP_NAVER_CLIENT_ID}`;
+            script.async = true;
+            document.head.appendChild(script);
+            script.onload = () => {
+                initializeMap();
+                console.log('MapView.js >> Naver Maps script loaded');
+                if (props.startPoint && props.endPoint) {
+                    findRoute();
+                } else {
+                    console.warn('Start point or end point is not provided');
+                }
+            };
+        });
 
         const findRoute = async () => {
             await MapView.methods.findRoute.call({
@@ -107,6 +125,10 @@ export default {
         };
 
         const handleRouteClick = async (route) => {
+            if (!isComponentMounted.value) {
+                console.error('MapView.js >> Component is not mounted yet');
+                return;
+            }
             await MapView.methods.handleRouteClick.call({
                 map: map.value,
                 clearPolylines: MapView.methods.clearPolylines,
@@ -119,31 +141,17 @@ export default {
 
     };
 
-        onMounted(() => {
-            const script = document.createElement('script');
-            script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.VUE_APP_NAVER_CLIENT_ID}`;
-            script.async = true;
-            document.head.appendChild(script);
-            script.onload = () => {
-                initializeMap();
-                if (props.startPoint && props.endPoint) {
-                    findRoute();
-                } else {
-                    console.warn('Start point or end point is not provided');
-                }
-            };
-        });
-
-        return {
-            localStartPoint,
-            localEndPoint,
-            routes,
-            map,
-            polylines,
-            findRoute,
-            handleRouteClick,
-            odsayLogo,
-            ...MapView.methods
+    return {
+        isComponentMounted,
+        localStartPoint,
+        localEndPoint,
+        routes,
+        map,
+        polylines,
+        findRoute,
+        handleRouteClick,
+        odsayLogo,
+        ...MapView.methods
         };
     }
 };

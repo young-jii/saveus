@@ -291,12 +291,16 @@ export default {
                 this.drawNaverMarker(ex, ey);
                 this.drawNaverPolyLine(routeResponse);
 
-                if (routeResponse.result && routeResponse.result.boundary) {
-                    const boundary = new naver.maps.LatLngBounds(
-                        new naver.maps.LatLng(routeResponse.result.boundary.top, routeResponse.result.boundary.left),
-                        new naver.maps.LatLng(routeResponse.result.boundary.bottom, routeResponse.result.boundary.right)
-                    );
-                    this.map.panToBounds(boundary);
+                if (this.map) {
+                    if (routeResponse.result && routeResponse.result.boundary) {
+                        const boundary = new naver.maps.LatLngBounds(
+                            new naver.maps.LatLng(routeResponse.result.boundary.top, routeResponse.result.boundary.left),
+                            new naver.maps.LatLng(routeResponse.result.boundary.bottom, routeResponse.result.boundary.right)
+                        );
+                        this.map.panToBounds(boundary);
+                    }
+                } else {
+                    console.error('MapView.js >> Map object is null')
                 }
 
             } catch (error) {
