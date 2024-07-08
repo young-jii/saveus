@@ -248,7 +248,7 @@ export default {
                         };
                     });
                     console.log('MapView.js >> Emitting route-found event with routes:', this.routes);
-                    EventBus.emit('route-found', this.routeData)
+                    EventBus.emit('route-found', this.routes)
                 } else {
                     console.error('MapView.js >> No valid route found');
                 }
