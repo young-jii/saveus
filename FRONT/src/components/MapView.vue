@@ -107,11 +107,16 @@ export default {
                 polylines: polylines
             });
             map.value = MapView.methods.map; // 초기화 후 map ref 업데이트
+            console.log('MapView.vue >> Map initialized:', map.value);
         };
 
         const handleRouteClick = async (route) => {
             if (!isComponentMounted.value) {
                 console.error('MapView.js >> Component is not mounted yet');
+                return;
+            }
+            if (!map.value) {
+                console.error('MapView.js >> Map is not initialized');
                 return;
             }
             await MapView.methods.handleRouteClick.call({
@@ -131,12 +136,17 @@ export default {
             script.async = true;
             document.head.appendChild(script);
             script.onload = () => {
-                initializeMap();
                 console.log('MapView.js >> Naver Maps script loaded');
-                if (props.startPoint && props.endPoint) {
-                    findRoute();
+                if (window.naver && window.naver.maps) {
+                    console.log('MapView.js >> Naver Maps API is available');
+                    initializeMap();
+                    if (props.startPoint && props.endPoint) {
+                        findRoute();
+                    } else {
+                        console.warn('Start point or end point is not provided');
+                    }
                 } else {
-                    console.warn('Start point or end point is not provided');
+                    console.error('MapView.js >> Naver Maps API is not available after script load');
                 }
             };
         });
