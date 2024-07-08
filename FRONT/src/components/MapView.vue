@@ -65,10 +65,9 @@
 </template>
 
 <script>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted } from 'vue';
 import { mapState, mapGetters, mapActions } from 'vuex';
-import { api } from '../assets/js/MapView.js';
-import MapView from '../assets/js/MapView.js';
+import MapView, { api } from '../assets/js/MapView.js';
 import odsayLogo from '../assets/img/ODsay_bi_mark.png';
 
 export default {
@@ -82,8 +81,14 @@ export default {
         memSubsidiaryYn: Boolean
     },
 
+    data() {
+        return {
+        routes: [],
+        };
+    },
+
     computed: {
-        ...mapState(['routes', 'selectedRouteIndex']),
+        ...mapState(['selectedRouteIndex']),
         ...mapGetters(['getSelectedRoute'])
     },
 
@@ -91,42 +96,42 @@ export default {
         ...mapActions(['selectRoute']),
         
         async findRoute() {
-            await MapView.methods.findRoute.call({
-                geocode: MapView.methods.geocode,
-                showAlert: MapView.methods.showAlert,
-                localStartPoint: this.localStartPoint,
-                localEndPoint: this.localEndPoint,
-                routes: this.routes,
-                $odsayAxios: api
-            });
-            this.$store.commit('setRoutes', this.routes);
+        await MapView.methods.findRoute.call({
+            geocode: MapView.methods.geocode,
+            showAlert: MapView.methods.showAlert,
+            localStartPoint: this.localStartPoint,
+            localEndPoint: this.localEndPoint,
+            routes: this.routes,
+            $odsayAxios: api
+        });
+        this.$store.commit('setRoutes', this.routes);
         },
 
         async handleRouteClick(route, index) {
-            if (!this.isComponentMounted) {
-                console.error('MapView.js >> Component is not mounted yet');
-                return;
-            }
-            if (!this.map) {
-                console.error('MapView.js >> Map is not initialized');
-                return;
-            }
-            await MapView.methods.handleRouteClick.call({
-                map: this.map,
-                clearPolylines: MapView.methods.clearPolylines,
-                drawNaverMarker: MapView.methods.drawNaverMarker,
-                drawNaverPolyLine: MapView.methods.drawNaverPolyLine,
-                polylines: this.polylines,
-                $odsayAxios: api
-            }, route);
+        if (!this.isComponentMounted) {
+            console.error('MapView.js >> Component is not mounted yet');
+            return;
+        }
+        if (!this.map) {
+            console.error('MapView.js >> Map is not initialized');
+            return;
+        }
+        await MapView.methods.handleRouteClick.call({
+            map: this.map,
+            clearPolylines: MapView.methods.clearPolylines,
+            drawNaverMarker: MapView.methods.drawNaverMarker,
+            drawNaverPolyLine: MapView.methods.drawNaverPolyLine,
+            polylines: this.polylines,
+            $odsayAxios: api
+        }, route);
 
-            this.selectRoute({ route, index });
+        this.selectRoute({ route, index });
         },
 
         initializeMap() {
-            MapView.methods.initializeMap.call(MapView.methods);
-            this.map = MapView.methods.map?.value;
-            console.log('MapView.vue >> Map initialized:', this.map);
+        MapView.methods.initializeMap.call(MapView.methods);
+        this.map = MapView.methods.map?.value;
+        console.log('MapView.vue >> Map initialized:', this.map);
         }
     },
 
@@ -138,43 +143,40 @@ export default {
         const isComponentMounted = ref(false);
 
         onMounted(() => {
-            console.log('Mounting component...');
-            isComponentMounted.value = true;
-            const script = document.createElement('script');
-            script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.VUE_APP_NAVER_CLIENT_ID}`;
-            script.async = true;
-            document.head.appendChild(script);
+        console.log('Mounting component...');
+        isComponentMounted.value = true;
+        const script = document.createElement('script');
+        script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.VUE_APP_NAVER_CLIENT_ID}`;
+        script.async = true;
+        document.head.appendChild(script);
 
-            script.onload = () => {
-                console.log('Naver Maps script loaded successfully');
-                initializeMap();
-                if (props.startPoint && props.endPoint) {
-                    findRoute();
-                } else {
-                    console.warn('Start point or end point is not provided');
-                }
-            };
+        script.onload = () => {
+            console.log('Naver Maps script loaded successfully');
+            this.initializeMap();
+            if (props.startPoint && props.endPoint) {
+            this.findRoute();
+            } else {
+            console.warn('Start point or end point is not provided');
+            }
+        };
 
-            script.onerror = (error) => {
-                console.error('Error loading Naver Maps script:', error);
-            };
-        });
+        script.onerror = (error) => {
+            console.error('Error loading Naver Maps script:', error);
+        };
+    });
 
-        return {
-            isComponentMounted,
-            localStartPoint,
-            localEndPoint,
-            routes,
-            map,
-            initializeMap,
-            polylines,
-            findRoute,
-            handleRouteClick,
-            odsayLogo,
-            ...MapView.methods
+    return {
+        localStartPoint,
+        localEndPoint,
+        map,
+        polylines,
+        isComponentMounted,
+        odsayLogo,
+        ...MapView.methods
         };
     }
 };
 </script>
+
 
 <style scoped src="../assets/css/MapView.css"></style>
