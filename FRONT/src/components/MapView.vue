@@ -16,7 +16,7 @@
             <div class="route-list-box">
                 <ul class="route-list">
                     <li v-for="(route, index) in routes" :key="index" class="route-data">
-                        <div class="route_con" @click="handleRouteClick(route)">
+                        <div class="route_con" @click="handleRouteClick(route, index)">
                             <div class="route_time_header">[총 소요 시간] {{ formatTime(route.totalTime) }}</div>
                             <div class="route_time">
                                 <span class="info_sub">

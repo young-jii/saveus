@@ -91,7 +91,6 @@
             </div>
             <div class="map-view-container">
                 <map-view
-                    @route-selected="onRouteSelected"
                     :memHome="inputs.mem_home"
                     :startPoint="inputs.start_point"
                     :endPoint="inputs.end_point"
@@ -117,6 +116,7 @@ import mainOne from '../assets/js/MainOne.js';
 import MapView from '../components/MapView.vue';
 import CardRecom from './CardRecom.vue';
 import EventBus from '../../eventBus.js';  // 이벤트 버스 불러오기
+import { mapState, mapGetters, mapActions } from 'vuex';
 
 export default {
     mixins: [mainOne],
@@ -134,23 +134,39 @@ export default {
         };
     },
 
+    computed: {
+        ...mapState(['routes']),
+        ...mapGetters(['getSelectedRouteIndex']),
+        selectedRouteIndex() {
+            return this.getSelectedRouteIndex;
+        },
+    },
+
     methods: {
+        ...mapActions(['selectRoute']),
+        
         handleSubmit() {
             console.log("handleSubmit 눌림");
             // Form 제출 시 처리
+            const formData = {
+                mem_home: this.inputs.mem_home,
+                start_point: this.inputs.start_point,
+                end_point: this.inputs.end_point,
+                mem_young_y: this.inputs.mem_young_y,
+                mem_young_n: this.inputs.mem_young_n,
+                mem_subsidiary_yn: this.inputs.mem_subsidiary_yn,
+            };
+            this.$store.dispatch('updateFormData', formData);
             this.findRoute();
         },
+        
         findRoute() {
             // 최적 경로 탐색 코드
             this.showMapApi = true;
             this.showMapView = true; // MapView 표시
             this.showCheckButton = true;
         },
-        onRouteSelected(route) {
-            console.log('선택된 경로:', route);
-            this.$store.dispatch('selectRoute', route);
-            console.log('저장 후 Vuex 상태:', this.$store.state.selectedRoute);
-        },
+
         async handleResultCheck() {
             try {
                 await new Promise(resolve => setTimeout(resolve, 100));
@@ -198,6 +214,7 @@ export default {
             }
         },
     },
+
     mounted() {
         console.log('초기 Vuex 상태:', this.$store.state);
         EventBus.on('formSubmitted', (formData) => {

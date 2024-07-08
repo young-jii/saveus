@@ -251,7 +251,8 @@ export default {
                         };
                     });
                     console.log('MapView.js >> Emitting route-found event with routes:', this.routes);
-                    EventBus.emit('route-found', this.routes)
+                    EventBus.emit('route-found', this.routes);
+                    this.$store.commit('setRoutes', this.routes); // Add this line
                     store.commit('setRoutes', this.routes);
                 } else {
                     console.error('MapView.js >> No valid route found');
@@ -270,7 +271,7 @@ export default {
             }
         },
 
-        async handleRouteClick(route) {
+        async handleRouteClick(route, index) {
             try {
                 const { mapObj, sx, sy, ex, ey } = route;
                 console.log('MapView.vue >> handleRouteClick >> mapObj:', mapObj);
@@ -291,6 +292,9 @@ export default {
                 this.drawNaverMarker(ex, ey);
                 this.drawNaverPolyLine(routeResponse);
 
+                this.$store.dispatch('selectRoute', { route, index });
+                console.log('선택된 경로:', route);
+                
                 if (this.map) {
                     if (routeResponse.result && routeResponse.result.boundary) {
                         const boundary = new naver.maps.LatLngBounds(
