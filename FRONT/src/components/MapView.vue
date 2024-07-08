@@ -65,13 +65,14 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
+import { mapState, mapGetters, mapActions } from 'vuex';
 import { api } from '../assets/js/MapView.js';
 import MapView from '../assets/js/MapView.js';
 import odsayLogo from '../assets/img/ODsay_bi_mark.png';
-// import EventBus from '../../eventBus.js';
 
 export default {
+    name: 'MapView',
     props: {
         memHome: String,
         startPoint: String,
@@ -80,50 +81,61 @@ export default {
         memYoungN: Boolean,
         memSubsidiaryYn: Boolean
     },
-    setup(props) {
-        const localStartPoint = ref(props.startPoint);
-        const localEndPoint = ref(props.endPoint);
-        const routes = ref([]);
-        const map = ref(null);
-        const polylines = ref([]);
-        const isComponentMounted = ref(false);
 
+    computed: {
+        ...mapState(['routes', 'selectedRouteIndex']),
+        ...mapGetters(['getSelectedRoute'])
+    },
 
-        const findRoute = async () => {
+    methods: {
+        ...mapActions(['selectRoute']),
+        
+        async findRoute() {
             await MapView.methods.findRoute.call({
                 geocode: MapView.methods.geocode,
                 showAlert: MapView.methods.showAlert,
-                localStartPoint: localStartPoint.value,
-                localEndPoint: localEndPoint.value,
-                routes: routes,
-                $odsayAxios: api // axiosInstance가 미리 정의되어 있어야 합니다.
+                localStartPoint: this.localStartPoint,
+                localEndPoint: this.localEndPoint,
+                routes: this.routes,
+                $odsayAxios: api
             });
-        };
+            this.$store.commit('setRoutes', this.routes);
+        },
 
-        const initializeMap = () => {
-            MapView.methods.initializeMap.call(MapView.methods);
-            map.value = MapView.methods.map?.value;
-            console.log('MapView.vue >> Map initialized:', map.value);
-        };
-
-        const handleRouteClick = async (route) => {
-            if (!isComponentMounted.value) {
+        async handleRouteClick(route, index) {
+            if (!this.isComponentMounted) {
                 console.error('MapView.js >> Component is not mounted yet');
                 return;
             }
-            if (!map.value) {
+            if (!this.map) {
                 console.error('MapView.js >> Map is not initialized');
                 return;
             }
             await MapView.methods.handleRouteClick.call({
-                map: map.value,
+                map: this.map,
                 clearPolylines: MapView.methods.clearPolylines,
                 drawNaverMarker: MapView.methods.drawNaverMarker,
                 drawNaverPolyLine: MapView.methods.drawNaverPolyLine,
-                polylines: polylines.value,
+                polylines: this.polylines,
                 $odsayAxios: api
             }, route);
-        };
+
+            this.selectRoute({ route, index });
+        },
+
+        initializeMap() {
+            MapView.methods.initializeMap.call(MapView.methods);
+            this.map = MapView.methods.map?.value;
+            console.log('MapView.vue >> Map initialized:', this.map);
+        }
+    },
+
+    setup(props) {
+        const localStartPoint = ref(props.startPoint);
+        const localEndPoint = ref(props.endPoint);
+        const map = ref(null);
+        const polylines = ref([]);
+        const isComponentMounted = ref(false);
 
         onMounted(() => {
             console.log('Mounting component...');

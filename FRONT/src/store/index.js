@@ -45,10 +45,11 @@ const store = createStore({
         },
     },
     getters: {
-        getSelectedRoute: state => state.selectedRoute,
         getFormData: state => state.formData,
         getRoutes: state => state.routes,
+        getPayment : state => state.payment,
         getSelectedRouteIndex: state => state.selectedRouteIndex,
+        getSelectedRoute: state => state.selectedRoute,
     },
 });
 
