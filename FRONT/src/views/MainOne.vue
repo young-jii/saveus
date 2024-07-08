@@ -133,6 +133,13 @@ export default {
             showCardRecom: false,
         };
     },
+    created() {
+    // Vuex store 구독
+    this.$store.subscribe((mutation, state) => {
+        console.log('Vuex mutation:', mutation.type);
+        console.log('새로운 상태:', state);
+        });
+    },
     methods: {
         handleSubmit() {
             console.log("handleSubmit 눌림");
@@ -146,14 +153,19 @@ export default {
             this.showCheckButton = true;
         },
         onRouteSelected(route) {
-            console.log('MainOne.vue >> 선택된 경로:', route);
-            // 경로 선택 시 처리
-            this.$store.dispatch('selectRoute', route); // Vuex action 호출
+            console.log('선택된 경로:', route);
+            this.$store.dispatch('selectRoute', route);
+            console.log('저장 후 Vuex 상태:', this.$store.state);
         },
         async handleResultCheck() {
             try {
+                await new Promise(resolve => setTimeout(resolve, 100));
                 // Vuex store에서 선택된 경로 가져오기
                 const selectedRoute = this.$store.getters.getSelectedRoute;
+                console.log('선택된 경로:', selectedRoute);
+
+                console.log('Vuex store 전체:', this.$store);
+                console.log('모든 getters:', this.$store.getters);
 
                 // 선택된 경로가 없거나 결제 정보가 없는 경우 처리
                 if (!selectedRoute || !selectedRoute.payment) {
@@ -193,6 +205,7 @@ export default {
         },
     },
     mounted() {
+        console.log('초기 Vuex 상태:', this.$store.state);
         EventBus.on('formSubmitted', (formData) => {
             this.inputs.start_point = formData.start_point;
             this.inputs.end_point = formData.end_point;

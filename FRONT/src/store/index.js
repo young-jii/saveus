@@ -21,6 +21,9 @@ const store = createStore({
             commit('setPayment', payment);
         },
     },
+    getters: {
+        getSelectedRoute: state => state.selectedRoute
+    },
 });
 
 export default store;
