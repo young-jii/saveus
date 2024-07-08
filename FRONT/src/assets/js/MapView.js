@@ -127,6 +127,8 @@ const busLineColors = {
     36: '#993797'
 };
 
+const store = useStore();
+
 export { api };  // Add this line to export api
 
 export default {
@@ -250,7 +252,6 @@ export default {
                     });
                     console.log('MapView.js >> Emitting route-found event with routes:', this.routes);
                     EventBus.emit('route-found', this.routes)
-                    const store = useStore();
                     store.commit('setRoutes', this.routes);
                 } else {
                     console.error('MapView.js >> No valid route found');
@@ -275,38 +276,28 @@ export default {
                 console.log('MapView.vue >> handleRouteClick >> mapObj:', mapObj);
                 console.log('MapView.vue >> handleRouteClick >> sx, sy, ex, ey:', sx, sy, ex, ey);
                     
-                const xhr = new XMLHttpRequest();
                 const encodedApiKey = encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY);
                 const url = `https://api.odsay.com/v1/api/loadLane?apiKey=${encodedApiKey}&mapObject=0:0@${mapObj}`;
 
-                xhr.open("GET", url, true);
-                xhr.onreadystatechange = () => {
-                    if (xhr.readyState === 4) {
-                        if (xhr.status === 200) {
-                            const routeResponse = JSON.parse(xhr.responseText);
-                            console.log('MapView.js >> ODSAY loadLane API response:', routeResponse);
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const routeResponse = await response.json();
+                console.log('MapView.js >> ODSAY loadLane API response:', routeResponse);
 
-                            this.clearPolylines();
-                            this.drawNaverMarker(sx, sy);
-                            this.drawNaverMarker(ex, ey);
-                            this.drawNaverPolyLine(routeResponse);
+                this.clearPolylines();
+                this.drawNaverMarker(sx, sy);
+                this.drawNaverMarker(ex, ey);
+                this.drawNaverPolyLine(routeResponse);
 
-                            if (routeResponse.result.boundary) {
-                                const boundary = new naver.maps.LatLngBounds(
-                                    new naver.maps.LatLng(routeResponse.result.boundary.top, routeResponse.result.boundary.left),
-                                    new naver.maps.LatLng(routeResponse.result.boundary.bottom, routeResponse.result.boundary.right)
-                                );
-                                this.map.panToBounds(boundary);
-                            }
-                        } else {
-                            console.error('MapView.vue >> handleRouteClick >> Error:', xhr.status, xhr.statusText);
-                        }
-                    }
-                };
-                xhr.onerror = (error) => {
-                    console.error('MapView.vue >> handleRouteClick >> Error:', error);
-                };
-                xhr.send();
+                if (routeResponse.result && routeResponse.result.boundary) {
+                    const boundary = new naver.maps.LatLngBounds(
+                        new naver.maps.LatLng(routeResponse.result.boundary.top, routeResponse.result.boundary.left),
+                        new naver.maps.LatLng(routeResponse.result.boundary.bottom, routeResponse.result.boundary.right)
+                    );
+                    this.map.panToBounds(boundary);
+                }
 
             } catch (error) {
                 console.error('MapView.vue >> handleRouteClick >> Error:', error);
@@ -317,13 +308,15 @@ export default {
             this.polylines.forEach(polyline => polyline.setMap(null));
             this.polylines = [];
         },
+
         initializeMap() {
-            if (window.naver) {
+            if (window.naver && window.naver.maps) {
                 var mapOptions = {
                     center: new naver.maps.LatLng(37.5665, 126.9780),
                     zoom: 10
                 };
                 this.map = new naver.maps.Map('map', mapOptions);
+                console.log('MapView.js >> Map initialized:', this.map);
             } else {
                 console.error('MapView.js >> Naver Maps API is not loaded.');
             }

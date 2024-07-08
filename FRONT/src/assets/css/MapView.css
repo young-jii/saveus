@@ -375,7 +375,9 @@ body {
 }
 
 .walk {
-    background: url("../img/free-icon-walking-12027488.png");
+    background-image: url("../img/free-icon-walking-12027488.png");
+    background-size: cover;
+    background-repeat: no-repeat;
     color: #d3d3d3;
 }
 

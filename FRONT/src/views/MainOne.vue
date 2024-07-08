@@ -144,6 +144,7 @@ export default {
             // 최적 경로 탐색 코드
             this.showMapApi = true;
             this.showMapView = true; // MapView 표시
+            this.showCheckButton = true;
         },
         onRouteSelected(route) {
             console.log('MainOne.vue >> Route selected:', route);
@@ -181,7 +182,7 @@ export default {
             this.inputs.start_point = formData.start_point;
             this.inputs.end_point = formData.end_point;
             this.showMapApi = true;
-            this.showCheckButton = true;
+
         });
     },
     computed: {
