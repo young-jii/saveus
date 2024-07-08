@@ -88,6 +88,42 @@ export default {
         const polylines = ref([]);
         const isComponentMounted = ref(false);
 
+
+        const findRoute = async () => {
+            await MapView.methods.findRoute.call({
+                geocode: MapView.methods.geocode,
+                showAlert: MapView.methods.showAlert,
+                localStartPoint: localStartPoint.value,
+                localEndPoint: localEndPoint.value,
+                routes: routes,
+                $odsayAxios: api // axiosInstance가 미리 정의되어 있어야 합니다.
+            });
+        };
+
+        const initializeMap = () => {
+            MapView.methods.initializeMap.call({
+                map: null, // 초기화 시 null로 설정
+                showAlert: MapView.methods.showAlert,
+                polylines: polylines
+            });
+            map.value = MapView.methods.map; // 초기화 후 map ref 업데이트
+        };
+
+        const handleRouteClick = async (route) => {
+            if (!isComponentMounted.value) {
+                console.error('MapView.js >> Component is not mounted yet');
+                return;
+            }
+            await MapView.methods.handleRouteClick.call({
+                map: map.value,
+                clearPolylines: MapView.methods.clearPolylines,
+                drawNaverMarker: MapView.methods.drawNaverMarker,
+                drawNaverPolyLine: MapView.methods.drawNaverPolyLine,
+                polylines: polylines.value,
+                $odsayAxios: api
+            }, route);
+        };
+
         onMounted(() => {
             isComponentMounted.value = true;
             const script = document.createElement('script');
@@ -105,53 +141,18 @@ export default {
             };
         });
 
-        const findRoute = async () => {
-            await MapView.methods.findRoute.call({
-                geocode: MapView.methods.geocode,
-                showAlert: MapView.methods.showAlert,
-                localStartPoint: localStartPoint.value,
-                localEndPoint: localEndPoint.value,
-                routes: routes,
-                $odsayAxios: api // axiosInstance가 미리 정의되어 있어야 합니다.
-            });
-        };
-
-        const initializeMap = () => {
-            MapView.methods.initializeMap.call({
-                map: map.value,
-                showAlert: MapView.methods.showAlert,
-                polylines: polylines
-            });
-        };
-
-        const handleRouteClick = async (route) => {
-            if (!isComponentMounted.value) {
-                console.error('MapView.js >> Component is not mounted yet');
-                return;
-            }
-            await MapView.methods.handleRouteClick.call({
-                map: map.value,
-                clearPolylines: MapView.methods.clearPolylines,
-                drawNaverMarker: MapView.methods.drawNaverMarker,
-                drawNaverPolyLine: MapView.methods.drawNaverPolyLine,
-                polylines: polylines.value,
-                $odsayAxios: api
-        }, route);
-
-
-    };
-
-    return {
-        isComponentMounted,
-        localStartPoint,
-        localEndPoint,
-        routes,
-        map,
-        polylines,
-        findRoute,
-        handleRouteClick,
-        odsayLogo,
-        ...MapView.methods
+        return {
+            isComponentMounted,
+            localStartPoint,
+            localEndPoint,
+            routes,
+            map,
+            initializeMap,
+            polylines,
+            findRoute,
+            handleRouteClick,
+            odsayLogo,
+            ...MapView.methods
         };
     }
 };
