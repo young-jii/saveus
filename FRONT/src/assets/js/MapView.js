@@ -319,8 +319,8 @@ export default {
                     center: new naver.maps.LatLng(37.5665, 126.9780),
                     zoom: 10
                 };
-                this.map = new naver.maps.Map('map', mapOptions);
-                console.log('MapView.js >> Map initialized:', this.map);
+                map.value = new window.naver.maps.Map('map', mapOptions);
+                console.log('Map initialized:', map.value);
             } else {
                 console.error('MapView.js >> Naver Maps API is not loaded.');
             }

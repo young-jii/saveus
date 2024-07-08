@@ -130,24 +130,19 @@ export default {
         };
 
         onMounted(() => {
+            console.log('Mounting component...');
             isComponentMounted.value = true;
             const script = document.createElement('script');
             script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.VUE_APP_NAVER_CLIENT_ID}`;
             script.async = true;
             document.head.appendChild(script);
             script.onload = () => {
-                console.log('MapView.js >> Naver Maps script loaded');
-                if (window.naver && window.naver.maps) {
-                    console.log('MapView.js >> Naver Maps API is available');
-                    initializeMap();
-                    if (props.startPoint && props.endPoint) {
-                        findRoute();
-                    } else {
-                        console.warn('Start point or end point is not provided');
-                    }
-                } else {
-                    console.error('MapView.js >> Naver Maps API is not available after script load');
-                }
+                console.log('Naver Maps script loaded successfully');
+                initializeMap();
+            };
+
+            script.onerror = (error) => {
+                console.error('Error loading Naver Maps script:', error);
             };
         });
 
