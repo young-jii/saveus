@@ -7,18 +7,18 @@ const store = createStore({
     },
     mutations: {
         setSelectedRoute(state, route) {
-        state.selectedRoute = route;
+            state.selectedRoute = route;
         },
         setPayment(state, payment) {
-        state.payment = payment;
+            state.payment = payment;
         },
     },
     actions: {
         selectRoute({ commit }, route) {
-        commit('setSelectedRoute', route);
+            commit('setSelectedRoute', route);
         },
         setPayment({ commit }, payment) {
-        commit('setPayment', payment);
+            commit('setPayment', payment);
         },
     },
 });

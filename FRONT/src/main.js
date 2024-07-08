@@ -3,6 +3,7 @@ import App from './App.vue';
 import router from './router';
 import axios from 'axios';
 import EventBus from '../eventBus';
+import store from './store'; // store 파일 import 추가
 
 // Axios 기본 설정
 axios.defaults.withCredentials = true;
@@ -42,4 +43,4 @@ app.config.globalProperties.$odsayAxios = odsayAxiosInstance;
 app.config.globalProperties.$apiBaseUrl = apiBaseUrl;
 app.config.globalProperties.EventBus = EventBus ;
 
-app.use(router).mount('#app');
+app.use(router).use(store).mount('#app');
