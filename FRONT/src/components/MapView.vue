@@ -82,8 +82,13 @@ export default {
     },
 
     data() {
-        return {
+    return {
         routes: [],
+        localStartPoint: this.startPoint,
+        localEndPoint: this.endPoint,
+        map: null,
+        polylines: [],
+        isComponentMounted: false
         };
     },
 
@@ -105,9 +110,9 @@ export default {
                 $odsayAxios: api
             });
             this.$store.commit('setRoutes', this.routes);
-            },
+        },
 
-            async handleRouteClick(route, index) {
+        async handleRouteClick(route, index) {
             if (!this.isComponentMounted) {
                 console.error('MapView.js >> Component is not mounted yet');
                 return;
@@ -134,50 +139,27 @@ export default {
             console.log('MapView.vue >> Map initialized:', this.map);
         }
     },
+    mounted() {
+    console.log('Mounting component...');
+    this.isComponentMounted = true;
+    const script = document.createElement('script');
+    script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.VUE_APP_NAVER_CLIENT_ID}`;
+    script.async = true;
+    document.head.appendChild(script);
 
-    setup(props) {
-        const localStartPoint = ref(props.startPoint);
-        const localEndPoint = ref(props.endPoint);
-        const map = ref(null);
-        const polylines = ref([]);
-        const isComponentMounted = ref(false);
+    script.onload = () => {
+        console.log('Naver Maps script loaded successfully');
+        this.initializeMap();
+        if (this.startPoint && this.endPoint) {
+            this.findRoute();
+        } else {
+            console.warn('Start point or end point is not provided');
+        }
+    };
 
-        onMounted(() => {
-        console.log('Mounting component...');
-        isComponentMounted.value = true;
-        const script = document.createElement('script');
-        script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.VUE_APP_NAVER_CLIENT_ID}`;
-        script.async = true;
-        document.head.appendChild(script);
-
-        script.onload = () => {
-            console.log('Naver Maps script loaded successfully');
-            this.initializeMap();
-            if (props.startPoint && props.endPoint) {
-                this.findRoute();
-            } else {
-                console.warn('Start point or end point is not provided');
-            }
-        };
-
-        script.onerror = (error) => {
-            console.error('Error loading Naver Maps script:', error);
-        };
-    });
-
-    return {
-        localStartPoint,
-        localEndPoint,
-        map,
-        polylines,
-        isComponentMounted,
-        odsayLogo,
-        initializeMap,
-        findRoute,
+    script.onerror = (error) => {
+        console.error('Error loading Naver Maps script:', error);
         };
     }
 };
 </script>
-
-
-<style scoped src="../assets/css/MapView.css"></style>
