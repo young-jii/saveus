@@ -65,7 +65,6 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
 import { mapState, mapGetters, mapActions } from 'vuex';
 import MapView, { api } from '../assets/js/MapView.js';
 import odsayLogo from '../assets/img/ODsay_bi_mark.png';
@@ -88,7 +87,8 @@ export default {
         localEndPoint: this.endPoint,
         map: null,
         polylines: [],
-        isComponentMounted: false
+        isComponentMounted: false,
+        odsayLogo
         };
     },
 
@@ -140,25 +140,25 @@ export default {
         }
     },
     mounted() {
-    console.log('Mounting component...');
-    this.isComponentMounted = true;
-    const script = document.createElement('script');
-    script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.VUE_APP_NAVER_CLIENT_ID}`;
-    script.async = true;
-    document.head.appendChild(script);
+        console.log('Mounting component...');
+        this.isComponentMounted = true;
+        const script = document.createElement('script');
+        script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.VUE_APP_NAVER_CLIENT_ID}`;
+        script.async = true;
+        document.head.appendChild(script);
 
-    script.onload = () => {
-        console.log('Naver Maps script loaded successfully');
-        this.initializeMap();
-        if (this.startPoint && this.endPoint) {
-            this.findRoute();
-        } else {
-            console.warn('Start point or end point is not provided');
-        }
-    };
+        script.onload = () => {
+            console.log('Naver Maps script loaded successfully');
+            this.initializeMap();
+            if (this.startPoint && this.endPoint) {
+                this.findRoute();
+            } else {
+                console.warn('Start point or end point is not provided');
+            }
+        };
 
-    script.onerror = (error) => {
-        console.error('Error loading Naver Maps script:', error);
+        script.onerror = (error) => {
+            console.error('Error loading Naver Maps script:', error);
         };
     }
 };
