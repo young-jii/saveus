@@ -133,13 +133,7 @@ export default {
             showCardRecom: false,
         };
     },
-    created() {
-    // Vuex store 구독
-    this.$store.subscribe((mutation, state) => {
-        console.log('Vuex mutation:', mutation.type);
-        console.log('새로운 상태:', state);
-        });
-    },
+
     methods: {
         handleSubmit() {
             console.log("handleSubmit 눌림");
@@ -155,7 +149,7 @@ export default {
         onRouteSelected(route) {
             console.log('선택된 경로:', route);
             this.$store.dispatch('selectRoute', route);
-            console.log('저장 후 Vuex 상태:', this.$store.state);
+            console.log('저장 후 Vuex 상태:', this.$store.state.selectedRoute);
         },
         async handleResultCheck() {
             try {
@@ -210,6 +204,12 @@ export default {
             this.inputs.start_point = formData.start_point;
             this.inputs.end_point = formData.end_point;
             this.showMapApi = true;
+        });
+
+        // Vuex store 구독
+        this.$store.subscribe((mutation, state) => {
+            console.log('Vuex mutation:', mutation.type);
+            console.log('새로운 상태:', state);
         });
     },
     computed: {
