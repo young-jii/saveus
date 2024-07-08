@@ -101,12 +101,8 @@ export default {
         };
 
         const initializeMap = () => {
-            MapView.methods.initializeMap.call({
-                map: null, // 초기화 시 null로 설정
-                showAlert: MapView.methods.showAlert,
-                polylines: polylines
-            });
-            map.value = MapView.methods.map; // 초기화 후 map ref 업데이트
+            MapView.methods.initializeMap.call(MapView.methods);
+            map.value = MapView.methods.map?.value;
             console.log('MapView.vue >> Map initialized:', map.value);
         };
 
@@ -136,9 +132,15 @@ export default {
             script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.VUE_APP_NAVER_CLIENT_ID}`;
             script.async = true;
             document.head.appendChild(script);
+
             script.onload = () => {
                 console.log('Naver Maps script loaded successfully');
                 initializeMap();
+                if (props.startPoint && props.endPoint) {
+                    findRoute();
+                } else {
+                    console.warn('Start point or end point is not provided');
+                }
             };
 
             script.onerror = (error) => {
