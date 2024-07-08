@@ -149,15 +149,25 @@ export default {
         onRouteSelected(route) {
             console.log('MainOne.vue >> Route selected:', route);
             // 경로 선택 시 처리
-            const store = useStore(); // Vuex store 가져오기
+            this.$store.dispatch('selectRoute', route); // Vuex action 호출
             store.dispatch('selectRoute', route); // Vuex action 호출
         },
-        handleResultCheck() {
-            // 결과 확인 버튼 처리
-            const selectedRoute = this.$store.getters.getSelectedRoute;
+        async handleResultCheck() {
+            try {
+                // Vuex store에서 선택된 경로 가져오기
+                const selectedRoute = this.$store.getters.getSelectedRoute;
 
-            if (selectedRoute && selectedRoute.payment) {
-                this.showCardRecom = true; // CardRecom 컴포넌트 표시
+                // 선택된 경로가 없거나 결제 정보가 없는 경우 처리
+                if (!selectedRoute || !selectedRoute.payment) {
+                    console.error('선택된 경로 또는 결제 정보가 없습니다.');
+                    // 사용자에게 오류 메시지를 표시하는 로직을 추가할 수 있습니다.
+                    return;
+                }
+
+                // CardRecom 컴포넌트 표시
+                this.showCardRecom = true;
+
+                // CardRecom 컴포넌트에 전달할 데이터 준비
                 const data = {
                     memHome: this.inputs.mem_home,
                     startPoint: this.inputs.start_point,
@@ -167,12 +177,20 @@ export default {
                     memSubsidiaryYn: this.inputs.mem_subsidiary_yn,
                     payment: selectedRoute.payment
                 };
-                console.log('Data being sent to CardRecom:', data);
+
+                console.log('CardRecom에 전송되는 데이터:', data);
+
+                // CardRecom 컴포넌트 업데이트
                 this.$nextTick(() => {
-                    this.$refs.cardRecom.updateData(data);
+                    if (this.$refs.cardRecom) {
+                        this.$refs.cardRecom.updateData(data);
+                    } else {
+                        console.error('CardRecom 컴포넌트 참조를 찾을 수 없습니다.');
+                    }
                 });
-            } else {
-                console.error('Selected payment is null or undefined');
+            } catch (error) {
+                console.error('handleResultCheck 에러:', error);
+                // 사용자에게 오류 메시지를 표시하는 로직을 추가할 수 있습니다.
             }
         },
     },
