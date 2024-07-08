@@ -40,9 +40,9 @@
                             <div class="route_detail">
                                 <ul class="route-detail-list">
                                     <li v-for="(subPath, subIndex) in route.subPaths" :key="subIndex" class="line">
-                                        <span class="icon" :class="getTrafficDetail(subPath)"></span>
+                                        <span class="icon" :class="{ [getTrafficDetail(subPath)]: getTrafficDetail(subPath) }"></span>
                                         <span class="r_body">
-                                            <span class="r_action">{{ getAction(subPath, subPath.startName, subPath.lane) }}</span>
+                                            <span class="r_action">{{ getAction(subPath, subPath.startName, subPath.lane, subPath.sectionTime) }}</span>
                                         </span>
                                     </li>
                                     <li :key="route.subPaths.length" class="line">

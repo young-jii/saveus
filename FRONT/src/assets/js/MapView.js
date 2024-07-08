@@ -248,7 +248,7 @@ export default {
                         };
                     });
                     console.log('MapView.js >> Emitting route-found event with routes:', this.routes);
-                    EventBus.emit('route-found', this.route)
+                    EventBus.emit('route-found', this.routeData)
                 } else {
                     console.error('MapView.js >> No valid route found');
                 }
@@ -273,7 +273,8 @@ export default {
                 console.log('MapView.vue >> handleRouteClick >> sx, sy, ex, ey:', sx, sy, ex, ey);
                     
                 const xhr = new XMLHttpRequest();
-                const url = `https://api.odsay.com/v1/api/loadLane?apiKey=${process.env.VUE_APP_ODSAY_API_KEY}&mapObject=0:0@${mapObj}`;
+                const encodedApiKey = encodeURIComponent(process.env.VUE_APP_ODSAY_API_KEY);
+                const url = `https://api.odsay.com/v1/api/loadLane?apiKey=${encodedApiKey}&mapObject=0:0@${mapObj}`;
 
                 xhr.open("GET", url, true);
                 xhr.onreadystatechange = () => {
@@ -308,8 +309,6 @@ export default {
                 console.error('MapView.vue >> handleRouteClick >> Error:', error);
             }
         },
-
-
         
         clearPolylines() {
             this.polylines.forEach(polyline => polyline.setMap(null));
@@ -418,8 +417,11 @@ export default {
                 const subwayClass = `sub${subPath.lane && subPath.lane[0] ? subPath.lane[0].subwayCode : ''}`;
                 // console.log('Subway class:', subClass);
                 return subwayClass;
-            } 
-            return
+            }  else {
+                const walkClass = 'walk';
+                // console.log('Walk class:', walkClass);
+                return walkClass;
+            }
         },
         
         formatTime(minutes) {
@@ -438,13 +440,13 @@ export default {
             }
         },
 
-        getAction(subPath, startName, lane) {
+        getAction(subPath, startName, lane, sectionTime) {
             if (subPath.trafficType === 1) {
                 return `지하철 ${lane.map(l => l.name).join(', ')} - ${startName}역`;
             } else if (subPath.trafficType === 2) {
                 return `버스 ${lane.map(l => l.busNo).join(', ')} 번 - ${startName}`;
             } else {
-                return `도보 - ${startName}`;
+                return `도보 ${sectionTime} 분`;
             }
         }
     }

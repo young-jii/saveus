@@ -145,6 +145,7 @@ export default {
             this.showMapView = true; // MapView 표시
         },
         onRouteSelected(route) {
+            console.log('MainOne.vue >> Route selected:', routeData);
             // 경로 선택 시 처리
             const store = useStore(); // Vuex store 가져오기
             store.dispatch('selectRoute', route); // Vuex action 호출

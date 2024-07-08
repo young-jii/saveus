@@ -375,7 +375,8 @@ body {
 }
 
 .walk {
-    background-color: #d3d3d3;
+    background: url("../img/free-icon-walking-12027488.png");
+    color: #d3d3d3;
 }
 
 /* 필요한 다른 노선 및 버스 타입 색상 추가 */
