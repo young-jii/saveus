@@ -1,5 +1,6 @@
 import axios from 'axios';
 import EventBus from '../../../eventBus';  // 이벤트 버스 불러오기
+import { useStore } from 'vuex';
 
 const apiBaseUrl = process.env.VUE_APP_API_BASE_URL || 'https://jiyoung.pythonanywhere.com';
 
@@ -249,6 +250,8 @@ export default {
                     });
                     console.log('MapView.js >> Emitting route-found event with routes:', this.routes);
                     EventBus.emit('route-found', this.routes)
+                    const store = useStore();
+                    store.commit('setRoutes', this.routes);
                 } else {
                     console.error('MapView.js >> No valid route found');
                 }
