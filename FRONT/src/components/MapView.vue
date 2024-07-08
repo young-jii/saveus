@@ -96,42 +96,42 @@ export default {
         ...mapActions(['selectRoute']),
         
         async findRoute() {
-        await MapView.methods.findRoute.call({
-            geocode: MapView.methods.geocode,
-            showAlert: MapView.methods.showAlert,
-            localStartPoint: this.localStartPoint,
-            localEndPoint: this.localEndPoint,
-            routes: this.routes,
-            $odsayAxios: api
-        });
-        this.$store.commit('setRoutes', this.routes);
-        },
+            await MapView.methods.findRoute.call({
+                geocode: MapView.methods.geocode,
+                showAlert: MapView.methods.showAlert,
+                localStartPoint: this.localStartPoint,
+                localEndPoint: this.localEndPoint,
+                routes: this.routes,
+                $odsayAxios: api
+            });
+            this.$store.commit('setRoutes', this.routes);
+            },
 
-        async handleRouteClick(route, index) {
-        if (!this.isComponentMounted) {
-            console.error('MapView.js >> Component is not mounted yet');
-            return;
-        }
-        if (!this.map) {
-            console.error('MapView.js >> Map is not initialized');
-            return;
-        }
-        await MapView.methods.handleRouteClick.call({
-            map: this.map,
-            clearPolylines: MapView.methods.clearPolylines,
-            drawNaverMarker: MapView.methods.drawNaverMarker,
-            drawNaverPolyLine: MapView.methods.drawNaverPolyLine,
-            polylines: this.polylines,
-            $odsayAxios: api
-        }, route);
+            async handleRouteClick(route, index) {
+            if (!this.isComponentMounted) {
+                console.error('MapView.js >> Component is not mounted yet');
+                return;
+            }
+            if (!this.map) {
+                console.error('MapView.js >> Map is not initialized');
+                return;
+            }
+            await MapView.methods.handleRouteClick.call({
+                map: this.map,
+                clearPolylines: MapView.methods.clearPolylines,
+                drawNaverMarker: MapView.methods.drawNaverMarker,
+                drawNaverPolyLine: MapView.methods.drawNaverPolyLine,
+                polylines: this.polylines,
+                $odsayAxios: api
+            }, route);
 
-        this.selectRoute({ route, index });
+            this.selectRoute({ route, index });
         },
 
         initializeMap() {
-        MapView.methods.initializeMap.call(MapView.methods);
-        this.map = MapView.methods.map?.value;
-        console.log('MapView.vue >> Map initialized:', this.map);
+            MapView.methods.initializeMap.call(MapView.methods);
+            this.map = MapView.methods.map?.value;
+            console.log('MapView.vue >> Map initialized:', this.map);
         }
     },
 
@@ -154,9 +154,9 @@ export default {
             console.log('Naver Maps script loaded successfully');
             this.initializeMap();
             if (props.startPoint && props.endPoint) {
-            this.findRoute();
+                this.findRoute();
             } else {
-            console.warn('Start point or end point is not provided');
+                console.warn('Start point or end point is not provided');
             }
         };
 
@@ -172,7 +172,8 @@ export default {
         polylines,
         isComponentMounted,
         odsayLogo,
-        ...MapView.methods
+        initializeMap,
+        findRoute,
         };
     }
 };
