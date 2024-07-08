@@ -117,7 +117,6 @@ import mainOne from '../assets/js/MainOne.js';
 import MapView from '../components/MapView.vue';
 import CardRecom from './CardRecom.vue';
 import EventBus from '../../eventBus.js';  // 이벤트 버스 불러오기
-import { useStore } from 'vuex';
 
 export default {
     mixins: [mainOne],
@@ -147,10 +146,9 @@ export default {
             this.showCheckButton = true;
         },
         onRouteSelected(route) {
-            console.log('MainOne.vue >> Route selected:', route);
+            console.log('MainOne.vue >> 선택된 경로:', route);
             // 경로 선택 시 처리
             this.$store.dispatch('selectRoute', route); // Vuex action 호출
-            store.dispatch('selectRoute', route); // Vuex action 호출
         },
         async handleResultCheck() {
             try {
@@ -195,18 +193,16 @@ export default {
         },
     },
     mounted() {
-        this.store = this.$store; // Vue 컴포넌트 내에서 this.$store를 사용하여 Vuex store에 접근합니다.
         EventBus.on('formSubmitted', (formData) => {
             this.inputs.start_point = formData.start_point;
             this.inputs.end_point = formData.end_point;
             this.showMapApi = true;
-
         });
     },
     computed: {
         routes() {
             return this.$store.state.routes;
-            }
+        }
     },
 };
 </script>
