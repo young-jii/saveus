@@ -147,7 +147,6 @@ export default {
         
         handleSubmit() {
             console.log("handleSubmit 눌림");
-            // Form 제출 시 처리
             const formData = {
                 mem_home: this.inputs.mem_home,
                 start_point: this.inputs.start_point,
@@ -161,33 +160,27 @@ export default {
         },
         
         findRoute() {
-            // 최적 경로 탐색 코드
             this.showMapApi = true;
-            this.showMapView = true; // MapView 표시
+            this.showMapView = true;
             this.showCheckButton = true;
         },
 
         async handleResultCheck() {
             try {
                 await new Promise(resolve => setTimeout(resolve, 100));
-                // Vuex store에서 선택된 경로 가져오기
                 const selectedRoute = this.$store.getters.getSelectedRoute;
                 console.log('선택된 경로:', selectedRoute);
 
                 console.log('Vuex store 전체:', this.$store);
                 console.log('모든 getters:', this.$store.getters);
 
-                // 선택된 경로가 없거나 결제 정보가 없는 경우 처리
                 if (!selectedRoute || !selectedRoute.payment) {
                     console.error('선택된 경로 또는 결제 정보가 없습니다.');
-                    // 사용자에게 오류 메시지를 표시하는 로직을 추가할 수 있습니다.
                     return;
                 }
 
-                // CardRecom 컴포넌트 표시
                 this.showCardRecom = true;
 
-                // CardRecom 컴포넌트에 전달할 데이터 준비
                 const data = {
                     memHome: this.inputs.mem_home,
                     startPoint: this.inputs.start_point,
@@ -200,7 +193,6 @@ export default {
 
                 console.log('CardRecom에 전송되는 데이터:', data);
 
-                // CardRecom 컴포넌트 업데이트
                 this.$nextTick(() => {
                     if (this.$refs.cardRecom) {
                         this.$refs.cardRecom.updateData(data);
@@ -210,7 +202,6 @@ export default {
                 });
             } catch (error) {
                 console.error('handleResultCheck 에러:', error);
-                // 사용자에게 오류 메시지를 표시하는 로직을 추가할 수 있습니다.
             }
         },
     },
@@ -223,16 +214,10 @@ export default {
             this.showMapApi = true;
         });
 
-        // Vuex store 구독
         this.$store.subscribe((mutation, state) => {
             console.log('Vuex mutation:', mutation.type);
             console.log('새로운 상태:', state);
         });
-    },
-    computed: {
-        routes() {
-            return this.$store.state.routes;
-        }
     },
 };
 </script>
