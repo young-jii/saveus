@@ -252,9 +252,9 @@ export default {
                     EventBus.emit('route-found', this.routes);
 
                     // Update Vuex store
-                    this.$store.dispatch('updateRoutes', this.routes);
+                    store.dispatch('updateRoutes', this.routes);
                     // Set initial selected route index (e.g., 0 for the first route)
-                    this.$store.dispatch('selectRoute', { route: this.routes[0], index: 0 });
+                    store.dispatch('selectRoute', { route: this.routes[0], index: 0 });
                 } else {
                     console.error('MapView.js >> No valid route found');
                 }
@@ -293,7 +293,7 @@ export default {
                 this.drawNaverMarker(ex, ey);
                 this.drawNaverPolyLine(routeResponse);
 
-                this.$store.dispatch('selectRoute', { route, index });
+                store.dispatch('selectRoute', { route, index });
                 console.log('선택된 경로:', route);
                 
                 if (this.map) {
