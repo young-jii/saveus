@@ -98,6 +98,9 @@ export default {
         ...mapState({
             routes: state => state.routes
         }),
+        storeRoutes() {
+        return this.$store.state.routes;
+        },
     },
 
     methods: {
@@ -115,7 +118,10 @@ export default {
                 });
                 console.log('API Response:', response);
                 if (response && response.data) {
-                    this.routes = response.data.routes; // Assuming response.data.routes contains the routes
+                    this.routes = response.result.path.map(path => ({
+                        // Map the path data to your route structure
+                        // This should match the structure you're using in your template
+                    }));
                     this.$store.commit('setRoutes', this.routes);
                 } else {
                     console.error('No routes found in the response:', response);
