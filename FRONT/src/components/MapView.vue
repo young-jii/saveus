@@ -113,7 +113,7 @@ export default {
                 console.log('API Response:', response);
 
                 if (response && response.result && response.result.path) {
-                    this.routes = response.result.path.map(path => ({
+                    const routes = response.result.path.map(path => ({
                         totalTime: path.info.totalTime,
                         totalWalk: path.info.totalWalk,
                         busTransitCount: path.info.busTransitCount,
@@ -145,7 +145,7 @@ export default {
                         ex: path.info.ex,
                         ey: path.info.ey
                     }));
-                    this.$store.commit('setRoutes', this.routes);
+                    this.updateRoutes(routes);
                 } else {
                     console.error('No routes found in the response:', response);
                 }
