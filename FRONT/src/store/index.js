@@ -43,6 +43,9 @@ const store = createStore({
         updateFormData({ commit }, formData) {
             commit('setFormData', formData);
         },
+        updateRoutes({ commit }, routes) {
+            commit('setRoutes', routes);
+        },
     },
     getters: {
         getFormData: state => state.formData,

@@ -127,8 +127,6 @@ const busLineColors = {
     36: '#993797'
 };
 
-const store = useStore();
-
 export { api };  // Add this line to export api
 
 export default {
@@ -252,7 +250,11 @@ export default {
                     });
                     console.log('MapView.js >> Emitting route-found event with routes:', this.routes);
                     EventBus.emit('route-found', this.routes);
-                    this.$store.commit('setRoutes', this.routes); // Add this line
+
+                    // Update Vuex store
+                    this.$store.dispatch('updateRoutes', this.routes);
+                    // Set initial selected route index (e.g., 0 for the first route)
+                    this.$store.dispatch('selectRoute', { route: this.routes[0], index: 0 });
                 } else {
                     console.error('MapView.js >> No valid route found');
                 }
