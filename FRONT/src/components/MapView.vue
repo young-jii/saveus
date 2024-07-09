@@ -94,7 +94,10 @@ export default {
 
     computed: {
         ...mapState(['selectedRouteIndex']),
-        ...mapGetters(['getSelectedRoute'])
+        ...mapGetters(['getSelectedRoute']),
+        ...mapState({
+            routes: state => state.routes
+        }),
     },
 
     methods: {
