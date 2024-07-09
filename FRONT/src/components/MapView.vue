@@ -98,9 +98,6 @@ export default {
         ...mapState({
             routes: state => state.routes
         }),
-        storeRoutes() {
-        return this.$store.state.routes;
-        },
     },
 
     methods: {
@@ -108,21 +105,53 @@ export default {
         
         async findRoute() {
             try {
-                const response = await MapView.methods.findRoute.call({
+                const context = {
                     geocode: MapView.methods.geocode,
                     showAlert: MapView.methods.showAlert,
                     localStartPoint: this.localStartPoint,
                     localEndPoint: this.localEndPoint,
                     routes: this.routes,
                     $odsayAxios: api
-                });
+                };
+                
+                console.log('Calling findRoute with context:', context);
+                const response = await MapView.methods.findRoute.call(context);
                 console.log('API Response:', response);
-                if (response && response.data) {
+
+                if (response && response.result && response.result.path) {
                     this.routes = response.result.path.map(path => ({
-                        // Map the path data to your route structure
-                        // This should match the structure you're using in your template
+                        totalTime: path.info.totalTime,
+                        totalWalk: path.info.totalWalk,
+                        busTransitCount: path.info.busTransitCount,
+                        subwayTransitCount: path.info.subwayTransitCount,
+                        payment: path.info.payment,
+                        totalDistance: path.info.totalDistance,
+                        startNameKor: path.info.firstStartStation,
+                        endName: path.info.lastEndStation,
+                        subPaths: path.subPath,
+                        mapObj: path.info.mapObj,
+                        busStopList: path.subPath
+                            .filter(subPath => subPath.trafficType === 2)
+                            .flatMap(subPath => {
+                                if (subPath.passStopList && Array.isArray(subPath.passStopList.stations)) {
+                                    return subPath.passStopList.stations.map(station => station.stationName);
+                                }
+                            return [];
+                        }),
+                        subwayStopList: path.subPath
+                            .filter(subPath => subPath.trafficType === 1)
+                            .flatMap(subPath => {
+                                if (subPath.passStopList && Array.isArray(subPath.passStopList.stations)) {
+                                    return subPath.passStopList.stations.map(station => station.stationName);
+                                }
+                            return [];
+                        }),
+                        sx: path.info.sx,
+                        sy: path.info.sy,
+                        ex: path.info.ex,
+                        ey: path.info.ey
                     }));
-                    this.$store.commit('setRoutes', this.routes);
+                this.$store.commit('setRoutes', this.routes);
                 } else {
                     console.error('No routes found in the response:', response);
                 }
