@@ -48,7 +48,7 @@
                                     <li :key="route.subPaths.length" class="line">
                                         <span class="icon"></span>
                                         <span class="r_body">
-                                            <span class="r_title"> ➜ {{ route.lastEndStation }} 하차</span>
+                                            <span class="r_title"> ➜ {{ route.endName }} 하차</span>
                                         </span>
                                     </li>
                                 </ul>
@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import { mapState, mapGetters, mapActions } from 'vuex';
+import { mapState, mapActions } from 'vuex';
 import MapView, { api } from '../assets/js/MapView.js';
 import odsayLogo from '../assets/img/ODsay_bi_mark.png';
 
@@ -79,10 +79,8 @@ export default {
         memYoungN: Boolean,
         memSubsidiaryYn: Boolean
     },
-
     data() {
         return {
-            routes: [],
             localStartPoint: this.startPoint,
             localEndPoint: this.endPoint,
             map: null,
@@ -91,15 +89,10 @@ export default {
             odsayLogo
         };
     },
-
     computed: {
-        ...mapState(['selectedRouteIndex']),
+        ...mapState(['routes', 'selectedRouteIndex']),
         ...mapGetters(['getSelectedRoute']),
-        ...mapState({
-            routes: state => state.routes
-        }),
     },
-
     methods: {
         ...mapActions(['selectRoute']),
         
@@ -136,22 +129,22 @@ export default {
                                 if (subPath.passStopList && Array.isArray(subPath.passStopList.stations)) {
                                     return subPath.passStopList.stations.map(station => station.stationName);
                                 }
-                            return [];
-                        }),
+                                return [];
+                            }),
                         subwayStopList: path.subPath
                             .filter(subPath => subPath.trafficType === 1)
                             .flatMap(subPath => {
                                 if (subPath.passStopList && Array.isArray(subPath.passStopList.stations)) {
                                     return subPath.passStopList.stations.map(station => station.stationName);
                                 }
-                            return [];
-                        }),
+                                return [];
+                            }),
                         sx: path.info.sx,
                         sy: path.info.sy,
                         ex: path.info.ex,
                         ey: path.info.ey
                     }));
-                this.$store.commit('setRoutes', this.routes);
+                    this.$store.commit('setRoutes', this.routes);
                 } else {
                     console.error('No routes found in the response:', response);
                 }
