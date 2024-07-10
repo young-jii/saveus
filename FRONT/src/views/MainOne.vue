@@ -181,25 +181,7 @@ export default {
 
                 this.showCardRecom = true;
 
-                const data = {
-                    memHome: this.inputs.mem_home,
-                    startPoint: this.inputs.start_point,
-                    endPoint: this.inputs.end_point,
-                    memYoungY: this.inputs.mem_young_y,
-                    memYoungN: this.inputs.mem_young_n,
-                    memSubsidiaryYn: this.inputs.mem_subsidiary_yn,
-                    payment: selectedRoute.payment
-                };
-
-                console.log('CardRecom에 전송되는 데이터:', data);
-
-                this.$nextTick(() => {
-                    if (this.$refs.cardRecom) {
-                        this.$refs.cardRecom.updateData(data);
-                    } else {
-                        console.error('CardRecom 컴포넌트 참조를 찾을 수 없습니다.');
-                    }
-                });
+                console.log('CardRecom 컴포넌트가 표시됩니다.');
             } catch (error) {
                 console.error('handleResultCheck 에러:', error);
             }

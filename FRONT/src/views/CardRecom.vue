@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { mapState, mapGetters } from 'vuex';
 import CardRecomMixin from '../assets/js/CardRecom.js'; // Mixin
 import CardDetail from './CardDetail.vue'; // Component
@@ -80,6 +80,11 @@ export default {
             }
             return altText;
         };
+
+        onMounted(() => {
+            console.log('Vuex formData:', formData);
+            console.log('Vuex selectedRoute:', selectedRoute);
+        });
 
         return {
             selectedCardId,
