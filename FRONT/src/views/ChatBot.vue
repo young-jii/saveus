@@ -14,7 +14,8 @@
 </template>
 
 <script>
-import { ref, reactive, watch, onMounted, onBeforeUnmount } from 'vue';
+import { ref, reactive, watch, onMounted, onBeforeUnmount, computed } from 'vue';
+import { useStore } from 'vuex';
 import mitt from 'mitt';
 
 const eventBus = mitt();
@@ -23,16 +24,13 @@ export default {
     name: 'ChatBot',
     props: ['selectedPayment'],
     setup(props) {
+        const store = useStore();
         const messages = ref([]);
         const userInput = ref('');
-        const formData = reactive({
-            home: '',
-            start_point: '',
-            end_point: '',
-            young: 'N',
-            subsidiary: 'N',
-            pre_month: 0
-        });
+
+        // Vuex 상태와 게터를 computed 속성으로 매핑
+        const formData = computed(() => store.state.formData);
+        const selectedRoute = computed(() => store.getters.getSelectedRoute);
 
         const sendMessage = () => {
             if (userInput.value.trim() !== '') {
@@ -72,7 +70,7 @@ export default {
             console.log(`Sending request to calculate cost with payment: ${payment}`);
             try {
                 const params = new URLSearchParams({
-                    payment: payment,
+                    payment: selectedRoute.payment,
                     home: formData.home,
                     start_point: formData.start_point,
                     end_point: formData.end_point,
@@ -111,10 +109,6 @@ export default {
             }
         };
 
-        const updateFormData = (data) => {
-            Object.assign(formData, data);
-        };
-
         // watch를 통해 selectedPayment 변경 감지
         watch(() => props.selectedPayment, async (newPayment) => {
             console.log("Selected payment in ChatBot:", newPayment);
@@ -138,13 +132,13 @@ export default {
             messages,
             userInput,
             formData,
+            selectedRoute,
             sendMessage,
             getBotResponse,
             scrollToEnd,
             formatNumber,
             calculateCost,
-            handleRouteClickPayment,
-            updateFormData
+            handleRouteClickPayment
         };
     }
 };
