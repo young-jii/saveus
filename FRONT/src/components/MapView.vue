@@ -17,7 +17,7 @@
                 <ul class="route-list" v-if="routes && routes.length > 0">
                     <li v-for="(route, index) in routes" :key="index" class="route-data">
                         <div class="route_con" @click="handleRouteClick(route, index)">
-                            <div class="route_time_header">[총 소요 시간] {{ formatTime(route.totalTime) }}</div>
+                            <div class="route_time_header">[총 소요 시간] {{ route.formattedTotalTime }}</div>
                             <div class="route_time">
                                 <span class="info_sub">
                                     <span>환승 {{ route.subwayTransitCount + route.busTransitCount - 1 }}회 | </span>
@@ -59,7 +59,7 @@
                 </ul>
 
                 <p v-else>Loading routes...</p>
-                
+
             </div>
         </div>
         <img :src="odsayLogo" alt="ODsay Logo" />
@@ -95,10 +95,21 @@ export default {
     computed: {
         ...mapState(['routes', 'selectedRouteIndex']),
         ...mapGetters(['getSelectedRoute']),
+        formattedRoutes() {
+            return this.routes.map(route => ({
+                ...route,
+                formattedTotalTime: this.formatTime(route.totalTime)
+            }));
+        }
     },
     methods: {
         ...mapActions(['selectRoute', 'updateRoutes']),
-        formatTime, // Add the imported formatTime method here
+
+        formatTime(minutes) {
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            return `${hours}시간 ${mins}분`;
+        },
 
         async findRoute() {
             try {
