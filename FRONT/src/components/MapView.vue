@@ -69,7 +69,7 @@
 
 <script>
 import { mapState, mapGetters, mapActions } from 'vuex';
-import MapView, { api, formatTime } from '../assets/js/MapView.js';
+import MapView, { api } from '../assets/js/MapView.js';
 import odsayLogo from '../assets/img/ODsay_bi_mark.png';
 
 export default {
