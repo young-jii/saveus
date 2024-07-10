@@ -116,7 +116,7 @@ import mainOne from '../assets/js/MainOne.js';
 import MapView from '../components/MapView.vue';
 import CardRecom from './CardRecom.vue';
 import EventBus from '../../eventBus.js';  // 이벤트 버스 불러오기
-import { mapState, mapGetters, mapActions } from 'vuex';
+import { mapGetters } from 'vuex';
 
 export default {
     mixins: [mainOne],
