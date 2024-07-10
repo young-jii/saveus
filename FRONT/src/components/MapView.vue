@@ -29,7 +29,7 @@
                                 <span 
                                     v-for="(subPath, subIndex) in route.subPaths" 
                                     :key="subIndex"
-                                    :class="['bar_area', getTrafficClass(subPath, true)]"
+                                    :class="['bar_area', this.getTrafficClass(subPath, true)]"
                                     :style="{ flexBasis: `${subPath.sectionTime * 100}%`, minWidth: '6.5%' }"
                                 >
                                     <span class="bar">
@@ -40,9 +40,9 @@
                             <div class="route_detail">
                                 <ul class="route-detail-list">
                                     <li v-for="(subPath, subIndex) in route.subPaths" :key="subIndex" class="line">
-                                        <span class="icon" :class="{ [getTrafficDetail(subPath)]: getTrafficDetail(subPath) }"></span>
+                                        <span class="icon" :class="{ [this.getTrafficDetail(subPath)]: this.getTrafficDetail(subPath) }"></span>
                                         <span class="r_body">
-                                            <span class="r_action">{{ getAction(subPath, subPath.startName, subPath.lane, subPath.sectionTime) }}</span>
+                                            <span class="r_action">{{ this.getAction(subPath, subPath.startName, subPath.lane, subPath.sectionTime) }}</span>
                                         </span>
                                     </li>
                                     <li :key="route.subPaths.length" class="line">
@@ -104,12 +104,6 @@ export default {
     },
     methods: {
         ...mapActions(['selectRoute', 'updateRoutes']),
-
-        formatTime(minutes) {
-            const hours = Math.floor(minutes / 60);
-            const mins = minutes % 60;
-            return `${hours}시간 ${mins}분`;
-        },
 
         async findRoute() {
             try {
@@ -236,6 +230,68 @@ export default {
             console.error('Error loading Naver Maps script:', error);
         };
     },
+
+
+        formatTime(minutes) {
+            const hours = Math.floor(minutes / 60);
+            const mins = minutes % 60;
+            return `${hours}시간 ${mins}분`;
+        },
+
+
+        getTrafficClass(subPath) {
+            if (subPath.trafficType === 2) {
+                const busClass = `line_bus${subPath.lane && subPath.lane[0] ? subPath.lane[0].type : ''}`;
+                // console.log('Bus class:', busClass);
+                return busClass;
+            } else if (subPath.trafficType === 1) {
+                const subwayClass = `line_sub${subPath.lane && subPath.lane[0] ? subPath.lane[0].subwayCode : ''}`;
+                // console.log('Subway class:', subClass);
+                return subwayClass;
+            } else {
+                const walkClass = 'line_walk';
+                // console.log('Walk class:', walkClass);
+                return walkClass;
+            }
+        },
+
+        getTrafficDetail(subPath) {
+            if (subPath.trafficType === 2) {
+                const busClass = `bus${subPath.lane && subPath.lane[0] ? subPath.lane[0].type : ''}`;
+                // console.log('Bus class:', busClass);
+                return busClass;
+            } else if (subPath.trafficType === 1) {
+                const subwayClass = `sub${subPath.lane && subPath.lane[0] ? subPath.lane[0].subwayCode : ''}`;
+                // console.log('Subway class:', subClass);
+                return subwayClass;
+            }  else {
+                const walkClass = 'walk';
+                // console.log('Walk class:', walkClass);
+                return walkClass;
+            }
+        },
+
+
+        getLineClass(trafficType, subwaycode) {
+            if (trafficType === 1) {
+                return 'bus';
+            } else if (trafficType === 2) {
+                return `sub${subwaycode}`;
+            } else {
+                return 'walk';
+            }
+        },
+
+        getAction(subPath, startName, lane, sectionTime) {
+            if (subPath.trafficType === 1) {
+                return `지하철 ${lane.map(l => l.name).join(', ')} - ${startName}역`;
+            } else if (subPath.trafficType === 2) {
+                return `버스 ${lane.map(l => l.busNo).join(', ')} 번 - ${startName}`;
+            } else {
+                return `도보 ${sectionTime} 분`;
+            }
+        },
+    
 
     // Add a watch for routes
     watch: {
