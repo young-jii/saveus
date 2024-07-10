@@ -34,7 +34,7 @@
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { mapState, mapGetters } from 'vuex';
 import CardRecomMixin from '../assets/js/CardRecom.js'; // Mixin
 import CardDetail from './CardDetail.vue'; // Component
@@ -44,16 +44,7 @@ export default {
     name: 'CardRecom',
     components: { CardDetail, ChatBot },
     mixins: [CardRecomMixin],
-    computed: {
-        ...mapState({
-            formData: state => state.formData
-        }),
-        ...mapGetters(['getSelectedRoute']),
-        selectedRoute() {
-            return this.getSelectedRoute;
-        }
-    },
-    
+
     setup() {
         const selectedCardId = ref(null);
         const isModalOpen = ref(false);
@@ -81,6 +72,19 @@ export default {
             return altText;
         };
 
+        const formData = computed(() => {
+            return {
+                mem_home: this.$store.state.formData.mem_home,
+                start_point: this.$store.state.formData.start_point,
+                end_point: this.$store.state.formData.end_point,
+                mem_young_y: this.$store.state.formData.mem_young_y,
+                mem_young_n: this.$store.state.formData.mem_young_n,
+                mem_subsidiary_yn: this.$store.state.formData.mem_subsidiary_yn,
+            };
+        });
+
+        const selectedRoute = computed(() => this.$store.getters.getSelectedRoute);
+
         onMounted(() => {
             console.log('Vuex formData:', formData);
             console.log('Vuex selectedRoute:', selectedRoute);
@@ -91,7 +95,9 @@ export default {
             isModalOpen,
             modalOpen,
             modalClose,
-            getFormattedAltText
+            getFormattedAltText,
+            formData,
+            selectedRoute
         };
     }
 };
