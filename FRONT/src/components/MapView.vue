@@ -230,15 +230,25 @@ export default {
             }
             try {
                 this.clearPolylines();
+                // 새로운 polyline을 그리기 전 길이 출력
+                console.log('Before drawing new polylines, current count:', this.polylines.length);
 
                 await MapView.methods.handleRouteClick.call({
                     map: this.map,
                     clearPolylines: MapView.methods.clearPolylines,
                     drawNaverMarker: MapView.methods.drawNaverMarker,
-                    drawNaverPolyLine: MapView.methods.drawNaverPolyLine,
+                    drawNaverPolyLine: (polylineOptions) => {
+                        const polyline = MapView.methods.drawNaverPolyLine(polylineOptions);
+                        this.polylines.push(polyline);
+                        console.log('Polyline added. Current polylines count:', this.polylines.length);
+                        return polyline;
+                    },
                     polylines: this.polylines,
                     $odsayAxios: api
                 }, route);
+
+                // 새로운 polyline을 그린 후 길이 출력
+                console.log('After drawing new polylines, current count:', this.polylines.length);
 
                 this.selectRoute({ route, index });
             } catch (error) {
