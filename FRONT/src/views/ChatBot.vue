@@ -14,7 +14,7 @@
 </template>
 
 <script>
-import { ref, reactive, watch, onMounted, onBeforeUnmount, computed } from 'vue';
+import { ref, watch, onMounted, onBeforeUnmount, computed } from 'vue';
 import { useStore } from 'vuex';
 import mitt from 'mitt';
 
@@ -70,13 +70,13 @@ export default {
             console.log(`Sending request to calculate cost with payment: ${payment}`);
             try {
                 const params = new URLSearchParams({
-                    payment: selectedRoute.payment,
-                    home: formData.home,
-                    start_point: formData.start_point,
-                    end_point: formData.end_point,
-                    young: formData.young,
-                    subsidiary: formData.subsidiary,
-                    pre_month: formData.pre_month
+                    payment: payment,
+                    home: formData.value.mem_home,
+                    start_point: formData.value.start_point,
+                    end_point: formData.value.end_point,
+                    young: formData.value.mem_young_y ? 'Y' : 'N',
+                    subsidiary: formData.value.mem_subsidiary_yn ? 'Y' : 'N',
+                    pre_month: formData.value.pre_month
                 });
                 const response = await fetch(`https://jiyoung.pythonanywhere.com/calculate/calculate-cost/?${params}`);
                 if (!response.ok) {
@@ -109,6 +109,10 @@ export default {
             }
         };
 
+        const updateFormData = (data) => {
+            Object.assign(formData.value, data);
+        };
+
         // watch를 통해 selectedPayment 변경 감지
         watch(() => props.selectedPayment, async (newPayment) => {
             console.log("Selected payment in ChatBot:", newPayment);
@@ -121,13 +125,17 @@ export default {
         onMounted(() => {
             eventBus.on('formSubmitted', updateFormData);
             eventBus.on('handleRouteClickPayment', handleRouteClickPayment);
+
+            // Vuex 상태 확인
+            console.log('Vuex formData:', formData.value);
+            console.log('Vuex selectedRoute:', selectedRoute.value);
         });
 
         onBeforeUnmount(() => {
             eventBus.off('formSubmitted', updateFormData);
             eventBus.off('handleRouteClickPayment', handleRouteClickPayment);
         });
-        
+
         return {
             messages,
             userInput,
