@@ -35,7 +35,7 @@
 
 <script>
 import { ref, onMounted, computed } from 'vue';
-import { mapState, mapGetters } from 'vuex';
+import { useStore } from 'vuex';
 import CardRecomMixin from '../assets/js/CardRecom.js'; // Mixin
 import CardDetail from './CardDetail.vue'; // Component
 import ChatBot from './ChatBot.vue'; // Component
@@ -46,6 +46,7 @@ export default {
     mixins: [CardRecomMixin],
 
     setup() {
+        const store = useStore();
         const selectedCardId = ref(null);
         const isModalOpen = ref(false);
 
@@ -72,22 +73,12 @@ export default {
             return altText;
         };
 
-        const formData = computed(() => {
-            return {
-                mem_home: this.$store.state.formData.mem_home,
-                start_point: this.$store.state.formData.start_point,
-                end_point: this.$store.state.formData.end_point,
-                mem_young_y: this.$store.state.formData.mem_young_y,
-                mem_young_n: this.$store.state.formData.mem_young_n,
-                mem_subsidiary_yn: this.$store.state.formData.mem_subsidiary_yn,
-            };
-        });
-
-        const selectedRoute = computed(() => this.$store.getters.getSelectedRoute);
+        const formData = computed(() => store.state.formData);
+        const selectedRoute = computed(() => store.getters.getSelectedRoute);
 
         onMounted(() => {
-            console.log('Vuex formData:', formData);
-            console.log('Vuex selectedRoute:', selectedRoute);
+            console.log('Vuex formData:', formData.value);
+            console.log('Vuex selectedRoute:', selectedRoute.value);
         });
 
         return {
