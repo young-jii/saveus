@@ -88,6 +88,70 @@ export default {
             localEndPoint: this.endPoint,
             map: null,
             polylines: [],
+            subwayLineColors : {
+                1: '#133499',
+                2: '#36B12A',
+                3: '#F55F2C',
+                4: '#1C97DB',
+                5: '#893CB6',
+                6: '#9A4F10',
+                7: '#5F6D00',
+                8: '#E71F6E',
+                9: '#BF9F1D',
+                21: '#6691C9',
+                22: '#ED8000',
+                101: '#0095D4',
+                102: '#F78D46',
+                104: '#7DC4A5',
+                107: '#9AD296',
+                108: '#26A97F',
+                109: '#A8022D',
+                110: '#FF8E00',
+                112: '#003499',
+                113: '#B6C15D',
+                114: '#80A62C',
+                115: '#AD8602',
+                116: '#EDB217',
+                117: '#6789CA',
+                31: '#36B42D',
+                41: '#FA5F2D',
+                42: '#36B42D',
+                43: '#EDB217',
+                51: '#36B42D',
+                71: '#FA5F2D',
+                72: '#34B12B',
+                73: '#BF9F1D',
+                74: '#6F8CC0',
+                78: '#0054A6',
+                79: '#893CB6',
+                91: '#996883',
+                92: '#2e81e2',
+                93: '#00ad79',
+                94: '#756be9',
+                95: '#ee7a0c',
+                96: '#fcb706'
+            },
+            busLineColors : {
+                1: '#39f',
+                2: '#3d5bab',
+                3: '#53b332',
+                4: '#f30',
+                5: '#00a0e9',
+                6: '#f30',
+                10: '#53b332',
+                11: '#1c78cf',
+                12: '#53b332',
+                13: '#f2b70a',
+                14: '#e60012',
+                15: '#f30',
+                16: '#ffba00',
+                20: '#ed8b32',
+                21: '#21b3f5',
+                22: '#b84efc',
+                26: '#f30',
+                34: '#c91017',
+                36: '#993797'
+            },
             isComponentMounted: false,
             odsayLogo
         };
@@ -235,14 +299,9 @@ export default {
 
                 await MapView.methods.handleRouteClick.call({
                     map: this.map,
-                    clearPolylines: MapView.methods.clearPolylines,
-                    drawNaverMarker: MapView.methods.drawNaverMarker,
-                    drawNaverPolyLine: (polylineOptions) => {
-                        const polyline = MapView.methods.drawNaverPolyLine(polylineOptions);
-                        this.polylines.push(polyline);
-                        console.log('Polyline added. Current polylines count:', this.polylines.length);
-                        return polyline;
-                    },
+                    clearPolylines: this.clearPolylines,
+                    drawNaverMarker: this.drawNaverMarker,
+                    drawNaverPolyLine: this.drawNaverPolyLine,
                     polylines: this.polylines,
                     $odsayAxios: api
                 }, route);
@@ -278,6 +337,75 @@ export default {
             });
             this.polylines = [];
             console.log('Polylines cleared. New count:', this.polylines.length);
+        },
+
+        drawNaverMarker(x, y) {
+            new window.naver.maps.Marker({
+                position: new window.naver.maps.LatLng(y, x),
+                map: this.map
+            });
+        },
+
+        drawNaverPolyLine(data) {
+            if (!data?.result?.lane) {
+                console.error('Invalid data structure:', data);
+                return;
+            }
+        
+            let lineArray;
+            for (let i = 0; i < data.result.lane.length; i++) {
+                for (let j = 0; j < data.result.lane[i].section.length; j++) {
+                    lineArray = [];
+                    for (let k = 0; k < data.result.lane[i].section[j].graphPos.length; k++) {
+                        lineArray.push(new window.naver.maps.LatLng(data.result.lane[i].section[j].graphPos[k].y, data.result.lane[i].section[j].graphPos[k].x));
+                    }
+                    let lineColor = '#000';
+
+                    const laneClass = data.result.lane[i].class;
+                    const laneType = data.result.lane[i].type;
+
+                    if (laneClass === 1) {
+                        lineColor = this.busLineColors[laneType];
+                    } else if (laneClass === 2) {
+                        lineColor = this.subwayLineColors[laneType] || lineColor;
+                    } else if (laneClass === 3) {
+                        lineColor = '#EEEEEE';
+                    }
+
+                    const polyline = new window.naver.maps.Polyline({
+                        map: this.map,
+                        path: lineArray,
+                        strokeWeight: 5,
+                        strokeColor: lineColor
+                    });
+                    this.polylines.push(polyline);
+                }
+            }
+        },
+
+        displayRouteOnMap(data) {
+            try {
+                console.log('MapView.vue >> Displaying route on map with data:', data);
+
+                const resultJsonData = data.result;
+                if (resultJsonData) {
+                    this.drawNaverMarker(data.sx, data.sy);
+                    this.drawNaverMarker(data.ex, data.ey);
+                    this.drawNaverPolyLine(resultJsonData);
+
+                    if (resultJsonData.result.boundary) {
+                        const boundary = new window.naver.maps.LatLngBounds(
+                            new window.naver.maps.LatLng(resultJsonData.result.boundary.top, resultJsonData.result.boundary.left),
+                            new window.naver.maps.LatLng(resultJsonData.result.boundary.bottom, resultJsonData.result.boundary.right)
+                        );
+                        this.map.panToBounds(boundary);
+                    }
+                } else {
+                    console.error('MapView.vue >> Invalid response data:', resultJsonData);
+                }
+            } catch (error) {
+                console.error('MapView.vue >> Error displaying route:', error);
+            }
         },
     },
 
