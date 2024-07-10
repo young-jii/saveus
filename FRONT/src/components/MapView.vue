@@ -269,8 +269,8 @@ export default {
             this.polylines = [];
             console.log('Polylines cleared. New count:', this.polylines.length);
         },
-
     },
+
     mounted() {
         console.log('Mounting component...');
 
