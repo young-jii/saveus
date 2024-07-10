@@ -14,7 +14,7 @@
         <div id="results">
             <h3>🧭 경로를 선택하세요! 🧭</h3>
             <div class="route-list-box">
-                <ul class="route-list">
+                <ul class="route-list" v-if="routes && routes.length > 0">
                     <li v-for="(route, index) in routes" :key="index" class="route-data">
                         <div class="route_con" @click="handleRouteClick(route, index)">
                             <div class="route_time_header">[총 소요 시간] {{ formatTime(route.totalTime) }}</div>
@@ -57,6 +57,9 @@
                         </div>
                     </li>
                 </ul>
+
+                <p v-else>Loading routes...</p>
+                
             </div>
         </div>
         <img :src="odsayLogo" alt="ODsay Logo" />
@@ -146,6 +149,12 @@ export default {
                         ey: path.info.ey
                     }));
                     this.updateRoutes(routes);
+                    // Add console logging here
+                    console.log('Routes after updating:', this.routes);
+                        if (this.routes && this.routes.length > 0) {
+                            console.log('Total time of first route:', this.routes[0].totalTime);
+                        }
+
                 } else {
                     console.error('No routes found in the response:', response);
                 }
@@ -190,6 +199,13 @@ export default {
     },
     mounted() {
         console.log('Mounting component...');
+
+        // Add console logging for initial routes state
+        console.log('Initial routes in Vuex store:', this.routes);
+        if (this.routes && this.routes.length > 0) {
+            console.log('Initial total time of first route:', this.routes[0].totalTime);
+        }
+
         this.isComponentMounted = true;
         const script = document.createElement('script');
         script.src = `https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=${process.env.VUE_APP_NAVER_CLIENT_ID}`;
@@ -208,6 +224,19 @@ export default {
         script.onerror = (error) => {
             console.error('Error loading Naver Maps script:', error);
         };
+    },
+
+    // Add a watch for routes
+    watch: {
+        routes: {
+            handler(newRoutes) {
+                console.log('Routes updated:', newRoutes);
+                if (newRoutes && newRoutes.length > 0) {
+                    console.log('Updated total time of first route:', newRoutes[0].totalTime);
+                }
+            },
+            deep: true
+        }
     }
 };
 </script>
