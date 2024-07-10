@@ -229,6 +229,8 @@ export default {
                 return;
             }
             try {
+                this.clearPolylines();
+
                 await MapView.methods.handleRouteClick.call({
                     map: this.map,
                     clearPolylines: MapView.methods.clearPolylines,
@@ -237,8 +239,7 @@ export default {
                     polylines: this.polylines,
                     $odsayAxios: api
                 }, route);
-                
-                this.clearPolylines();
+
                 this.selectRoute({ route, index });
             } catch (error) {
                 console.error('Error handling route click:', error);
@@ -259,8 +260,14 @@ export default {
         },
 
         clearPolylines() {
-            this.polylines.forEach(polyline => polyline.setMap(null));
+            console.log('Clearing polylines. Current count:', this.polylines.length);
+            this.polylines.forEach(polyline => {
+                if (polyline && typeof polyline.setMap === 'function') {
+                    polyline.setMap(null);
+                }
+            });
             this.polylines = [];
+            console.log('Polylines cleared. New count:', this.polylines.length);
         },
 
     },
