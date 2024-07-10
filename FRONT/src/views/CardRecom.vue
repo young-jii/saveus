@@ -34,7 +34,8 @@
 </template>
 
 <script>
-import { ref, reactive, watch, onMounted } from 'vue'; // Vue 3 Composition API
+import { ref } from 'vue';
+import { mapState, mapGetters } from 'vuex';
 import CardRecomMixin from '../assets/js/CardRecom.js'; // Mixin
 import CardDetail from './CardDetail.vue'; // Component
 import ChatBot from './ChatBot.vue'; // Component
@@ -43,31 +44,19 @@ export default {
     name: 'CardRecom',
     components: { CardDetail, ChatBot },
     mixins: [CardRecomMixin],
-    props: {
-        startPoint: String,
-        endPoint: String,
-        memHome: String,
-        memYoungY: Boolean,
-        memYoungN: Boolean,
-        memSubsidiaryYn: Boolean,
-        selectedPayment: Number
+    computed: {
+        ...mapState({
+            formData: state => state.formData
+        }),
+        ...mapGetters(['getSelectedRoute']),
+        selectedRoute() {
+            return this.getSelectedRoute;
+        }
     },
     
-    setup(props, { emit }) {
-        const formData = reactive({
-            home: props.memHome || '',
-            start_point: props.startPoint || '',
-            end_point: props.endPoint || '',
-            young: props.memYoungY ? 'Y' : 'N',
-            subsidiary: props.memSubsidiaryYn ? 'Y' : 'N'
-        });
-        const localSelectedPayment = ref(props.selectedPayment); // props.selectedPayment를 localSelectedPayment로 변경
+    setup() {
         const selectedCardId = ref(null);
         const isModalOpen = ref(false);
-
-        const updateFormData = (data) => {
-            Object.assign(formData, data);
-        };
 
         const modalOpen = (cardId) => {
             console.log("Opening modal for card:", cardId);
@@ -92,53 +81,12 @@ export default {
             return altText;
         };
 
-        const sendParameters = async () => {
-            const params = {
-                payment: localSelectedPayment.value,
-                home: formData.home,
-                start_point: formData.start_point,
-                end_point: formData.end_point,
-                young: formData.young,
-                subsidiary: formData.subsidiary,
-                pre_month: 0
-            };
-            try {
-                const response = await fetch(`https://jiyoung.pythonanywhere.com/calculate/calculate-cost/?${new URLSearchParams(params)}`);
-                const data = await response.json();
-                emit('calculationResult', data);
-            } catch (error) {
-                console.error('Error sending parameters:', error);
-            }
-        };
-
-        watch(() => props.startPoint, (newVal) => {
-            formData.start_point = newVal;
-        });
-
-        watch(() => props.endPoint, (newVal) => {
-            formData.end_point = newVal;
-        });
-
-        watch(localSelectedPayment, (newVal) => {
-            if (newVal) {
-                sendParameters();
-            }
-        });
-
-        onMounted(() => {
-            console.log('Received routes:', CardRecomMixin.data().routes);
-        });
-
         return {
-            formData,
-            localSelectedPayment,
             selectedCardId,
             isModalOpen,
-            updateFormData,
             modalOpen,
             modalClose,
-            getFormattedAltText,
-            sendParameters
+            getFormattedAltText
         };
     }
 };
