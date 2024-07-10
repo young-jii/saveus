@@ -237,7 +237,8 @@ export default {
                     polylines: this.polylines,
                     $odsayAxios: api
                 }, route);
-
+                
+                this.clearPolylines();
                 this.selectRoute({ route, index });
             } catch (error) {
                 console.error('Error handling route click:', error);
@@ -256,6 +257,12 @@ export default {
                 console.error('MapView.vue >> Naver Maps API is not loaded.');
             }
         },
+
+        clearPolylines() {
+            this.polylines.forEach(polyline => polyline.setMap(null));
+            this.polylines = [];
+        },
+
     },
     mounted() {
         console.log('Mounting component...');
