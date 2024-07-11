@@ -100,7 +100,7 @@ export default {
                     const minValue = data['일반'][0];
                     const maxValue = data['일반'][1];
                     console.log(`Calculated cost: min=${minValue}, max=${maxValue}`);
-                    const botResponse = `현재 선택한 경로의 편도 교통비는 ${formatNumber(payment)}원 입니다. \n<해당 경로로 한 달 동안 이용한다고 했을 때 예상 비용>\n ↡ 최소 : ${formatNumber(minValue)}원\n ↟ 최대 : ${formatNumber(maxValue)}원`;
+                    const botResponse = `현재 선택한 경로의 편도 교통비는 ${selectedRoute.value.payment}원 입니다. \n<해당 경로로 한 달 동안 이용한다고 했을 때 예상 비용>\n ↡ 최소 : ${formatNumber(minValue)}원\n ↟ 최대 : ${formatNumber(maxValue)}원`;
                     messages.value.push({ sender: 'bot', text: botResponse });
                     scrollToEnd();
                 } catch (error) {
