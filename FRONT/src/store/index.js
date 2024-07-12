@@ -54,9 +54,9 @@ const store = createStore({
                     .filter(subPath => subPath.trafficType === 2)
                     .map(subPath => subPath.lane.busNo);
 
-                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/calculate/calculate-cost/`, {
+                const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/calculate/calculate-cost/`, {
                     params: {
-                        payment: state.payment,
+                        payment: state.selectedRoute.payment,
                         busLists: busLists.join(','), // Convert array to comma-separated string
                         start_point: state.formData.start_point,
                         end_point: state.formData.end_point,
