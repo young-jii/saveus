@@ -52,7 +52,7 @@ const store = createStore({
                 // Extract busNo from subPaths where trafficType is 2
                 const busLists = state.selectedRoute.subPaths
                     .filter(subPath => subPath.trafficType === 2)
-                    .map(subPath => subPath.lane.busNo);
+                    .flatMap(subPath => subPath.lane.map(lane => lane.busNo));
 
                 const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/calculate/calculate-cost/`, {
                     params: {
