@@ -57,7 +57,7 @@ const store = createStore({
                 const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/calculate/calculate-cost/`, {
                     params: {
                         payment: state.selectedRoute.payment,
-                        busLists: busLists.join(','), // Convert array to comma-separated string
+                        busLists: busLists,
                         start_point: state.formData.start_point,
                         end_point: state.formData.end_point,
                         young: state.formData.mem_young_y ? 'Y' : 'N',
