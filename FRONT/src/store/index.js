@@ -1,4 +1,5 @@
 import { createStore } from 'vuex';
+import axios from 'axios';
 
 const store = createStore({
     state: {
@@ -46,6 +47,31 @@ const store = createStore({
         updateRoutes({ commit }, routes) {
             commit('setRoutes', routes);
         },
+        async sendPaymentToDjango({ state }) {
+            try {
+                // Extract busNo from subPaths where trafficType is 2
+                const busLists = state.selectedRoute.subPaths
+                    .filter(subPath => subPath.trafficType === 2)
+                    .map(subPath => subPath.lane.busNo);
+
+                const response = await axios.get(`${process.env.VUE_APP_API_BASE_URL}/calculate/calculate-cost/`, {
+                    params: {
+                        payment: state.payment,
+                        busLists: busLists.join(','), // Convert array to comma-separated string
+                        start_point: state.formData.start_point,
+                        end_point: state.formData.end_point,
+                        young: state.formData.mem_young_y ? 'Y' : 'N',
+                        home: state.formData.mem_home,
+                        subsidiary: state.formData.mem_subsidiary_yn ? 'Y' : 'N',
+                        pre_month: 0,
+                        transport: 'bus,subway'
+                    }
+                });
+                console.log(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
     },
     getters: {
         getFormData: state => state.formData,
