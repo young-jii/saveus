@@ -39,7 +39,7 @@ if (!apiBaseUrl) {
 
 // CSRF 토큰을 가져와 Axios에 설정
 axios.get(`${apiBaseUrl}/map/set-csrf-token/`, { withCredentials: true })
-    .then(response => {
+    .then(() => {
         const csrfToken = getCookie('csrftoken');
         console.log('CSRF Token received:', csrfToken);
         axios.defaults.headers.common['X-CSRFToken'] = csrfToken;
