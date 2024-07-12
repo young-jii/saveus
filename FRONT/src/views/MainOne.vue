@@ -179,6 +179,9 @@ export default {
                     return;
                 }
 
+                // Django로 데이터 전송
+                await this.$store.dispatch('sendPaymentToDjango');
+
                 this.showCardRecom = true;
 
                 console.log('CardRecom 컴포넌트가 표시됩니다.');
