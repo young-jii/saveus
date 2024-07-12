@@ -16,20 +16,20 @@
             </div>
         </div>
         <!-- Modal -->
-        <Teleport to="body">
-            <div v-if="isModalOpen" class="modal-overlay" @click="modalClose">
-                <div class="modal-wrap" @click.stop>
-                    <div class="modal-container">
-                        <div class="modal-content" v-if="selectedCardId">
-                            <CardDetail :id="selectedCardId" />
-                        </div>
-                        <div class="modal-footer">
-                            <button @click="modalClose">close</button>
-                        </div>
+        <!-- <Teleport to="body"> -->
+        <div v-show="isModalOpen" class="modal-overlay" @click="modalClose">
+            <div class="modal-wrap" @click.stop>
+                <div class="modal-container">
+                    <div class="modal-content" v-if="selectedCardId">
+                        <CardDetail :id="selectedCardId" />
+                    </div>
+                    <div class="modal-footer">
+                        <button @click="modalClose">close</button>
                     </div>
                 </div>
             </div>
-        </Teleport>
+        </div>
+        <!-- </Teleport> -->
     </div>
 </template>
 
@@ -54,11 +54,14 @@ export default {
             console.log("Opening modal for card:", cardId);
             selectedCardId.value = cardId;
             isModalOpen.value = true;
+            document.querySelector('.modal-wrap').classList.add('show');
         };
 
         const modalClose = () => {
+            console.log("Closing modal")
             selectedCardId.value = null;
             isModalOpen.value = false;
+            document.querySelector('.modal-wrap').classList.remove('show');
         };
 
         const getFormattedAltText = (altText) => {
