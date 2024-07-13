@@ -53,25 +53,24 @@ const store = createStore({
                 const busLists = state.selectedRoute.subPaths
                     .filter(subPath => subPath.trafficType === 2)
                     .flatMap(subPath => subPath.lane.map(lane => lane.busNo));
-
+        
                 const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/calculate/calculate-cost/`, {
-                    params: {
-                        payment: state.selectedRoute.payment,
-                        busLists: busLists,
-                        start_point: state.formData.start_point,
-                        end_point: state.formData.end_point,
-                        young: state.formData.mem_young_y ? 'Y' : 'N',
-                        home: state.formData.mem_home,
-                        subsidiary: state.formData.mem_subsidiary_yn ? 'Y' : 'N',
-                        pre_month: 0,
-                        transport: 'bus,subway'
-                    }
+                    payment: state.selectedRoute.payment,
+                    busLists: busLists,
+                    start_point: state.formData.start_point,
+                    end_point: state.formData.end_point,
+                    young: state.formData.mem_young_y ? 'Y' : 'N',
+                    home: state.formData.mem_home,
+                    subsidiary: state.formData.mem_subsidiary_yn ? 'Y' : 'N',
+                    pre_month: 0,
+                    transport: 'bus,subway'
                 });
                 console.log(response.data);
             } catch (error) {
                 console.error(error);
             }
-        }
+        },
+
     },
     getters: {
         getFormData: state => state.formData,

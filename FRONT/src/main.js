@@ -10,9 +10,8 @@ function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
+        for (let i = 0; cookies.length; i++) {
             const cookie = cookies[i].trim();
-            // Does this cookie string begin with the name we want?
             if (cookie.substring(0, name.length + 1) === (name + '=')) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                 break;
@@ -21,11 +20,6 @@ function getCookie(name) {
     }
     return cookieValue;
 }
-
-// Axios 기본 설정
-axios.defaults.withCredentials = true;
-axios.defaults.xsrfCookieName = 'csrftoken';
-axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 
 // API 기본 URL 설정 (HTTPS 사용)
 const apiBaseUrl = process.env.VUE_APP_API_BASE_URL || 'https://jiyoung.pythonanywhere.com';
@@ -38,15 +32,16 @@ if (!apiBaseUrl) {
 }
 
 // CSRF 토큰을 가져와 Axios에 설정
-axios.get(`${apiBaseUrl}/map/set-csrf-token/`, { withCredentials: true })
-    .then(() => {
+axios.interceptors.request.use(
+    config => {
         const csrfToken = getCookie('csrftoken');
-        console.log('CSRF Token received:', csrfToken);
-        axios.defaults.headers.common['X-CSRFToken'] = csrfToken;
-    })
-    .catch(error => {
-        console.error('Error getting CSRF Token:', error.response || error.message);
-    });
+        if (csrfToken) {
+            config.headers['X-CSRFToken'] = csrfToken;
+        }
+        return config;
+    },
+    error => Promise.reject(error)
+);
 
 // ODSAY API 호출용 Axios 인스턴스 생성
 const odsayAxiosInstance = axios.create({
@@ -58,6 +53,6 @@ const app = createApp(App);
 app.config.globalProperties.$axios = axios;
 app.config.globalProperties.$odsayAxios = odsayAxiosInstance;
 app.config.globalProperties.$apiBaseUrl = apiBaseUrl;
-app.config.globalProperties.EventBus = EventBus ;
+app.config.globalProperties.EventBus = EventBus;
 
 app.use(router).use(store).mount('#app');
