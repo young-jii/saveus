@@ -28,6 +28,9 @@ async function fetchCsrfToken() {
         const csrfToken = getCookie('csrftoken');
         console.log('Fetched CSRF Token:', csrfToken);
 
+        // 추가: 응답 데이터를 사용하여 로그 출력
+        console.log('Response data:', response.data);
+
         // Vuex 스토어에 CSRF 토큰을 저장합니다.
         store.commit('setCsrfToken', csrfToken);
 
@@ -35,6 +38,7 @@ async function fetchCsrfToken() {
         console.error('Error fetching CSRF token:', error);
     }
 }
+
 
 const store = createStore({
     state: {
