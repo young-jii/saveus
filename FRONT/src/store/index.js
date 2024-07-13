@@ -1,4 +1,7 @@
+// store/index.js
+
 import { createStore } from 'vuex';
+import axios from 'axios';
 
 // Helper function to get CSRF token from cookies
 function getCookie(name) {
@@ -7,7 +10,6 @@ function getCookie(name) {
         const cookies = document.cookie.split(';');
         for (let i = 0; i < cookies.length; i++) {
             const cookie = cookies[i].trim();
-            // Check if the cookie starts with the name we are looking for
             if (cookie.substring(0, name.length + 1) === (name + '=')) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
                 break;
@@ -29,8 +31,8 @@ const store = createStore({
             mem_young_n: false,
             mem_subsidiary_yn: false,
         },
-        routes: [], // Add this line to store routes
-        selectedRouteIndex: -1, // Add this line to store selected route index
+        routes: [],
+        selectedRouteIndex: -1,
     },
     mutations: {
         setSelectedRoute(state, route) {
@@ -70,14 +72,10 @@ const store = createStore({
                     .filter(subPath => subPath.trafficType === 2)
                     .flatMap(subPath => subPath.lane.map(lane => lane.busNo));
         
-                // Send request using fetch API
-                const response = await fetch(`${process.env.VUE_APP_API_BASE_URL}/calculate/calculate-cost/`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': getCookie('csrftoken')
-                    },
-                    body: JSON.stringify({
+                // Use Axios to send POST request with CSRF token
+                const response = await axios.post(
+                    `${process.env.VUE_APP_API_BASE_URL}/calculate/calculate-cost/`,
+                    {
                         payment: state.selectedRoute.payment,
                         busLists: busLists,
                         start_point: state.formData.start_point,
@@ -87,25 +85,24 @@ const store = createStore({
                         subsidiary: state.formData.mem_subsidiary_yn ? 'Y' : 'N',
                         pre_month: 0,
                         transport: 'bus,subway'
-                    })
-                });
+                    },
+                    {
+                        headers: {
+                            'X-CSRFToken': getCookie('csrftoken')
+                        }
+                    }
+                );
         
-                if (!response.ok) {
-                    throw new Error(`HTTP error! Status: ${response.status}`);
-                }
-        
-                const data = await response.json();
-                console.log(data);
+                console.log(response.data);
             } catch (error) {
                 console.error('Request failed:', error);
             }
-        }             
-
+        },
     },
     getters: {
         getFormData: state => state.formData,
         getRoutes: state => state.routes,
-        getPayment : state => state.payment,
+        getPayment: state => state.payment,
         getSelectedRouteIndex: state => state.selectedRouteIndex,
         getSelectedRoute: state => state.selectedRoute,
     },
