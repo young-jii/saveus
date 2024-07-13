@@ -24,7 +24,8 @@ instance.interceptors.request.use(
 
 async function fetchCsrfToken() {
     try {
-        const response = await axios.get('https://jiyoung.pythonanywhere.com/map/set-csrf-token/');
+        // CSRF 토큰을 설정하기 위한 요청 (응답이 사용되지 않음)
+        await axios.get('https://jiyoung.pythonanywhere.com/map/set-csrf-token/');
         const csrfToken = getCookie('csrftoken');
         console.log('Fetched CSRF Token:', csrfToken);
     } catch (error) {
@@ -65,7 +66,7 @@ const store = createStore({
         },
     },
     actions: {
-        async initialize({ dispatch }) {
+        async initialize() {
             await fetchCsrfToken();
         },
         selectRoute({ commit }, { route, index }) {
