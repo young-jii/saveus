@@ -3,6 +3,23 @@
 import { createStore } from 'vuex';
 import axios from 'axios';
 
+// CSRF 토큰을 쿠키에서 가져오는 함수
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+
+// Axios 인스턴스 생성
 const instance = axios.create({
     baseURL: 'https://jiyoung.pythonanywhere.com/',  // Django API의 기본 URL
     withCredentials: true  // 자격 증명을 포함한 요청 허용
@@ -10,7 +27,7 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
     config => {
-        const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+        const csrfToken = getCookie('csrftoken');
         console.log('CSRF Token for request:', csrfToken);
         if (csrfToken) {
             config.headers['X-CSRFToken'] = csrfToken;
@@ -19,7 +36,6 @@ instance.interceptors.request.use(
     },
     error => Promise.reject(error)
 );
-
 const store = createStore({
     state: {
         selectedRoute: null,
