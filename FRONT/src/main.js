@@ -4,22 +4,7 @@ import router from './router';
 import axios from 'axios';
 import EventBus from '../eventBus';
 import store from './store'; // store 파일 import 추가
-
-// CSRF 토큰을 쿠키에서 가져오는 함수
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
+import { getCookie } from './utils/getCookie'
 
 // API 기본 URL 설정 (HTTPS 사용)
 const apiBaseUrl = process.env.VUE_APP_API_BASE_URL || 'https://jiyoung.pythonanywhere.com';

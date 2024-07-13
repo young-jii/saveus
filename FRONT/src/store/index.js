@@ -2,22 +2,7 @@
 
 import { createStore } from 'vuex';
 import axios from 'axios';
-
-// CSRF 토큰을 쿠키에서 가져오는 함수
-function getCookie(name) {
-    let cookieValue = null;
-    if (document.cookie && document.cookie !== '') {
-        const cookies = document.cookie.split(';');
-        for (let i = 0; i < cookies.length; i++) {
-            const cookie = cookies[i].trim();
-            if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                break;
-            }
-        }
-    }
-    return cookieValue;
-}
+import { getCookie } from '@/utils/getCookie';
 
 // Axios 인스턴스 생성
 const instance = axios.create({
