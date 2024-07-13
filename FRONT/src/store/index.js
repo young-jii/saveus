@@ -9,7 +9,6 @@ const instance = axios.create({
     baseURL: 'https://jiyoung.pythonanywhere.com/',  // Django API의 기본 URL
     withCredentials: true  // 자격 증명을 포함한 요청 허용
 });
-
 instance.interceptors.request.use(
     config => {
         const csrfToken = getCookie('csrftoken');
@@ -25,9 +24,13 @@ instance.interceptors.request.use(
 async function fetchCsrfToken() {
     try {
         // CSRF 토큰을 설정하기 위한 요청 (응답이 사용되지 않음)
-        await axios.get('https://jiyoung.pythonanywhere.com/map/set-csrf-token/');
+        const response = await axios.get('https://jiyoung.pythonanywhere.com/map/set-csrf-token/');
         const csrfToken = getCookie('csrftoken');
         console.log('Fetched CSRF Token:', csrfToken);
+
+        // Vuex 스토어에 CSRF 토큰을 저장합니다.
+        store.commit('setCsrfToken', csrfToken);
+
     } catch (error) {
         console.error('Error fetching CSRF token:', error);
     }
@@ -47,6 +50,7 @@ const store = createStore({
         },
         routes: [],
         selectedRouteIndex: -1,
+        csrfToken: null, // CSRF 토큰 상태 추가
     },
     mutations: {
         setSelectedRoute(state, route) {
@@ -63,6 +67,9 @@ const store = createStore({
         },
         setSelectedRouteIndex(state, index) {
             state.selectedRouteIndex = index;
+        },
+        setCsrfToken(state, csrfToken) {
+            state.csrfToken = csrfToken;
         },
     },
     actions: {
@@ -116,5 +123,8 @@ const store = createStore({
         getSelectedRoute: state => state.selectedRoute,
     },
 });
+
+// 초기화 작업 수행
+store.dispatch('initialize');
 
 export default store;

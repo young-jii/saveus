@@ -64,6 +64,11 @@ export default {
                 // 쿠키에서도 CSRF 토큰을 가져옵니다.
                 const cookieCsrfToken = getCookie('csrftoken');
                 console.log('mainone.js Retrieved CSRF token from cookie:', cookieCsrfToken);
+
+
+                // Vuex 스토어에 CSRF 토큰을 저장합니다.
+                this.$store.commit('setCsrfToken', cookieCsrfToken || csrfToken);
+                
                 this.csrfToken = cookieCsrfToken || csrfToken;
         
                 console.log('mainone.js CSRF 토큰:', this.csrfToken);
