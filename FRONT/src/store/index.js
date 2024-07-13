@@ -8,6 +8,18 @@ const instance = axios.create({
     withCredentials: true  // 자격 증명을 포함한 요청 허용
 });
 
+instance.interceptors.request.use(
+    config => {
+        const csrfToken = document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+        console.log('CSRF Token for request:', csrfToken);
+        if (csrfToken) {
+            config.headers['X-CSRFToken'] = csrfToken;
+        }
+        return config;
+    },
+    error => Promise.reject(error)
+);
+
 const store = createStore({
     state: {
         selectedRoute: null,
@@ -61,7 +73,7 @@ const store = createStore({
                     .filter(subPath => subPath.trafficType === 2)
                     .flatMap(subPath => subPath.lane.map(lane => lane.busNo));
         
-                // Use the custom Axios instance with base URL and withCredentials
+                // Use the custom Axios instance without CSRF token
                 const response = await instance.post('/calculate/calculate-cost/', {
                     payment: state.selectedRoute.payment,
                     busLists: busLists,
