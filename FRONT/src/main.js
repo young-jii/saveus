@@ -41,6 +41,9 @@ const instance = axios.create({
     withCredentials: true  // 자격 증명을 포함한 요청 허용
 });
 
+// CSRF 토큰 설정
+axios.defaults.headers.common['X-CSRFToken'] = getCookie('csrftoken');
+
 const app = createApp(App);
 app.config.globalProperties.$axios = axios;
 app.config.globalProperties.$odsayAxios = odsayAxiosInstance;
