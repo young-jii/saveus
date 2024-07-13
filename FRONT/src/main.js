@@ -35,6 +35,7 @@ if (!apiBaseUrl) {
 axios.interceptors.request.use(
     config => {
         const csrfToken = getCookie('csrftoken');
+        console.log('CSRF Token for request:', csrfToken); // 로그 추가
         if (csrfToken) {
             config.headers['X-CSRFToken'] = csrfToken;
         }
