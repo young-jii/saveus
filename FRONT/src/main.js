@@ -51,4 +51,11 @@ app.config.globalProperties.$instance = instance; // 추가된 인스턴스 설�
 app.config.globalProperties.$apiBaseUrl = apiBaseUrl;
 app.config.globalProperties.EventBus = EventBus;
 
-app.use(router).use(store).mount('#app');
+
+// Store 초기화 액션 호출 후 애플리케이션 마운트
+store.dispatch('initialize').then(() => {
+    app.use(store).use(router).mount('#app');
+}).catch(error => {
+    console.error('Error during store initialization:', error);
+    app.use(store).use(router).mount('#app');
+});

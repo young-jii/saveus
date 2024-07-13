@@ -21,6 +21,17 @@ instance.interceptors.request.use(
     },
     error => Promise.reject(error)
 );
+
+async function fetchCsrfToken() {
+    try {
+        const response = await axios.get('https://jiyoung.pythonanywhere.com/map/set-csrf-token/');
+        const csrfToken = getCookie('csrftoken');
+        console.log('Fetched CSRF Token:', csrfToken);
+    } catch (error) {
+        console.error('Error fetching CSRF token:', error);
+    }
+}
+
 const store = createStore({
     state: {
         selectedRoute: null,
@@ -54,6 +65,9 @@ const store = createStore({
         },
     },
     actions: {
+        async initialize({ dispatch }) {
+            await fetchCsrfToken();
+        },
         selectRoute({ commit }, { route, index }) {
             commit('setSelectedRoute', route);
             commit('setSelectedRouteIndex', index);
@@ -73,7 +87,7 @@ const store = createStore({
                 const busLists = state.selectedRoute.subPaths
                     .filter(subPath => subPath.trafficType === 2)
                     .flatMap(subPath => subPath.lane.map(lane => lane.busNo));
-        
+
                 // Use the custom Axios instance without CSRF token
                 const response = await instance.post('/calculate/calculate-cost/', {
                     payment: state.selectedRoute.payment,
@@ -86,7 +100,7 @@ const store = createStore({
                     pre_month: 0,
                     transport: 'bus,subway'
                 });
-        
+
                 console.log(response.data);
             } catch (error) {
                 console.error('Request failed:', error);
