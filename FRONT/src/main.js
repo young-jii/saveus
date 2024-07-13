@@ -10,7 +10,7 @@ function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
         const cookies = document.cookie.split(';');
-        for (let i = 0; cookies.length; i++) {
+        for (let i = 0; i < cookies.length; i++) {  // 수정된 for 루프 조건
             const cookie = cookies[i].trim();
             if (cookie.substring(0, name.length + 1) === (name + '=')) {
                 cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
@@ -50,9 +50,16 @@ const odsayAxiosInstance = axios.create({
     withCredentials: false,
 });
 
+// Django API 호출용 Axios 인스턴스 생성
+const instance = axios.create({
+    baseURL: 'https://jiyoung.pythonanywhere.com/',  // Django API의 기본 URL
+    withCredentials: true  // 자격 증명을 포함한 요청 허용
+});
+
 const app = createApp(App);
 app.config.globalProperties.$axios = axios;
 app.config.globalProperties.$odsayAxios = odsayAxiosInstance;
+app.config.globalProperties.$instance = instance; // 추가된 인스턴스 설정
 app.config.globalProperties.$apiBaseUrl = apiBaseUrl;
 app.config.globalProperties.EventBus = EventBus;
 

@@ -54,7 +54,8 @@ const store = createStore({
                     .filter(subPath => subPath.trafficType === 2)
                     .flatMap(subPath => subPath.lane.map(lane => lane.busNo));
         
-                const response = await axios.post(`${process.env.VUE_APP_API_BASE_URL}/calculate/calculate-cost/`, {
+                // Use the custom Axios instance with base URL and withCredentials
+                const response = await this.$instance.post('/calculate/calculate-cost/', {
                     payment: state.selectedRoute.payment,
                     busLists: busLists,
                     start_point: state.formData.start_point,
@@ -67,9 +68,9 @@ const store = createStore({
                 });
                 console.log(response.data);
             } catch (error) {
-                console.error(error);
+                console.error('Request failed:', error);
             }
-        },
+        },        
 
     },
     getters: {
