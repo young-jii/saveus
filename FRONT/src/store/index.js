@@ -19,6 +19,11 @@ function getCookie(name) {
     return cookieValue;
 }
 
+const instance = axios.create({
+    baseURL: 'https://jiyoung.pythonanywhere.com/',  // Django API의 기본 URL
+    withCredentials: true  // 자격 증명을 포함한 요청 허용
+});
+
 const store = createStore({
     state: {
         selectedRoute: null,
@@ -72,26 +77,18 @@ const store = createStore({
                     .filter(subPath => subPath.trafficType === 2)
                     .flatMap(subPath => subPath.lane.map(lane => lane.busNo));
         
-                // Use Axios to send POST request with CSRF token
-                const response = await axios.post(
-                    `${process.env.VUE_APP_API_BASE_URL}/calculate/calculate-cost/`,
-                    {
-                        payment: state.selectedRoute.payment,
-                        busLists: busLists,
-                        start_point: state.formData.start_point,
-                        end_point: state.formData.end_point,
-                        young: state.formData.mem_young_y ? 'Y' : 'N',
-                        home: state.formData.mem_home,
-                        subsidiary: state.formData.mem_subsidiary_yn ? 'Y' : 'N',
-                        pre_month: 0,
-                        transport: 'bus,subway'
-                    },
-                    {
-                        headers: {
-                            'X-CSRFToken': getCookie('csrftoken')
-                        }
-                    }
-                );
+                // Use the custom Axios instance with base URL and withCredentials
+                const response = await instance.post('/calculate/calculate-cost/', {
+                    payment: state.selectedRoute.payment,
+                    busLists: busLists,
+                    start_point: state.formData.start_point,
+                    end_point: state.formData.end_point,
+                    young: state.formData.mem_young_y ? 'Y' : 'N',
+                    home: state.formData.mem_home,
+                    subsidiary: state.formData.mem_subsidiary_yn ? 'Y' : 'N',
+                    pre_month: 0,
+                    transport: 'bus,subway'
+                });
         
                 console.log(response.data);
             } catch (error) {
