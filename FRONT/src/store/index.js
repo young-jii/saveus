@@ -53,23 +53,36 @@ const store = createStore({
                     .filter(subPath => subPath.trafficType === 2)
                     .flatMap(subPath => subPath.lane.map(lane => lane.busNo));
         
-                // Use the custom Axios instance with base URL and withCredentials
-                const response = await this.$instance.post('/calculate/calculate-cost/', {
-                    payment: state.selectedRoute.payment,
-                    busLists: busLists,
-                    start_point: state.formData.start_point,
-                    end_point: state.formData.end_point,
-                    young: state.formData.mem_young_y ? 'Y' : 'N',
-                    home: state.formData.mem_home,
-                    subsidiary: state.formData.mem_subsidiary_yn ? 'Y' : 'N',
-                    pre_month: 0,
-                    transport: 'bus,subway'
+                // Send request using fetch API
+                const response = await fetch(`${process.env.VUE_APP_API_BASE_URL}/calculate/calculate-cost/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCookie('csrftoken')
+                    },
+                    body: JSON.stringify({
+                        payment: state.selectedRoute.payment,
+                        busLists: busLists,
+                        start_point: state.formData.start_point,
+                        end_point: state.formData.end_point,
+                        young: state.formData.mem_young_y ? 'Y' : 'N',
+                        home: state.formData.mem_home,
+                        subsidiary: state.formData.mem_subsidiary_yn ? 'Y' : 'N',
+                        pre_month: 0,
+                        transport: 'bus,subway'
+                    })
                 });
-                console.log(response.data);
+        
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+        
+                const data = await response.json();
+                console.log(data);
             } catch (error) {
                 console.error('Request failed:', error);
             }
-        },        
+        }             
 
     },
     getters: {
