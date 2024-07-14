@@ -7,17 +7,6 @@ const instance = axios.create({
     baseURL: 'https://jiyoung.pythonanywhere.com/',  // Django API의 기본 URL
     withCredentials: true  // 자격 증명을 포함한 요청 허용
 });
-instance.interceptors.request.use(
-    config => {
-        const csrfToken = getCookie('csrftoken');
-        console.log('CSRF Token for request (interceptor):', csrfToken);
-        if (csrfToken) {
-            config.headers['X-CSRFToken'] = csrfToken;
-        }
-        return config;
-    },
-    error => Promise.reject(error)
-);
 
 async function fetchCsrfToken() {
     try {
