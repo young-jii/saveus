@@ -1,5 +1,3 @@
-// store/index.js
-
 import { createStore } from 'vuex';
 import axios from 'axios';
 import { getCookie } from '@/utils/getCookie';
@@ -12,7 +10,7 @@ const instance = axios.create({
 instance.interceptors.request.use(
     config => {
         const csrfToken = getCookie('csrftoken');
-        console.log('CSRF Token for request:', csrfToken);
+        console.log('CSRF Token for request (interceptor):', csrfToken);
         if (csrfToken) {
             config.headers['X-CSRFToken'] = csrfToken;
         }
@@ -28,9 +26,6 @@ async function fetchCsrfToken() {
         const csrfToken = getCookie('csrftoken');
         console.log('Fetched CSRF Token:', csrfToken);
 
-        // 추가: 응답 데이터를 사용하여 로그 출력
-        console.log('Response data:', response.data);
-
         // Vuex 스토어에 CSRF 토큰을 저장합니다.
         store.commit('setCsrfToken', csrfToken);
 
@@ -38,7 +33,6 @@ async function fetchCsrfToken() {
         console.error('Error fetching CSRF token:', error);
     }
 }
-
 
 const store = createStore({
     state: {
@@ -103,7 +97,9 @@ const store = createStore({
                 // CSRF 토큰을 인스턴스 헤더에 설정
                 instance.defaults.headers.common['X-CSRFToken'] = state.csrfToken;
 
-                // Use the custom Axios instance without CSRF token
+                console.log('CSRF Token for request (sendPaymentToDjango):', state.csrfToken);
+
+                // Use the custom Axios instance with CSRF token
                 const response = await instance.post('/calculate/calculate-cost/', {
                     payment: state.selectedRoute.payment,
                     busLists: busLists,
