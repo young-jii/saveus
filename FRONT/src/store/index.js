@@ -78,7 +78,8 @@ const store = createStore({
         },
         async sendPaymentToDjango({ state }) {
             try {
-                const csrfResponse = await axios.get('https://jiyoung.pythonanywhere.com/map/set-csrf-token/');
+                // CSRF 토큰을 설정하기 위한 요청
+                await axios.get('https://jiyoung.pythonanywhere.com/map/set-csrf-token/');
                 const csrfToken = getCookie('csrftoken');
                 instance.defaults.headers.common['X-CSRFToken'] = csrfToken;
         
