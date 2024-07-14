@@ -8,16 +8,26 @@ const instance = axios.create({
     withCredentials: true  // 자격 증명을 포함한 요청 허용
 });
 
+instance.interceptors.request.use(
+    config => {
+        const csrfToken = getCookie('csrftoken');
+        if (csrfToken) {
+            config.headers['X-CSRFToken'] = csrfToken;
+        }
+        return config;
+    },
+    error => Promise.reject(error)
+);
+
 async function fetchCsrfToken() {
     try {
         // CSRF 토큰을 설정하기 위한 요청 (응답이 사용되지 않음)
-        await axios.get('https://jiyoung.pythonanywhere.com/map/set-csrf-token/');
+        await axios.get('https://jiyoung.pythonanywhere.com/map/set-csrf-token/', { withCredentials: true });
         const csrfToken = getCookie('csrftoken');
         console.log('Fetched CSRF Token:', csrfToken);
 
         // Vuex 스토어에 CSRF 토큰을 저장합니다.
         store.commit('setCsrfToken', csrfToken);
-
     } catch (error) {
         console.error('Error fetching CSRF token:', error);
     }
@@ -78,17 +88,15 @@ const store = createStore({
         },
         async sendPaymentToDjango({ state }) {
             try {
-                // CSRF 토큰을 설정하기 위한 요청
-                await axios.get('https://jiyoung.pythonanywhere.com/map/set-csrf-token/');
-                const csrfToken = getCookie('csrftoken');
-                instance.defaults.headers.common['X-CSRFToken'] = csrfToken;
-        
-                console.log('CSRF Token for request (sendPaymentToDjango):', csrfToken);
-        
+                // CSRF 토큰을 인스턴스 헤더에 설정
+                instance.defaults.headers.common['X-CSRFToken'] = state.csrfToken;
+
+                console.log('CSRF Token for request (sendPaymentToDjango):', state.csrfToken);
+
                 const busLists = state.selectedRoute.subPaths
                     .filter(subPath => subPath.trafficType === 2)
                     .flatMap(subPath => subPath.lane.map(lane => lane.busNo));
-        
+
                 const response = await instance.post('/calculate/calculate-cost/', {
                     payment: state.selectedRoute.payment,
                     busLists: busLists,
@@ -100,7 +108,7 @@ const store = createStore({
                     pre_month: 0,
                     transport: 'bus,subway'
                 });
-        
+
                 console.log(response.data);
             } catch (error) {
                 if (error.response) {
@@ -112,7 +120,6 @@ const store = createStore({
                 }
             }
         },
-        
     },
     getters: {
         getFormData: state => state.formData,
