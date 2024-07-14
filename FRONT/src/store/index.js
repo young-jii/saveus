@@ -105,11 +105,13 @@ const store = createStore({
                     young: state.formData.mem_young_y ? 'Y' : 'N',
                     home: state.formData.mem_home,
                     subsidiary: state.formData.mem_subsidiary_yn ? 'Y' : 'N',
-                    pre_month: 0,
+                    pre_month: 300000,
                     transport: 'bus,subway'
                 });
 
                 console.log(response.data);
+                return response.data; // 결과 반환
+
             } catch (error) {
                 if (error.response) {
                     console.error('Response data:', error.response.data);
@@ -118,6 +120,7 @@ const store = createStore({
                 } else {
                     console.error('Error message:', error.message);
                 }
+                throw error; // 에러 발생 시 예외 던지기
             }
         },
     },

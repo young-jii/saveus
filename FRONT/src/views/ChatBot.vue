@@ -66,39 +66,14 @@ export default {
             return value.toLocaleString();
         };
 
-        const calculateCost = async (payment) => {
-            console.log(`Sending request to calculate cost with payment: ${payment}`);
-            try {
-                const params = new URLSearchParams({
-                    payment: payment,
-                    home: formData.value.mem_home,
-                    start_point: formData.value.start_point,
-                    end_point: formData.value.end_point,
-                    young: formData.value.mem_young_y ? 'Y' : 'N',
-                    subsidiary: formData.value.mem_subsidiary_yn ? 'Y' : 'N',
-                    pre_month: formData.value.pre_month
-                });
-                const response = await fetch(`https://jiyoung.pythonanywhere.com/calculate/calculate-cost/?${params}`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                const data = await response.json();
-                console.log('Response data:', data);
-                return data;
-            } catch (error) {
-                console.error('Error calculating cost:', error);
-                return { '일반': [0, 0] };
-            }
-        };
-
         const handleRouteClickPayment = async (payment) => {
             console.log("Handling route click payment in ChatBot:", payment);
             if (payment) {
                 try {
                     console.log("Calling calculateCost...");
-                    const data = await calculateCost(payment);
-                    const minValue = data['일반'][0];
-                    const maxValue = data['일반'][1];
+                    const data = await store.dispatch('sendPaymentToDjango');
+                    const minValue = data.minValue;
+                    const maxValue = data.maxValue;
                     console.log(`Calculated cost: min=${minValue}, max=${maxValue}`);
                     const botResponse = `현재 선택한 경로의 편도 교통비는 ${selectedRoute.value.payment}원 입니다. \n<해당 경로로 한 달 동안 이용한다고 했을 때 예상 비용>\n ↡ 최소 : ${formatNumber(minValue)}원\n ↟ 최대 : ${formatNumber(maxValue)}원`;
                     messages.value.push({ sender: 'bot', text: botResponse });
@@ -145,7 +120,6 @@ export default {
             getBotResponse,
             scrollToEnd,
             formatNumber,
-            calculateCost,
             handleRouteClickPayment
         };
     }
