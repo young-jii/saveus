@@ -100,6 +100,9 @@ const store = createStore({
                     .filter(subPath => subPath.trafficType === 2)
                     .flatMap(subPath => subPath.lane.map(lane => lane.busNo));
 
+                // CSRF 토큰을 인스턴스 헤더에 설정
+                instance.defaults.headers.common['X-CSRFToken'] = state.csrfToken;
+
                 // Use the custom Axios instance without CSRF token
                 const response = await instance.post('/calculate/calculate-cost/', {
                     payment: state.selectedRoute.payment,
