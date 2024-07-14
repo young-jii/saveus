@@ -22,7 +22,7 @@ instance.interceptors.request.use(
 async function fetchCsrfToken() {
     try {
         // CSRF 토큰을 설정하기 위한 요청 (응답이 사용되지 않음)
-        const response = await axios.get('https://jiyoung.pythonanywhere.com/map/set-csrf-token/');
+        await axios.get('https://jiyoung.pythonanywhere.com/map/set-csrf-token/');
         const csrfToken = getCookie('csrftoken');
         console.log('Fetched CSRF Token:', csrfToken);
 
