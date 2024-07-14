@@ -78,17 +78,16 @@ const store = createStore({
         },
         async sendPaymentToDjango({ state }) {
             try {
-                // Extract busNo from subPaths where trafficType is 2
+                const csrfResponse = await axios.get('https://jiyoung.pythonanywhere.com/map/set-csrf-token/');
+                const csrfToken = getCookie('csrftoken');
+                instance.defaults.headers.common['X-CSRFToken'] = csrfToken;
+        
+                console.log('CSRF Token for request (sendPaymentToDjango):', csrfToken);
+        
                 const busLists = state.selectedRoute.subPaths
                     .filter(subPath => subPath.trafficType === 2)
                     .flatMap(subPath => subPath.lane.map(lane => lane.busNo));
-
-                // CSRF 토큰을 인스턴스 헤더에 설정
-                instance.defaults.headers.common['X-CSRFToken'] = state.csrfToken;
-
-                console.log('CSRF Token for request (sendPaymentToDjango):', state.csrfToken);
-
-                // Use the custom Axios instance with CSRF token
+        
                 const response = await instance.post('/calculate/calculate-cost/', {
                     payment: state.selectedRoute.payment,
                     busLists: busLists,
@@ -100,12 +99,19 @@ const store = createStore({
                     pre_month: 0,
                     transport: 'bus,subway'
                 });
-
+        
                 console.log(response.data);
             } catch (error) {
-                console.error('Request failed:', error);
+                if (error.response) {
+                    console.error('Response data:', error.response.data);
+                    console.error('Response status:', error.response.status);
+                    console.error('Response headers:', error.response.headers);
+                } else {
+                    console.error('Error message:', error.message);
+                }
             }
         },
+        
     },
     getters: {
         getFormData: state => state.formData,
