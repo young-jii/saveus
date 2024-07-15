@@ -106,7 +106,7 @@ const store = createStore({
                     home: state.formData.mem_home,
                     subsidiary: state.formData.mem_subsidiary_yn ? 'Y' : 'N',
                     pre_month: 300000,
-                    transport: 'bus,subway'
+                    transport: 'bus, subway'
                 });
 
                 console.log(response.data);

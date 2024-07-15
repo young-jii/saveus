@@ -14,6 +14,9 @@ if (!apiBaseUrl) {
 } else {
     console.log(`API Base URL: ${apiBaseUrl}`);
     axios.defaults.baseURL = apiBaseUrl; // Axios 기본 URL 설정
+    axios.defaults.withCredentials = true; // 자격 증명을 포함한 요청 허용
+    axios.defaults.xsrfCookieName = 'csrftoken';
+    axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 }
 
 // CSRF 토큰을 가져오는 함수
