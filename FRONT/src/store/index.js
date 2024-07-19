@@ -67,6 +67,7 @@ const store = createStore({
         },
         setCsrfToken(state, csrfToken) {
             state.csrfToken = csrfToken;
+            console.log('Vuex CSRF Token:', state.csrfToken); // CSRF 토큰 로그 출력
         },
     },
     actions: {
@@ -97,7 +98,7 @@ const store = createStore({
                     .filter(subPath => subPath.trafficType === 2)
                     .flatMap(subPath => subPath.lane.map(lane => lane.busNo));
 
-                const response = await instance.post('/calculate/calculate-cost/', {
+                const response = await axios.post('https://jiyoung.pythonanywhere.com/calculate/calculate-cost/', {
                     payment: state.selectedRoute.payment,
                     busLists: busLists,
                     start_point: state.formData.start_point,
@@ -107,8 +108,13 @@ const store = createStore({
                     subsidiary: state.formData.mem_subsidiary_yn ? 'Y' : 'N',
                     pre_month: 300000,
                     transport: 'bus, subway'
+                }, {
+                    headers: {
+                        'X-CSRFToken': state.csrfToken
+                    },
+                    withCredentials: true
                 });
-
+                
                 console.log(response.data);
                 return response.data; // 결과 반환
 
