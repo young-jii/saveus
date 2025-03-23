@@ -26,7 +26,7 @@
 
 ### 📌 ERD (Entity-Relationship Diagram)
 
-<img src="saveus/image/erd.png" width="600" alt="ERD 이미지">
+![ERD 이미지](imgae/erd.png)
 <br>
 
 ### 📌 사용된 API
